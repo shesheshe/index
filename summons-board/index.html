@@ -1,0 +1,228 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>召喚圖板緊急地下城查詢器 beta - v0.0.0.1</title>
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+請問您的ID第7碼是:
+<select id="id_seven_number" onchange="select_number(this.options[this.options.selectedIndex].value);">
+	<option>0</option>
+	<option>1</option>
+	<option>2</option>
+	<option>3</option>
+	<option>4</option>
+	<option>5</option>
+	<option>6</option>
+	<option>7</option>
+	<option>8</option>
+	<option>9</option>
+</select>
+<input type="button" value="go" onclick="show_date();"/>
+ex : 123,456,{7}89
+<ul id="demo">
+	<li>緊急任務</li>
+</ul>
+
+<!--<ul id="demo2">
+	<li>曜日任務</li>
+	<li>(一)</li>
+	<li>(二)</li>
+	<li>(三)</li>
+	<li>(四)</li>
+	<li>(五)</li>
+	<li>(六)</li>
+</ul>-->
+
+<pre>ui 無修正版 - 以上時間為日本時間減1小時(時差)</pre>
+
+<script>
+
+	//<pre>2014/4/24 by hero, shesheshe98@hotmail.com</pre>s
+	/**
+		2014/4/23 - 基礎查詢, ui無修正
+		2014/4/25 - 二次點擊會計算到下個月, bug修正
+		2014/4/26 - 手機ui優化, 不可放大
+		2014/4/26 - ui優化, 加入顏色
+		2014/4/26 - 部分程式碼優化
+	
+	**/
+	
+	var base_time = new Date(2014, 3, 1);	//2014-4-1
+	var ymd = '';
+	
+	var number2class = [
+		'A', 'B', 'C', 'D', 'E', 
+		'A', 'B', 'C', 'D', 'E'
+	];
+		
+	var class2number = {
+		'A':0, 'B':1, 'C':2, 'D':3, 'E':4
+	};
+
+	var val_ch = [
+		'闇', '水', '光', '火', '木'
+	];
+		
+	var val_en =[
+		'purple', 'blue', 'yellow', 'red', 'green'
+	];
+		
+	var day2str =[
+		'日', '一', '二', '三', '四',
+		'五', '六'
+	];
+
+	var val_class_date = new Array2DVar(5, 5);
+	
+		val_class_date[0][0] = '10:00, 15:00, 20:00';
+		val_class_date[0][1] = '11:00, 16:00, 21:00';
+		val_class_date[0][2] = '07:00, 12:00, 17:00';
+		val_class_date[0][3] = '08:00, 13:00, 18:00';
+		val_class_date[0][4] = '09:00, 14:00, 19:00';
+
+		val_class_date[1][0] = '11:00, 16:00, 21:00';
+		val_class_date[1][1] = '07:00, 12:00, 17:00';
+		val_class_date[1][2] = '08:00, 13:00, 18:00';
+		val_class_date[1][3] = '09:00, 14:00, 19:00';
+		val_class_date[1][4] = '10:00, 15:00, 20:00';
+
+		val_class_date[2][0] = '07:00, 12:00, 17:00';
+		val_class_date[2][1] = '08:00, 13:00, 18:00';
+		val_class_date[2][2] = '09:00, 14:00, 19:00';		
+		val_class_date[2][3] = '10:00, 15:00, 20:00';
+		val_class_date[2][4] = '11:00, 16:00, 21:00';
+
+		val_class_date[3][0] = '08:00, 13:00, 18:00';			
+		val_class_date[3][1] = '09:00, 14:00, 19:00';
+		val_class_date[3][2] = '10:00, 15:00, 20:00';
+		val_class_date[3][3] = '11:00, 16:00, 21:00';
+		val_class_date[3][4] = '07:00, 12:00, 17:00';
+
+		val_class_date[4][0] = '09:00, 14:00, 19:00';
+		val_class_date[4][1] = '10:00, 15:00, 20:00';
+		val_class_date[4][2] = '11:00, 16:00, 21:00';
+		val_class_date[4][3] = '07:00, 12:00, 17:00';
+		val_class_date[4][4] = '08:00, 13:00, 18:00';
+		
+	function show_date()
+	{
+		var form = document.getElementById('id_seven_number');
+		var nowDay = 0;
+		var nextDays = 7;
+	
+		for(var i=0; i<form.options.length; i++)
+		{
+			if(form.options[i].selected == true)
+			{
+				date_list(nextDays, class2number[number2class[i]], number2class[i]);
+			}
+		}
+	}
+	
+	function date_list(nextDays, _class, _class_en)
+	{
+		var now_time = new Date();
+		var diff = parseInt(Math.abs(now_time - base_time)/(1000 * 60 * 60 * 24));
+		var data = [];
+		
+		/*
+		data[0] = [];
+		data[0][0] = val_ch[(diff)%5] + ' - ' + 
+					 val_class_date[_class][(diff)%5] + ' - ' + 
+					 date_format(now_time);
+		data[0][1] = val_en[(diff)%5];
+		*/
+		
+		for(var i=0; i<nextDays; i++)
+		{
+			data[i] = [];
+			
+			now_time.setDate(now_time.getDate() + (i < 1 ? 0 : 1));
+			
+			data[i][0] = val_ch[(diff+i)%5] + ' - ' + 
+					     val_class_date[_class][(diff+i)%5] + ' - ' + 
+					     date_format(now_time);
+				  
+			data[i][1] = val_en[(diff+i)%5];
+			
+			/*		
+			data[i+1] = [];
+			now_time.setDate(now_time.getDate() + 1);
+			data[i+1][0] = val_ch[(diff+i+1)%5] + ' - ' + 
+						   val_class_date[_class][(diff+i+1)%5] + ' - ' + 
+					       date_format(now_time);
+			data[i+1][1] = val_en[(diff+i+1)%5];
+			*/
+		}
+
+		ui(data, _class_en);
+
+	}
+	
+	function ui(data, _class_en)
+	{
+
+		var ul = document.getElementById("demo");
+		
+		ul.innerHTML = "<li>您是{" + _class_en + "}組, 開啟時間如下:<li>";
+		for(var key in data)
+		{
+			li = document.createElement("li");
+			div = document.createElement("div");
+			
+			div.className = data[key][1];
+			div.innerHTML = data[key][0];
+			
+			li.appendChild(div);
+			ul.appendChild(li);
+		}
+		
+	}
+	
+	function date_format(date)
+	{
+		
+		var yyyy = date.getFullYear();
+		var mm = pad_left_zero((date.getMonth()+1));
+		var dd = pad_left_zero(date.getDate());
+		var dd_ch = '(' + day2str[date.getDay()] + ')';
+	
+		return yyyy + '/' + mm + '/' + dd + dd_ch;
+		
+	}
+	
+	function pad_left_zero(str, length)
+	{
+		length = length || 2;
+		for(var i=0; i<length; i++)
+		{
+			if(str.toString().length >= length)
+			{
+				return str;
+			}
+			str = '0' + str;
+		}
+	}
+	
+	function select_number(number)
+	{
+		var number2class = document.getElementById('id_seven_number');
+			
+		number2class.options[number].selected = true;
+	}
+	
+	function Array2DVar(x,y)
+	{
+		this.length = x;
+		this.x = x;
+		this.y = y;
+		for(var i = 0; i < this.length; i++)
+		this[i] = new Array(y);
+	}
+
+</script>
+</body>
+</html>
