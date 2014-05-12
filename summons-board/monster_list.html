@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>jquery-tmpl unit tests</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"> </script>
+		<script type="text/javascript" src="js/jquery.tmpl.min.js"> </script>
+		<script type="text/javascript" src="js/jquery.tablesorter.min.js"> </script>
+		<style type="text/css">
+		
+		div.attr img {
+			width: 20px;
+			height: 20px;
+		}
+		
+		div.right img{
+			width: 50px;
+			height: 50px;
+		}
+		
+		div.right{
+			display: inline;
+		}
+		
+		div.left {
+			display: inline-block;
+		}
+			
+		</style>
+	</head>
+	<body>
+
+		<div id="main">
+			<div id="title">xxxxx</div>
+			<span>
+				<select id="kind">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+				</select>
+			</span>
+		</div>
+		
+		
+		<script type="text/x-jquery-tmpl" id="mytmpl">
+			<div class="row" value=${kind}>
+				<div class="right">
+					<img src=pic/${img} alt="" />
+				</div>
+				<div class="left">
+					<div class="name">
+						${name}
+						<span>${kind}</span>
+					</div>
+					<div class="attr">
+						<img src=pic/${ability1} alt="" />
+						<img src=pic/${ability2} alt="" />
+						<a href=monster_view.html?id=t>click!!</a>
+					</div>
+				</div>
+
+			</div>
+		</script>
+
+		<script>
+
+			var data = [
+				{'img':'t.png', 'name':'hero1', 'kind':'1', 'ability1':'t.png', 'ability2':'t.png'},
+				{'img':'t.png', 'name':'hero2', 'kind':'2', 'ability1':'t.png', 'ability2':'t.png'},
+				{'img':'t.png', 'name':'hero3', 'kind':'3', 'ability1':'t.png', 'ability2':'t.png'},
+				{'img':'t.png', 'name':'hero4', 'kind':'1', 'ability1':'t.png', 'ability2':'t.png'},
+				{'img':'t.png', 'name':'hero5', 'kind':'2', 'ability1':'t.png', 'ability2':'t.png'}
+			];
+		
+			$.tmpl(mytmpl, data).appendTo('#main');
+			
+			//$("#myTable").tablesorter();
+			
+			$('select#kind').change(function() {
+				$('div.row').hide();
+				$('div.row[value='+ $(this).attr('value') +']').show();
+			}).trigger('change');
+			
+		</script>
+		
+	</body>
+</html>
