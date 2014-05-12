@@ -1,32 +1,9 @@
-<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>jquery-tmpl unit tests</title>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"> </script>
-		<script type="text/javascript" src="js/jquery.tmpl.min.js"> </script>
-		<script type="text/javascript" src="js/jquery.tablesorter.min.js"> </script>
-		<style type="text/css">
-		
-		div.attr img {
-			width: 20px;
-			height: 20px;
-		}
-		
-		div.right img{
-			width: 50px;
-			height: 50px;
-		}
-		
-		div.right{
-			display: inline;
-		}
-		
-		div.left {
-			display: inline-block;
-		}
-			
-		</style>
+		<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+		<title>召喚圖板緊急地下城查詢器 beta - v0.0.0.1</title>
+		<link rel="stylesheet" href="css/monster_list_style.css" />
 	</head>
 	<body>
 
@@ -62,15 +39,11 @@
 			</div>
 		</script>
 
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"> </script>
+		<script type="text/javascript" src="js/jquery.tmpl.min.js"> </script>
+		<script type="text/javascript" src="js/jquery.tablesorter.min.js"> </script>
+		<script type="text/javascript" src="js/monster_data.js"> </script>
 		<script>
-
-			var data = [
-				{'img':'t.png', 'name':'hero1', 'kind':'1', 'ability1':'t.png', 'ability2':'t.png'},
-				{'img':'t.png', 'name':'hero2', 'kind':'2', 'ability1':'t.png', 'ability2':'t.png'},
-				{'img':'t.png', 'name':'hero3', 'kind':'3', 'ability1':'t.png', 'ability2':'t.png'},
-				{'img':'t.png', 'name':'hero4', 'kind':'1', 'ability1':'t.png', 'ability2':'t.png'},
-				{'img':'t.png', 'name':'hero5', 'kind':'2', 'ability1':'t.png', 'ability2':'t.png'}
-			];
 		
 			$.tmpl(mytmpl, data).appendTo('#main');
 			
