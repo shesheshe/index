@@ -3,6 +3,22 @@ ul {
   list-style: none;
 }
 
+ul#menu li {
+	float: left;
+	width: 33%;
+	background-color: #6E6E6E;
+	text-align: center;
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #FFF;
+}
+
+ul#menu li a {
+	text-decoration: none;
+	display: block;
+}
+
+
 div.red {
 	background-color: #EFA2A1;
 }
