@@ -9,7 +9,7 @@
 		<input type="button" value="back" onclick="history.back();"/>
 		
 		<div id="main">
-			<div id="title">xxxxx</div>
+			<div id="title">戰棋清單</div>
 			<span>
 				<select id="kind">
 					<option value="1">1</option>
@@ -23,16 +23,19 @@
 		<script type="text/x-jquery-tmpl" id="mytmpl">
 			<div class="row" value=${kind}>
 				<div class="right">
-					<img src=pic/${img} alt="" />
+					<img src=pic/pic.jpg alt="" style="${img}"/>
 				</div>
 				<div class="left">
 					<div class="name">
 						${name}
-						<span>${kind}</span>
 					</div>
 					<div class="attr">
-						<img src=pic/${ability1} alt="" />
-						<img src=pic/${ability2} alt="" />
+						<!--<img src=pic/${ability1} alt="" />
+						<img src=pic/${ability2} alt="" />-->
+						<span>${ability1}</span>
+						<span>  </span>
+						<span>${ability2}</span>
+						<span>  </span>
 						<a href=monster_view.html?id=t>click!!</a>
 					</div>
 				</div>

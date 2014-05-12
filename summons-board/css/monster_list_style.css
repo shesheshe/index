@@ -2,16 +2,41 @@ div.attr img {
 	width: 20px;
 	height: 20px;
 }
-		
-div.right img{
-	width: 50px;
-	height: 50px;
+
+div.right {
+	overflow: hidden;
+	width: 105px;
+	height: 100px;
+	display: inline-block;
+	vertical-align: center;
 }
-		
-div.right{
-	display: inline;
-}
-		
+
 div.left {
 	display: inline-block;
+}
+
+div.row {
+	background-color: lightgrey;
+}
+
+div.name {
+	height: 40px;
+	text-align: center;
+	vertical-align: top;
+}
+
+div#title {
+	display: inline-block;
+	width: 80%;
+	height: 25px;
+	text-align: center;
+}
+
+div#main {
+	background-color: silver;
+}
+
+div#main span{
+	width: 20%;
+	text-align: right;
 }
