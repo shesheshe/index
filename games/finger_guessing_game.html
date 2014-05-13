@@ -77,11 +77,16 @@
 	}
 	
 	/*
-	* 清除div
+	* 清除div, 順便刪除所有資訊
 	*/
 	var clear_guestbook = function() {
 		document.getElementById('guestbook').innerHTML = '';
+		document.getElementById('scorebook').innerHTML = '';
 		index = 1;
+		remove_index = 1;
+		win = 0;
+		lose = 0;
+		mind = 0;
 	}
 	
 	var set_scorebook = function() {
@@ -152,6 +157,18 @@
 	
 	clear.onclick = function() {
 		clear_guestbook();
+	}
+	
+	
+	/*
+	* 切換人物時清除所有資訊
+	*/
+	var level = document.getElementsByName('level');
+	for(var i=0; i<level.length; i++) {
+		level[i].onclick = function() {
+			clear_guestbook();
+		}
+		
 	}
 	
 	/*
