@@ -22,12 +22,17 @@
 <input type="button" id="clear" value="clear"/>
 <br />
 <br />
+<div id="scorebook"></div>
+<br />
 <div id="guestbook"></div>
 
 <script type="text/javascript">
 
 	var index = 1;
 	var remove_index = 1;
+	var win = 0;
+	var lose = 0;
+	var mind = 0;
 	
 	/*
 	* 取得選取的值 radio button
@@ -79,6 +84,20 @@
 		index = 1;
 	}
 	
+	var set_scorebook = function() {
+		var scorebook = document.getElementById('scorebook');
+		
+		var total = win + lose + mind;
+		var _win = parseInt(win/total*100);
+		var _lose = parseInt(lose/total*100);
+		var _mind = parseInt(mind/total*100);
+		
+		scorebook.innerHTML = '總場數:' + total + 
+		                      ', 勝率:' + _win +
+		                      ', 敗率:' + _lose +
+		                      ', 平率:' + _mind;
+	}
+	
 	/*
 	* 開始拉!
 	*/
@@ -98,17 +117,22 @@
 			case '2_5':
 			case '0_2':
 			case '5_0':
+				win += 1;
 				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 你贏了!');
 				break;
 			case '2_0':
 			case '0_5':
 			case '5_2':
+				lose += 1;
 				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 你輸了!');
 				break;
 			default:
+				mind += 1;
 				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 雙方平手!');
 				break;
 		}
+		
+		set_scorebook();
 	}	
 	
 	/*
