@@ -5,9 +5,10 @@ ul {
 
 ul#menu li {
 	float: left;
-	width: 24%;
+	width: 25%;
 	background-color: #6E6E6E;
 	text-align: center;
+	margin-left: -1px;
 	border-left-width: 1px;
 	border-left-style: solid;
 	border-left-color: #FFF;
