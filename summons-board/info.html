@@ -5,29 +5,14 @@
 	<title>召喚圖板緊急地下城查詢器 beta - v0.0.0.1</title>
 	<link rel="stylesheet" href="css/index_style.css" />
 </head>
-<body
+<body>
+
 <div id="results"></div>
 <br />
 <br />
-
-<div id="disqus_thread"></div>
-
+test!
 <br />
 <input type="button" value="back" onclick="history.back();"/>
-
-<script type="text/javascript">
-/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-var disqus_shortname = 'summons-board'; // required: replace example with your forum shortname
-
-/* * * DON'T EDIT BELOW THIS LINE * * */
-(function() {
-	var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-	dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
 <script type="text/javascript" src="js/global.js"> </script>
 <script type="text/html" id="user_tmpl">
@@ -38,7 +23,7 @@ var disqus_shortname = 'summons-board'; // required: replace example with your f
 	</ul>
 </script>
 <script type="text/javascript">
-
+		
 	var links = [
 		{"name":"相關資訊 dev!", 		"url":"info.html"},
 		{"name":"戰棋列表 dev!",	 	"url":"monster_list.html"},
@@ -47,6 +32,8 @@ var disqus_shortname = 'summons-board'; // required: replace example with your f
 	];
 
 	document.getElementById("results").innerHTML = tmpl("user_tmpl", links);
+
 </script>
+
 </body>
 </html>
