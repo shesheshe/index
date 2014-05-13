@@ -6,20 +6,27 @@
 </head>
 <body>
 
-模式選擇: 
+選擇模式: 
 easy:<input  type="radio" name="level" value="easy" checked>
 normal:<input  type="radio" name="level" value="normal">
 hard:<input  type="radio" name="level" value="hard">
 <br />
-205選擇: 
+<br />
+選擇205: 2等於剪刀, 0等於石頭, 5等於布 <br />
 2:<input  type="radio" name="fgg" value="2" checked>
 0:<input  type="radio" name="fgg" value="0">
 5:<input  type="radio" name="fgg" value="5">
 <br />
+<br />
 <input type="button" id="run" value="run"/>
+<input type="button" id="clear" value="clear"/>
+<br />
+<br />
+<div id="guestbook"></div>
 
 <script type="text/javascript">
 
+	var index = 1;
 	
 	/*
 	* 取得選取的值 radio button
@@ -38,76 +45,112 @@ hard:<input  type="radio" name="level" value="hard">
 	};
 	
 	/*
+	* 寫入div
+	*/
+	var set_guestbook = function(content) {
+		var guestbook = document.getElementById('guestbook');
+		
+		if(guestbook.innerHTML == '') {
+			guestbook.innerHTML = index + ' : ' + content;
+		} else {
+			guestbook.innerHTML += '<br />'+ index + ' : ' + content;
+		}
+		
+		index++;
+	}
+	
+	/*
+	* 清除div
+	*/
+	var clear_guestbook = function() {
+		document.getElementById('guestbook').innerHTML = '';
+		index = 1;
+	}
+	
+	/*
 	* 開始拉!
 	*/
 	var fgg = function(level, fgg) {
 		var list = {
-			'easy':{'2':30, '0':30, '5':30}, 
-			'normal':{'2':30, '0':20, '5':10}, 
-			'hard':{'2':10, '0':20, '5':30}, 
+			'easy':[30, 30, 30], 
+			'normal':[30, 20, 10], 
+			'hard':[10, 30, 30], 
 		};
+		var key2val = {1:2, 2:0, 3:5};
+		var val = return_array_num(list[level]);
 		
-		console.log(list[level]);
+		var val2txt = {2:'剪刀', 0:'石頭', 5:'布'};
+		//console.log(fgg+'_'+key2val[val]);
 		
-		return_array_num(list[level]);
+		switch(fgg+'_'+key2val[val]) {
+			case '2_5':
+			case '0_2':
+			case '5_0':
+				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 你贏了!');
+				break;
+			case '2_0':
+			case '0_5':
+			case '5_2':
+				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 你輸了!');
+				break;
+			default:
+				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 雙方平手!');
+				break;
+		}
 	}	
 	
+	/*
+	* 按鈕事件
+	*/
 	var run = document.getElementById('run');
+	var clear = document.getElementById('clear');
 
 	run.onclick = function() {
 	
 		var level_val = radio_value('level');
-		var fgg_val = radio_value('level');
+		var fgg_val = radio_value('fgg');
 		
-		fgg(level_val	, fgg_val);
+		fgg(level_val, fgg_val);
 		
 	}
-
+	
+	clear.onclick = function() {
+		clear_guestbook();
+	}
+	
+	/*
+	* 隨機數
+	*/
+	function usefloor(min, max) {
+		return Math.floor(Math.random()*(max-min+1)+min);
+	}
+	
 	/*
 	* 不定機率
 	*/
 	var return_array_num = function(ary) {
-		var x = 0;
-		var nums = 0;
-		
-		for(var v in ary) {
-			console.log(v);
+		var result = 0, total = 0, list_val = 0;
+		var i = 0, list = [], rand = 0, len = ary.length;
+
+		for(var k in ary) {
+			total += ary[k];
+			list_val = 0;
+			for(i=0; i<=k; i++) {                
+				list_val += ary[i];
+			}
+			list[parseInt(k)+1] = list_val;
 		}
+		rand = usefloor(1, total);
+		
+		for(i=1; i<=len; i++) {
+			if(rand <= list[i]) {
+				result = i;  //開的值落的範圍
+				break;
+			}
+		}
+		return result;
 	}
-	
-	/*
-	function return_array_num($array) {	
-		 $x=0;       //開的值落的範圍
-		 $nums=0;    //參數總額
 
-		 //寫迴圈  將每個機率寫入陣列
-		 foreach($array as $key => $value)
-		 {
-			  $nums=$nums+$value;  //將陣列總數相加
-				 
-			  $n1=0;        //初始化機率為1
-
-			  for($i=0;$i<=$key;$i++)
-			  {                
-				  $n1=$n1+$array[$i];
-			  }
-			  $n[$key+1]=$n1;
-		  }         
-		  $rand=rand(1,$nums);  //取得隨機數   
-		  
-		  //計算i落在哪個範圍
-		  for($i=1;$i<=count($array);$i++)
-		  {
-			  if($rand <= $n[$i])
-			  {
-				  $x=$i;  //開的值落的範圍
-				  break;
-			  }
-		  }
-		  return $x;
-	}	*/
-
-	
 </script>
 
 </body>
