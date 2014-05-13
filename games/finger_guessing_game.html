@@ -1,0 +1,114 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>fgg</title>
+</head>
+<body>
+
+模式選擇: 
+easy:<input  type="radio" name="level" value="easy" checked>
+normal:<input  type="radio" name="level" value="normal">
+hard:<input  type="radio" name="level" value="hard">
+<br />
+205選擇: 
+2:<input  type="radio" name="fgg" value="2" checked>
+0:<input  type="radio" name="fgg" value="0">
+5:<input  type="radio" name="fgg" value="5">
+<br />
+<input type="button" id="run" value="run"/>
+
+<script type="text/javascript">
+
+	
+	/*
+	* 取得選取的值 radio button
+	*/
+	var radio_value = function(elm_name) {
+		var level = document.getElementsByName(elm_name);
+		var len = level.length;
+		var i = 0;
+
+		for(i; i<len; i++) {
+			if(level[i].checked == true) {
+				//console.log(level[i].value);
+				return level[i].value;
+			}
+		}
+	};
+	
+	/*
+	* 開始拉!
+	*/
+	var fgg = function(level, fgg) {
+		var list = {
+			'easy':{'2':30, '0':30, '5':30}, 
+			'normal':{'2':30, '0':20, '5':10}, 
+			'hard':{'2':10, '0':20, '5':30}, 
+		};
+		
+		console.log(list[level]);
+		
+		return_array_num(list[level]);
+	}	
+	
+	var run = document.getElementById('run');
+
+	run.onclick = function() {
+	
+		var level_val = radio_value('level');
+		var fgg_val = radio_value('level');
+		
+		fgg(level_val	, fgg_val);
+		
+	}
+
+	/*
+	* 不定機率
+	*/
+	var return_array_num = function(ary) {
+		var x = 0;
+		var nums = 0;
+		
+		for(var v in ary) {
+			console.log(v);
+		}
+	}
+	
+	/*
+	function return_array_num($array) {	
+		 $x=0;       //開的值落的範圍
+		 $nums=0;    //參數總額
+
+		 //寫迴圈  將每個機率寫入陣列
+		 foreach($array as $key => $value)
+		 {
+			  $nums=$nums+$value;  //將陣列總數相加
+				 
+			  $n1=0;        //初始化機率為1
+
+			  for($i=0;$i<=$key;$i++)
+			  {                
+				  $n1=$n1+$array[$i];
+			  }
+			  $n[$key+1]=$n1;
+		  }         
+		  $rand=rand(1,$nums);  //取得隨機數   
+		  
+		  //計算i落在哪個範圍
+		  for($i=1;$i<=count($array);$i++)
+		  {
+			  if($rand <= $n[$i])
+			  {
+				  $x=$i;  //開的值落的範圍
+				  break;
+			  }
+		  }
+		  return $x;
+	}	*/
+
+	
+</script>
+
+</body>
+</html>
