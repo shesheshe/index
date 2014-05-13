@@ -7,15 +7,15 @@
 <body>
 
 選擇模式: 
-easy:<input  type="radio" name="level" value="easy" checked>
-normal:<input  type="radio" name="level" value="normal">
-hard:<input  type="radio" name="level" value="hard">
+阿誠:<input  type="radio" name="level" value="easy" checked>
+小強:<input  type="radio" name="level" value="normal">
+威力:<input  type="radio" name="level" value="hard">
 <br />
 <br />
-選擇205: 2等於剪刀, 0等於石頭, 5等於布 <br />
-2:<input  type="radio" name="fgg" value="2" checked>
-0:<input  type="radio" name="fgg" value="0">
-5:<input  type="radio" name="fgg" value="5">
+選擇一拳:
+剪刀:<input  type="radio" name="fgg" value="2" checked>
+石頭:<input  type="radio" name="fgg" value="0">
+布:<input  type="radio" name="fgg" value="5">
 <br />
 <br />
 <input type="button" id="run" value="run"/>
@@ -27,6 +27,7 @@ hard:<input  type="radio" name="level" value="hard">
 <script type="text/javascript">
 
 	var index = 1;
+	var remove_index = 1;
 	
 	/*
 	* 取得選取的值 radio button
@@ -49,12 +50,23 @@ hard:<input  type="radio" name="level" value="hard">
 	*/
 	var set_guestbook = function(content) {
 		var guestbook = document.getElementById('guestbook');
+		var guestbook_row = document.createElement('div');
+		var remove =  '';
 		
-		if(guestbook.innerHTML == '') {
-			guestbook.innerHTML = index + ' : ' + content;
+		guestbook_row.setAttribute("id", "row" + index);
+		guestbook_row.innerHTML = index + ' : ' + content;
+
+		if(index > 10) {
+			remove = document.getElementById('row' + remove_index);
+			guestbook.removeChild(remove);
+			remove_index++;
 		} else {
-			guestbook.innerHTML += '<br />'+ index + ' : ' + content;
+		
 		}
+
+		guestbook.appendChild(guestbook_row);
+
+		//console.log(index + '_' + remove_index);
 		
 		index++;
 	}
