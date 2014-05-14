@@ -6,29 +6,33 @@
 	<style type="text/css">
 
 	div.c {
-		border: 1px;
 		display: inline-block;
-		width: 20px;
-		height: 20px;
+		width: 40px;
+		height: 40px;
 		background-color: lightgrey;
 	}
 
+	div.t {
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background-color: red;
+	}
+	
 	</style>
 </head>
 <body>
 
-<div>
-	<div id="hero"></div>
-</div>
 <input type="button" id="init" value="init"/>
 <input type="button" id="start" value="start"/>
 <div id="table"></div>
 
-
-
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
 <script type="text/javascript">
 	
+	/*
+	* 建立棋盤
+	*/
 	var createTable = function(size) {
 		var table = document.getElementById('table');
 		var fragment = document.createDocumentFragment();
@@ -39,7 +43,7 @@
 			row.setAttribute('val', i);
 			for(var j=0; j<size; j++) {
 				col = document.createElement('div');
-				col.innerHTML = i + j;
+				//col.innerHTML = i + j;
 				col.className = 'c';
 				col.setAttribute('val', j);
 				row.appendChild(col);
@@ -49,32 +53,69 @@
 		table.appendChild(fragment);
 	}
 	
+	/*
+	* 清除棋盤
+	*/
 	var clearTable = function() {
 		var table = document.getElementById('table');
 		table.innerHTML = '';
 	}
 	
-	//createTable(5);
-	
+	/*
+	* 棋盤初始化
+	*/
 	$('input#init').on('click', function() {
 		clearTable();
 		createTable(5);
+	}).trigger('click');
+	
+	/*
+	* 點擊紅點
+	*/
+	$('div').on('click', '.t', function() {
+		$(this).removeClass("t").addClass('c');
+		return false;
+	});
+
+	/*
+	* 遊戲開始
+	*/
+	$('input#start').on('click', function() {
+		start();
 	});
 	
-	var sec = 5;
+	/*
+	* 倒數計時器
+	*/
+	var start_id = 0;
+	var end_sec = 5;
+	var x = 0, y = 0;
+	var start = function() {
 	
-	$('input#start').on('click', function(sec) {
-		//settimeout arguments.callee
-			
-		if(sec == 0)
+		if(end_sec == 0)
 		{
 			console.log('stop');
+			clearTimeout(start_id);
+			end_sec = 5;
+			return false;
 		}
 		
-		//每秒執行一次,showTime()
-		setTimeout(arguments.callee(sec-1), 1000);
-		
-	});
+		x = usefloor(0, 5-1);
+		y = usefloor(0, 5-1);
+
+		$('div[val='+x+']').find('div[val='+y+']').removeClass("c").addClass('t');
+
+		end_sec--;
+		start_id = setTimeout(arguments.callee, 1000);
+	}
+
+	/*
+	* 隨機數
+	*/
+	function usefloor(min, max) {
+		return Math.floor(Math.random()*(max-min+1)+min);
+	}	
+	
 </script>
 
 <script>
