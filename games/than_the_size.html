@@ -10,10 +10,45 @@
 <script type="text/javascript">
 	var cards = [], tmp = 0, x = 0, y = 0;
 	var me_val = [], me_txt = [], txt = '', num = 0;
+	var tmp_ary = [], tmp_ary2 = [];
+	
+	var val2txt = function(ary) {
+
+		for(var k in ary) {
+			txt = '';
+			switch(parseInt(ary[k]/13)) {
+				case 0: txt+='黑桃'; break;
+				case 1: txt+='紅心'; break;
+				case 2: txt+='梅花'; break;
+				case 3: txt+='方塊'; break;
+			}
+			
+			num = parseInt(ary[k]%13)+1;
+			switch(num) {
+				case 1: txt+='A'; break;
+				case 11: txt+='J'; break;
+				case 12: txt+='Q'; break;
+				case 13: txt+='K'; break;
+				default: txt+=num; break;
+			}
+			
+			me_txt[k] = txt;
+		}
+		
+		return me_txt;
+	};
 	
 	for(var i=0; i<52; i++) {
 		cards[i] = i;
+		tmp_ary[i] = parseInt(i/13);
+		tmp_ary2[i] = parseInt(i%13);
+		
 	}
+	
+	console.log(cards);
+	//console.log(tmp_ary);
+	//console.log(tmp_ary2);
+	//console.log(val2txt(cards));
 	
 	for(var i=0; i<100; i++) {
 		x = usefloor(0, cards.length-1);
@@ -33,32 +68,6 @@
 	me_val[3] = cards.pop();
 	me_val[4] = cards.pop();
 
-	var val2txt = function(ary) {
-
-		for(var k in ary) {
-			txt = '';
-			switch(parseInt(ary[k]/13)) {
-				case 0: txt+='黑桃'; break;
-				case 1: txt+='紅心'; break;
-				case 2: txt+='梅花'; break;
-				case 3: txt+='方塊'; break;
-			}
-			
-			num = parseInt(ary[k]%4);
-			switch(num) {
-				case 0: txt+='A'; break;
-				case 11: txt+='J'; break;
-				case 12: txt+='Q'; break;
-				case 12: txt+='K'; break;
-				default: txt+=num; break;
-			}
-			
-			me_txt[k] = txt;
-		}
-		
-		return me_txt;
-	};
-	
 	var tcard = function(num) {
 		console.log(num%13);
 		console.log(parseInt(num/13));
@@ -66,7 +75,7 @@
 
 	console.log(me_val);
 	
-	console.log(cards);
+	//console.log(cards);
 	
 	console.log(val2txt(me_val));
 	
