@@ -3,10 +3,31 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
 	<title>bingo</title>
+	<style type="text/css">
+
+	div.c {
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background-color: lightgrey;
+	}
+
+	div.t {
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background-color: red;
+	}
+	
+	</style>
 </head>
 <body>
 
+<input type="button" id="init" value="init"/>
+<input type="button" id="start" value="start"/>
+<div id="table"></div>
 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
 <script type="text/javascript">
 
 	var list = [];
@@ -41,13 +62,64 @@
 	console.log(player1);
 	console.log(player2);
 	
-	var init = function() {
-	
+
+	/*
+	* 建立棋盤
+	*/
+	var createTable = function(size, val_ary) {
+		var table = document.getElementById('table');
+		var fragment = document.createDocumentFragment();
+
+		val_ary.reverse();
+		
+		for(var i=0; i<size; i++) {
+			row = document.createElement('div');
+			row.className = 'r';
+			row.setAttribute('val', i);
+			for(var j=0; j<size; j++) {
+				col = document.createElement('div');
+				col.innerHTML = val_ary.pop();
+				col.className = 'c';
+				col.setAttribute('val', j);
+				row.appendChild(col);
+			}
+			fragment.appendChild(row);
+		}
+		table.appendChild(fragment);
 	}
+	
+	/*
+	* 清除棋盤
+	*/
+	var clearTable = function() {
+		var table = document.getElementById('table');
+		table.innerHTML = '';
+	}
+	
+	/*
+	* 棋盤初始化
+	*/
+	$('input#init').on('click', function() {
+		clearTable();
+		createTable(5, player1);
+	}).trigger('click');
 
-
-
-
+	/*
+	* 點擊紅點
+	*/
+	$('div').on('click', '.c', function() {
+		//$(this).removeClass("t").addClass('c');
+		console.log($(this).html());
+		return false;
+	});
+	
+	/*
+	* 遊戲開始
+	*/
+	$('input#start').on('click', function() {
+		alert('還沒好!= _=');
+	});
+	
 	/*
 	* 隨機數
 	*/
