@@ -9,6 +9,45 @@
 
 <script type="text/javascript">
 
+	var list = [];
+	var size = 5;	//寫死5*5
+	
+	var create = function(num) {
+		var max = num * num ;
+		for(var i=0; i<max; i++) {
+			list[i] = i + 1;
+		}
+	};
+	
+	var shuffle = function(ary) {
+		var tmp = 0, x = 0, y = 0;
+		for(var i=0; i<100; i++) {
+			x = usefloor(0, ary.length-1);
+			y = usefloor(0, ary.length-1);
+			tmp = ary[x];
+			ary[x] = ary[y];
+			ary[y] = tmp;
+			
+		}
+		return ary;
+	};
+	
+	create(size);
+
+	var player1 = shuffle(list);
+	var player2 = shuffle(player1);
+	
+	
+	console.log(player1);
+	console.log(player2);
+	
+	var init = function() {
+	
+	}
+
+
+
+
 	/*
 	* 隨機數
 	*/
@@ -19,7 +58,7 @@
 </script>
 
 <script>
-
+/*
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -27,7 +66,7 @@
 
   ga('create', 'UA-50817771-1', 'shesheshe.github.io');
   ga('send', 'pageview');
-
+*/
 </script>
 </body>
 </html>
