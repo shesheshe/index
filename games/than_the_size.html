@@ -8,22 +8,74 @@
 
 
 <script type="text/javascript">
-	var cards = [];
+	var cards = [], tmp = 0, x = 0, y = 0;
+	var me_val = [], me_txt = [], txt = '', num = 0;
 	
 	for(var i=0; i<52; i++) {
-		cards[i] = parseInt(i/13);
+		cards[i] = i;
 	}
 	
+	for(var i=0; i<100; i++) {
+		x = usefloor(0, cards.length-1);
+		y = usefloor(0, cards.length-1);
+		
+		tmp = cards[x];
+		cards[x] = cards[y];
+		cards[y] = tmp;
+
+	}	
+	
 	console.log(cards);
+	
+	me_val[0] = cards.pop();
+	me_val[1] = cards.pop();
+	me_val[2] = cards.pop();
+	me_val[3] = cards.pop();
+	me_val[4] = cards.pop();
+
+	var val2txt = function(ary) {
+
+		for(var k in ary) {
+			txt = '';
+			switch(parseInt(ary[k]/13)) {
+				case 0: txt+='黑桃'; break;
+				case 1: txt+='紅心'; break;
+				case 2: txt+='梅花'; break;
+				case 3: txt+='方塊'; break;
+			}
+			
+			num = parseInt(ary[k]%4);
+			switch(num) {
+				case 0: txt+='A'; break;
+				case 11: txt+='J'; break;
+				case 12: txt+='Q'; break;
+				case 12: txt+='K'; break;
+				default: txt+=num; break;
+			}
+			
+			me_txt[k] = txt;
+		}
+		
+		return me_txt;
+	};
 	
 	var tcard = function(num) {
 		console.log(num%13);
 		console.log(parseInt(num/13));
 	}
+
+	console.log(me_val);
 	
-	tcard(cards[0]);
-	tcard(cards[1]);
-	tcard(cards[50]);
+	console.log(cards);
+	
+	console.log(val2txt(me_val));
+	
+	/*
+	* 隨機數
+	*/
+	function usefloor(min, max) {
+		return Math.floor(Math.random()*(max-min+1)+min);
+	}
 	
 </script>
 
