@@ -6,8 +6,77 @@
 </head>
 <body>
 
+<input type="text" id="user_num"/>
+<input type="button" id="run" value="run"/>重玩按F5!
+<div id="result"></div>
 
 <script type="text/javascript">
+	
+	var list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
+	var shuffle = function(ary) {
+	
+		//console.log(ary);
+		
+		var a = 0, b = 0, tmp = 0;
+		for(var i=0; i<100; i++) {
+			a = usefloor(0, ary.length-1);
+			b = usefloor(0, ary.length-1);
+			
+			tmp = ary[a];
+			ary[a] = ary[b];
+			ary[b] = tmp;
+			
+		}
+		//console.log(ary);
+		return [ary[0], ary[1], ary[2], ary[3]];
+	}
+	
+	var target = shuffle(list);
+	
+	console.log('解答:' + target.join(''));
+	
+	var go = function(ary_a, ary_b) {
+		
+		if(ary_a.join('') == ary_b.join('')) {
+			return 'so nice!'
+		}
+
+		var i = 0, j = 0;
+		var a = 0, b = 0;
+		var ii = 0;
+		
+		for(i; i<ary_a.length; i++) {
+			for(j=0; j<ary_b.length; j++) {
+				//先看陣列有沒有值
+				if(ary_a[i] == ary_b[j]) {
+					//在看位置有沒有一樣
+					if(i == j) {
+						a++;
+					} else {
+						b++;
+					}
+				}
+			}
+		}
+
+		return a + 'A' + b + 'B';
+	}
+
+	var run = document.getElementById('run');
+	run.onclick = function() {
+	
+		var user_num = document.getElementById('user_num').value.split('');
+		var show = document.getElementById('result');
+		show.innerHTML = go(user_num, target);
+	}
+	
+	/*
+	* 隨機數
+	*/
+	function usefloor(min, max) {
+		return Math.floor(Math.random()*(max-min+1)+min);
+	}
 
 </script>
 
