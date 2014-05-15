@@ -2,32 +2,88 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
-	<title>fgg</title>
+	<title>猜拳遊戲</title>
 </head>
 <body>
+<style type="text/css">
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
 
-選擇模式: 
-阿誠:<input  type="radio" name="level" value="easy" checked>
-小強:<input  type="radio" name="level" value="normal">
-威力:<input  type="radio" name="level" value="hard">
-<br />
-<br />
-選擇一拳:
-剪刀:<input  type="radio" name="fgg" value="2" checked>
-石頭:<input  type="radio" name="fgg" value="0">
-布:<input  type="radio" name="fgg" value="5">
-<br />
-<br />
-<input type="button" id="run" value="run"/>
-<input type="button" id="clear" value="clear"/>
-<br />
-<br />
-<div id="scorebook"></div>
-<br />
-<div id="guestbook"></div>
+table td {
+  border:1px solid black;
+}
+</style>
+<table width="70%" height="500px" style="margin:40px auto;background:#CA8EC2;">
+    <tr>
+      <td width="30%">
+        <table width="100%" height="100%" style="background:#DDDDFF;">  <!--遊戲者-->
+            <tr>
+                <td height="100px" valign="top">
+                  選擇一拳:<br/>
+                  剪刀:<input  type="radio" name="fgg" value="剪刀" checked>
+                  &nbsp;石頭:<input  type="radio" name="fgg" value="石頭">
+                  &nbsp;布:<input  type="radio" name="fgg" value="布">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+      </td>
+      <td width="40%">
+        <table width="100%" height="100%" style="background:#CEFFCE;">  <!--中間區塊-->
+            <tr>
+                <td height="100px"  colspan="2" align="center">
+                    <input type="button" id="run" style="width:100px;height:50px" value="猜拳"/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="clear" style="width:100px;height:25px" value="清除資料"/>
+                </td>
+            </tr>
+            <tr>
+                <td height="200px" width="50%" align="center">
+                    <div id="user_pic"></div>
+                </td>
+                <td width="50%" align="center">
+                    <div id="computer_pic"></div>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" colspan="2">
+                    <div id="scorebook"></div><br/>
+                    <div id="guestbook"></div>
+                </td>
+            </tr>
+        </table>
+      </td>
+      <td width="30%">
+        <table width="100%" height="100%" style="background:#DDDDFF;">  <!--敵人-->
+            <tr>
+                <td height="100px" valign="top">
+                  選擇敵人: <br/>
+                  阿誠:<input  type="radio" name="people" value="chan" checked>
+                  小強:<input  type="radio" name="people" value="strength">
+                  威力:<input  type="radio" name="people" value="power">
+                </td>
+            </tr>
+            <tr>
+                <td height="100px" valign="top">
+                  選擇難度: <br/>
+                  簡單:<input  type="radio" name="level" value="easy" checked>
+                  一般:<input  type="radio" name="level" value="normal">
+                  困難:<input  type="radio" name="level" value="hard">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+      </td>
+  </tr>
+</table>
 
 <script type="text/javascript">
-
 	var index = 1;
 	var remove_index = 1;
 	var win = 0;
@@ -38,19 +94,19 @@
 	* 取得選取的值 radio button
 	*/
 	var radio_value = function(elm_name) {
-		var level = document.getElementsByName(elm_name);
-		var len = level.length;
+		var radio_object = document.getElementsByName(elm_name);
+		var len = radio_object.length;
 		var i = 0;
 
 		for(i; i<len; i++) {
-			if(level[i].checked == true) {
-				//console.log(level[i].value);
-				return level[i].value;
+			if(radio_object[i].checked == true) {
+				//console.log(radio_object[i].value);
+				return radio_object[i].value;
 			}
 		}
 	};
-	
-	/*
+    
+    /*
 	* 寫入div
 	*/
 	var set_guestbook = function(content) {
@@ -61,7 +117,7 @@
 		guestbook_row.setAttribute("id", "row" + index);
 		guestbook_row.innerHTML = index + ' : ' + content;
 
-		if(index > 10) {
+		if(index > 8) {
 			remove = document.getElementById('row' + remove_index);
 			guestbook.removeChild(remove);
 			remove_index++;
@@ -75,21 +131,23 @@
 		
 		index++;
 	}
-	
-	/*
+    
+    /*
 	* 清除div, 順便刪除所有資訊
 	*/
 	var clear_guestbook = function() {
 		document.getElementById('guestbook').innerHTML = '';
 		document.getElementById('scorebook').innerHTML = '';
+		document.getElementById('user_pic').innerHTML = '';
+		document.getElementById('computer_pic').innerHTML = '';
 		index = 1;
 		remove_index = 1;
 		win = 0;
 		lose = 0;
 		mind = 0;
 	}
-	
-	var set_scorebook = function() {
+    
+    var set_scorebook = function() {
 		var scorebook = document.getElementById('scorebook');
 		
 		var total = win + lose + mind;
@@ -102,76 +160,116 @@
 		                      ', 敗率:' + _lose +
 		                      ', 平率:' + _mind;
 	}
-	
-	/*
+    
+    /*
 	* 開始拉!
 	*/
-	var fgg = function(level, fgg) {
-		var list = {
-			'easy':[30, 30, 30], 
-			'normal':[30, 20, 10], 
-			'hard':[10, 30, 30], 
-		};
-		var key2val = {1:2, 2:0, 3:5};
-		var val = return_array_num(list[level]);
-		
-		var val2txt = {2:'剪刀', 0:'石頭', 5:'布'};
-		//console.log(fgg+'_'+key2val[val]);
-		
-		switch(fgg+'_'+key2val[val]) {
-			case '2_5':
-			case '0_2':
-			case '5_0':
-				win += 1;
-				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 你贏了!');
-				break;
-			case '2_0':
-			case '0_5':
-			case '5_2':
-				lose += 1;
-				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 你輸了!');
-				break;
-			default:
-				mind += 1;
-				set_guestbook('你出' + val2txt[fgg] + ', 對方出' + val2txt[key2val[val]] + ', 雙方平手!');
-				break;
-		}
-		
-		set_scorebook();
-	}	
-	
-	/*
+	var fgg = function(people_val,fgg_val,level_val) {
+        //敵人出的拳 
+		var val = return_array_num(people_like(people_val,fgg_val,level_val));
+        var key2val = {1:"剪刀", 2:"石頭", 3:"布"};
+        var computer_fgg = key2val[val];
+        
+        //遊戲者出的拳
+        var user_fgg = fgg_val;
+        
+        //先看有沒有平手
+        if (user_fgg == computer_fgg) {
+            mind += 1;
+            set_guestbook('你出' + user_fgg + ', 對方出' + computer_fgg + ', 雙方平手!');
+        }
+        else {  //再來分輸贏
+            switch (user_fgg+'_'+computer_fgg) {
+                case '剪刀_布':
+                    fgg_win (user_fgg,computer_fgg);
+                break;
+                case '布_石頭':
+                    fgg_win (user_fgg,computer_fgg);
+                break;
+                case '石頭_剪刀':
+                    fgg_win (user_fgg,computer_fgg);
+                break;
+                default:
+                    lose += 1;
+				    set_guestbook('你出' + user_fgg + ', 對方出' + computer_fgg + ', 你輸了!');
+                break;
+            }
+        }
+        
+        set_scorebook();
+        
+        //圖片放置
+        var fgg_eng = {'剪刀':'scissors.png','石頭':'rock.png','布':'paper.png'};
+        document.getElementById('user_pic').innerHTML='<img width="120px" height="120px" src='+fgg_eng[user_fgg]+' />';
+        document.getElementById('computer_pic').innerHTML='<img width="120px" height="120px" src='+fgg_eng[computer_fgg]+' />';
+        
+	}
+
+    //贏的function 
+    function fgg_win (user_fgg,computer_fgg) {
+      win += 1;
+	  set_guestbook('你出' + user_fgg + ', 對方出' + computer_fgg + ', 你贏了!');
+    } 	
+    
+    /*
+    * 每個人的猜拳的喜好
+    */
+    var people_like = function (people_val,fgg_val,level_val) {
+        var like_list = {
+            'chan':[30,30,30],
+            'strength':[30,20,10],
+            'power':[10,30,30]
+        };
+
+        //難易度 先取得使用者的拳在依難度加乘上去
+        var fgg_list = {
+            '剪刀':{'easy':[2,1,3],'normal':[1,1,1],'hard':[2,3,1]},
+            '石頭':{'easy':[3,2,1],'normal':[1,1,1],'hard':[1,2,3]},
+            '布':{'easy':[1,3,2],'normal':[1,1,1],'hard':[3,1,2]}
+        };
+        
+        var level_list = fgg_list[fgg_val][level_val];
+        var list_val = like_list[people_val];
+        var mix_val = [];
+
+        for (i=0; i<list_val.length; i++) {
+          mix_val[i] = list_val[i]*level_list[i];
+        }
+
+        return mix_val;
+    }
+    
+    /*
 	* 按鈕事件
 	*/
 	var run = document.getElementById('run');
 	var clear = document.getElementById('clear');
 
 	run.onclick = function() {
-	
-		var level_val = radio_value('level');
+	    //取得選取的值
+		var people_val = radio_value('people');
 		var fgg_val = radio_value('fgg');
-		
-		fgg(level_val, fgg_val);
-		
+		var level_val = radio_value('level');
+
+        fgg(people_val,fgg_val,level_val);
 	}
-	
-	clear.onclick = function() {
+    
+    clear.onclick = function() {
 		clear_guestbook();
 	}
-	
-	
-	/*
+    
+    /*
 	* 切換人物時清除所有資訊
 	*/
-	var level = document.getElementsByName('level');
-	for(var i=0; i<level.length; i++) {
-		level[i].onclick = function() {
+	var people = document.getElementsByName('people');
+	for(var i=0; i<people.length; i++) {
+		people[i].onclick = function() {
 			clear_guestbook();
 		}
 		
 	}
-	
-	/*
+    
+    /*
 	* 隨機數
 	*/
 	function usefloor(min, max) {
@@ -193,7 +291,8 @@
 			}
 			list[parseInt(k)+1] = list_val;
 		}
-		rand = usefloor(1, total);
+	
+        rand = usefloor(1, total);
 		
 		for(i=1; i<=len; i++) {
 			if(rand <= list[i]) {
@@ -203,7 +302,6 @@
 		}
 		return result;
 	}
-
 </script>
 
 <script>
