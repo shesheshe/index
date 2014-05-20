@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>bump_ball_game</title>
+</head>
+<body>
+
+<canvas id="game_area" width="600" height="300"></canvas><br>
+<canvas id="other_area" width="600" height="100"></canvas>
+
+<script type="text/javascript">
+//-----------------------------------------------------
+var game_area_obj = document.getElementById('game_area');
+var game_area = game_area_obj.getContext('2d');
+var area_w = game_area_obj.width;
+var area_h = game_area_obj.height;
+
+//長條棒
+var box_h = 100;                   //長度
+var box_w = 10;                    //寬度
+var box_loca = area_h/2-box_h/2;   //位置
+
+//球
+var ball_size = 12;                //球的大小
+var x = ball_size+box_w;           //球的X座標
+var y = area_h/2;                  //球的Y座標
+var add_x;
+var add_y;
+var speed = 4;                     //速度
+var ang = 0;                       //角度
+
+var rim_box = 5                    //邊框
+var game_over = 1;                 //值為2結束遊戲
+var score = 0;                     //分數
+var level = 1;                     //難易度
+var level_up = 3;                  //每接球幾次難易度up 
+var catch_ball = 0;                //記次數 為了每接球幾次難易度up 
+
+//-----------------------------------------------------
+var other_area_obj = document.getElementById('other_area');
+var other_area = other_area_obj.getContext('2d');
+var other_area_w = other_area_obj.width;
+var other_area_h = other_area_obj.height;
+
+//-----------------------------------------------------
+dorw_ground ();
+var play = setInterval(drawCanvas,20);
+
+    /*
+    *畫背景
+    */
+    function dorw_ground () {
+        //灰底
+        game_area.fillStyle='#d0d0d0';
+        game_area.fillRect(0,0,area_w,area_h);
+        //上下右的框框
+        game_area.fillStyle='green';
+        game_area.fillRect(area_w-rim_box,0,rim_box,area_h);             //右
+        game_area.fillRect(box_w,0,area_w-box_w,rim_box);                //上
+        game_area.fillRect(box_w,area_h-rim_box,area_w-box_w,rim_box);   //下
+        
+    }
+    
+    function other_ground (){
+        other_area.fillStyle='#d0d0d0';
+        other_area.fillRect(0,0,area_w,area_h); 
+        //上下右的框框
+        other_area.fillStyle='black';
+        other_area.fillRect(0,0,other_area_w,5);                         //上
+        other_area.fillRect(0,other_area_h-5,other_area_w,5);            //下
+        other_area.fillRect(0,0,5,other_area_h);                         //左
+        other_area.fillRect(other_area_w-5,0,5,other_area_h);            //右
+    }
+    
+    /*
+    *遊戲開始
+    */
+    function drawCanvas() {
+        game_area.clearRect(0, 0, area_w, area_h);
+        dorw_ground ();
+        
+        //畫球
+        game_area.beginPath();
+        game_area.arc(x, y, ball_size, 0, Math.PI * 2, true);
+        game_area.closePath();
+        game_area.fillStyle = 'green';
+        game_area.fill();
+        
+        //長條棒
+        game_area.fillStyle='green';
+        game_area.fillRect(0,box_loca,box_w,box_h);
+        
+        rebound ();
+        
+        x = x+add_x;
+        y = y+add_y;
+    }
+
+    //反彈的fun
+    function rebound () {
+        
+        switch (game_over) {
+            case 1:
+                if ( x <= 0+box_w+ball_size) {               //左邊的 決定角度 碰撞
+                    
+                    //alert(x+'-'+y+'-'+box_loca);
+                    if (y >= box_loca && y <= box_loca+box_h) {    //有接到球 就要看值改變角度
+                        //分數++
+                        score = score+level*100;
+                        
+                        //等級++
+                        if (catch_ball == level_up) {
+                            catch_ball =0;
+                            level ++;
+                        }
+                        
+                        //黑框的東西
+                        other_ground();
+                        other_area.font = '24pt 標楷體';
+                        other_area.fillText("目前等級: "+level+" 得分: "+score,10,40);
+                        
+                        //看哪邊接到就換算成角度 (0~35)+45
+                        ang = Math.sin((Math.abs((box_loca+box_h/2)-y)/(box_h/2)*35+45)*2*Math.PI/180);
+                        
+                        //重置角度與速度
+                        add_x = 1;
+                        add_y = 1;
+                        add_x = Math.abs(add_x*(speed+level)*ang);
+                        add_y = add_y*(speed+level);
+                        
+                        catch_ball++
+                    }
+                    else {
+                        alert('你輸了!!');
+                        game_over = 2;
+                    } 
+                }
+                else if ( x >= area_w-rim_box-ball_size) {    //右邊的
+                    add_x = -Math.abs(add_x);
+                }
+                else if ( y <= 0+rim_box+ball_size) {         //上
+                    add_y = Math.abs(add_y);
+                }
+                else if ( y >= area_h-rim_box-ball_size) {    //下
+                    add_y = -Math.abs(add_y);
+                }
+            break;
+            case 2:
+                
+                if ( x <= -ball_size ) {    //讓球消失
+                    clearInterval(play);
+                }
+                
+            break;
+            default:
+                return false;
+            break;
+        }
+    }
+    
+    //鍵盤點擊 Q往上 A往下
+    document.onkeydown=function(){
+        //  alert(window.event.keyCode);
+        
+        if (window.event.keyCode == 81) {  //Q
+           if (box_loca > 0) {
+               box_loca -= 20;
+           }
+        }
+        else if (window.event.keyCode == 65) {  //A
+           if (box_loca < area_h-box_h) {
+               box_loca += 20;
+           }
+        }
+    }
+    
+    //滑鼠
+    game_area_obj.onmousemove =function(){
+        
+    }
+</script>
+
+</body>
+</html>
