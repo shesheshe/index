@@ -6,14 +6,28 @@
 </head>
 <body>
 
-<input type="button" id="init" value="init"/>
-<input type="button" id="start" value="start"/>
-<div id="table"></div>
+按F12 -> console
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
+
 <script type="text/javascript">
 	console.log('google xls');
+	
+	function test(json) {
+	
+		$.each(json.feed.entry, function(idx, obj) {
+			console.log(obj.gsx$name.$t);
+		});
+		
+		console.log(json);
+	}
+	
+	
+	
 </script>
+
+<script type="text/javascript" src="https://spreadsheets.google.com/feeds/list/1Nq-Nnca0qTWAwU4ogwc9EA3Sg9B0nvQzCiUQmmFiV88/1437390283/public/values?alt=json&callback=test"> </script>
+
 
 <script>
 /*
