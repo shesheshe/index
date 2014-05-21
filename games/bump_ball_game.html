@@ -6,7 +6,6 @@
 	<title>bump_ball_game</title>
 </head>
 <body>
-
 <canvas id="game_area" width="600" height="300"></canvas><br>
 <canvas id="other_area" width="600" height="100"></canvas>
 
@@ -177,16 +176,16 @@ var play = setInterval(drawCanvas,20);
     }
     
     //滑鼠移動長條棒
-    game_area_obj.onmousemove =function(){
-        //alert(window.event.clientY);
-        if (window.event.clientY-box_h/2 < 0) {
+    game_area_obj.onmousemove =function(event){
+        //alert(event.offsetX+'--'+event.offsetY);
+        if (event.offsetY-box_h/2 < 0) {
             box_loca = 0;
         }
-        else if (window.event.clientY+box_h/2 > area_h) {
+        else if (event.offsetY+box_h/2 > area_h) {
             box_loca = area_h-box_h;
         }
         else {
-            box_loca = window.event.clientY - box_h/2;
+            box_loca = event.offsetY - box_h/2;
         }
     }
 </script>
