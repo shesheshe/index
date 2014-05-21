@@ -106,7 +106,7 @@ var play = setInterval(drawCanvas,20);
                 if ( x <= 0+box_w+ball_size) {               //左邊的 決定角度 碰撞
                     
                     //alert(x+'-'+y+'-'+box_loca);
-                    if (y >= box_loca && y <= box_loca+box_h) {    //有接到球 就要看值改變角度
+                    if (y >= box_loca-5 && y <= box_loca+box_h+5) {    //有接到球 就要看值改變角度
                         //分數++
                         score = score+level*100;
                         
@@ -176,9 +176,18 @@ var play = setInterval(drawCanvas,20);
         }
     }
     
-    //滑鼠
+    //滑鼠移動長條棒
     game_area_obj.onmousemove =function(){
-        
+        //alert(window.event.clientY);
+        if (window.event.clientY-box_h/2 < 0) {
+            box_loca = 0;
+        }
+        else if (window.event.clientY+box_h/2 > area_h) {
+            box_loca = area_h-box_h;
+        }
+        else {
+            box_loca = window.event.clientY - box_h/2;
+        }
     }
 </script>
 
