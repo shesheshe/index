@@ -5,6 +5,7 @@
 	<title>google xls</title>
 </head>
 <body>
+
 <input id="read" type="button" value="read"/>
 <input id="add" type="button" value="add"/>
 按F12 -> console
@@ -13,6 +14,17 @@
 
 <script type="text/javascript">
 	console.log('google xls');
+	
+	/*
+	* 參考資料
+	* https://developers.google.com/google-apps/spreadsheets/
+    * http://blog.ericsk.org/archives/1417
+    * http://www.wfublog.com/2011/11/google-spreadsheet-as-micro-database-1.html
+	*
+	* google 新增資料
+	* https://docs.google.com/forms/d/1nAg0CUbZLXaUwU0cfpa7-WHa-ujbUHzqX0IiJcZIXAo/viewform
+	*
+	*/
 	
 	var key = "1Nq-Nnca0qTWAwU4ogwc9EA3Sg9B0nvQzCiUQmmFiV88";
 	var sheet = "1437390283";
@@ -40,7 +52,8 @@
 	//dev
 	$('input#add').on('click', function() {
 	
-		console.log('add');
+		console.log('add for dev');
+		
 		/*$.post(add_url, { name: "John", time: "2pm" })
 		 .done(function(data) {
 			console.log(data);
