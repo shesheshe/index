@@ -5,7 +5,8 @@
 	<title>google xls</title>
 </head>
 <body>
-
+<input id="read" type="button" value="read"/>
+<input id="add" type="button" value="add"/>
 按F12 -> console
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
@@ -13,20 +14,66 @@
 <script type="text/javascript">
 	console.log('google xls');
 	
-	function test(json) {
+	var key = "1Nq-Nnca0qTWAwU4ogwc9EA3Sg9B0nvQzCiUQmmFiV88";
+	var sheet = "1437390283";
+	var sq = "sq=name=ben&";
+	sq = '';
+	var read_url = "https://spreadsheets.google.com/feeds/list/" + key + "/" + sheet + "/public/values?" + sq + "alt=json&callback=?";
+	var add_url = "https://spreadsheets.google.com/feeds/list/" + key + "/" + sheet + "/private/full";
 	
-		$.each(json.feed.entry, function(idx, obj) {
-			console.log(obj.gsx$name.$t);
-		});
-		
-		console.log(json);
+	function read_data() {
+	
+		$.getJSON(read_url).done(exec);		
+	
+		function exec(json) {
+			$.each(json.feed.entry, function(idx, obj) {
+				console.log(obj.gsx$name.$t);
+			});
+		}
 	}
 	
+	$('input#read').on('click', function() {
+		read_data();
+		return false;
+	});
+	
+	//dev
+	$('input#add').on('click', function() {
+	
+		console.log('add');
+		/*$.post(add_url, { name: "John", time: "2pm" })
+		 .done(function(data) {
+			console.log(data);
+			console.log('hi');
+		});*/
+		
+		/*function post_to_url(path, params, method) {
+			method = method || "post";
+			
+			var form = document.createElement("form");
+			var hiddenField = document.createElement("input");
+			
+			form.setAttribute("method", method);
+			form.setAttribute("action", path);
+			form.setAttribute("enctype", "application/atom+xml");
+
+			hiddenField.setAttribute("name", params);
+
+			form.appendChild(hiddenField);
+
+			document.body.appendChild(form);
+			form.submit();
+		}
+
+		post_to_url(add_url, 'xxx');
+		*/
+		
+		return false;
+	});
+
 	
 	
 </script>
-
-<script type="text/javascript" src="https://spreadsheets.google.com/feeds/list/1Nq-Nnca0qTWAwU4ogwc9EA3Sg9B0nvQzCiUQmmFiV88/1437390283/public/values?alt=json&callback=test"> </script>
 
 
 <script>
