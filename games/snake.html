@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="BIG5">
+<title>我是一條蛇</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<style type="text/css">
+.snake {
+	border: 1px solid black;
+}
+</style>
+
+<script>
+    var rederwidth = 200;
+    var rederheight = 200;
+
+    var rowcount = 10;
+    var colcount = 10;
+
+    var boxwidth = 0;
+    var boxheight = 0;
+
+    var scene = null;
+    var cnv = null;
+    
+    var sanke = new Array(1);
+    sanke[0] = new Array(2); //x,y
+    sanke[0][0] = 2;
+    sanke[0][1] = 2;
+    
+    direction = 0; //left:0,right:1,up:2,down:3
+    
+    
+    //init
+    $(document).ready(function() {
+        cnv = $('.snake')[0];    
+        $(cnv).attr('width',rederwidth + 'px');
+        $(cnv).attr('height',rederheight + 'px');
+
+        //definitions
+        boxwidth = $(cnv).width() / colcount;
+        boxheight = $(cnv).height() / rowcount;
+        //debug
+        //alert(boxwidth + "  " + boxheight);
+        
+        scene = new Array(rowcount);
+        for (var y = 0; y < rowcount; y++) {
+            scene[y] = new Array(colcount);
+            for (var x = 0; x < colcount; x++) {
+                scene[y][x] = 0;
+            }
+        }
+        
+        //delegate keypress event
+        //$("#body").delegate(".snake","keypress",keyevent);
+        $(cnv).keypress(keyevent);
+        
+        scene[9][9] = 1;
+        setInterval("render()",1);
+        setInterval("move()",1000);
+        
+        
+    });
+
+    //render engine
+    function render() {
+        var paint = cnv.getContext("2d");
+        paint.fillStyle = "#FF0000";
+        
+        //reset
+        for (var y = 0; y < rowcount; y++) {
+            for (var x = 0; x < colcount; x++) {
+                scene[y][x] = 0;
+            }
+        }
+        
+        //add
+        for (var i = 0; i < sanke.length; i++) {
+            scene[sanke[i][1]][sanke[i][0]] = 1;
+        }
+        
+        paint.clearRect ( 0 , 0 , rederwidth , rederheight );
+        //render
+        for (var y = 0; y < rowcount; y++) {
+            for (var x = 0; x < colcount; x++) {
+                if (scene[y][x] == 1){
+                    paint.fillRect(x * boxwidth , y * boxheight, boxwidth, boxheight);            
+                }
+            }
+        }
+    }
+    
+    //key event
+    function keyevent(eventobject){
+        var keynum = (eventobject.keyCode == 0)?eventobject.keyCode + eventobject.which:eventobject.keyCode;
+        
+	    switch (keynum) {
+	        case 38://上
+	            direction=2;
+	            break;
+	        case 40://下
+	            direction=3;
+	            break;
+	        case 37://左
+	            direction=0;
+	            break;
+	        case 39://右
+	            direction=1;
+	            break;
+	        default:
+	            break;
+	        }
+    }
+    
+    function move(){
+        switch (direction) {
+        case 0://left
+            sanke[0][1]--;
+            break;
+        case 1://right
+            sanke[0][1]++;
+            break;
+        case 2://up
+            sanke[0][0]--;
+            break;
+        case 3://down
+            sanke[0][0]++;
+            break;
+        default:
+            break;
+        }
+    }
+</script>
+
+</head>
+<body>
+
+	<canvas id="gamebord" class="snake" tabindex="1" ></canvas>
+
+</body>
+</html>
