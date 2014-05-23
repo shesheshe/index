@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>hit_game</title>
+</head>
+<body>
+
+<canvas id="game_area" width="600" height="300"></canvas><br>
+<canvas id="other_area" width="600" height="100"></canvas>
+
+<script type="text/javascript">
+//遊戲區塊
+var game_area_obj = document.getElementById('game_area');
+var game_area = game_area_obj.getContext('2d');
+var game_area_w = game_area_obj.width;
+var game_area_h = game_area_obj.height;
+
+//其他區塊
+var other_area_obj = document.getElementById('other_area');
+var other_area = other_area_obj.getContext('2d');
+var other_area_w = other_area_obj.width;
+var other_area_h = other_area_obj.height;
+
+var bullets = []
+var enemies = []
+
+var add_work = null;
+
+//飛機class
+my_aircraft = new My_aircraft(10, 0, 40, 40, 'pic/aircraft/my_aircraft.png');
+function My_aircraft (x, y, h, w, image_src){
+    //位置
+    this.x = x;
+    this.y = y;
+    //高寬
+    this.h = h;
+    this.w = w;
+    //圖片
+    this.image = new Image;
+    this.image.src = image_src;
+    
+}
+
+//子彈class
+function Bullet (x, y , h, w, speed, image_src) {
+    //位置
+    this.x = x;
+    this.y = y;
+    //高寬
+    this.h = h;
+    this.w = w;
+    //速度
+    this.speed = speed;
+    //圖片
+    this.image = new Image;
+    this.image.src = image_src;
+}
+
+//敵人阿阿阿阿阿阿阿
+function Enemy (x, y , h, w, speed, image_src) {
+    //位置
+    this.x = x;
+    this.y = y;
+    //高寬
+    this.h = h;
+    this.w = w;
+    //速度
+    this.speed = speed;
+    //圖片
+    this.image = new Image;
+    this.image.src = image_src;
+    
+}
+
+game_ground ();
+other_ground ();
+var play = setInterval(drawCanvas,30);
+    
+    //遊戲區塊背景
+    function game_ground () {
+        game_area.fillStyle='#d0d0d0';
+        game_area.fillRect(0,0,game_area_w,game_area_h);
+        
+        game_area.fillStyle='green';
+        game_area.fillRect(0,0,game_area_w,5);                           //上
+        game_area.fillRect(0,game_area_h-5,game_area_w,5);               //下
+        game_area.fillRect(0,0,5,game_area_h);                           //左
+        game_area.fillRect(game_area_w-5,0,5,game_area_h);               //右
+    }
+    
+    //其他區塊背景
+    function other_ground (){
+        other_area.fillStyle='#d0d0d0';
+        other_area.fillRect(0,0,other_area_w,other_area_h); 
+        
+        other_area.fillStyle='black';
+        other_area.fillRect(0,0,other_area_w,5);                         //上
+        other_area.fillRect(0,other_area_h-5,other_area_w,5);            //下
+        other_area.fillRect(0,0,5,other_area_h);                         //左
+        other_area.fillRect(other_area_w-5,0,5,other_area_h);            //右
+    }
+    
+    
+    function drawCanvas() {
+        game_area.clearRect(0, 0, game_area_w, game_area_h);
+        game_ground ();
+        
+        //我的飛機呦
+        game_area.drawImage(my_aircraft.image,my_aircraft.x,my_aircraft.y,my_aircraft.w,my_aircraft.h);
+        
+        //讓子彈飛
+        if (bullets.length > 0) {
+            for (var key in bullets) {
+                if (bullets[key] != undefined) {
+                    game_area.drawImage(bullets[key].image, bullets[key].x, bullets[key].y,bullets[key].w, bullets[key].h);
+                    bullets[key].x += bullets[key].speed;
+                    
+                    if (bullets[key].x > game_area_w) {
+                        delete bullets[key];
+                    }
+                }
+            }
+        }
+        
+        //讓敵人飛機飛
+        if (enemies.length > 0) {
+            for (var key in enemies) {
+                if (enemies[key] != undefined) {
+                    game_area.drawImage(enemies[key].image, enemies[key].x, enemies[key].y,enemies[key].w, enemies[key].h);
+                    enemies[key].x -= enemies[key].speed;
+                    
+                    if (enemies[key].x < 0) {
+                        delete enemies[key];
+                    }
+                }
+            }
+        }
+        
+        //子彈撞飛機 子彈*飛機
+        if (enemies.length > 0) {                               //飛機
+            for (var ekey in enemies) {                         //飛機
+                if (enemies[ekey] != undefined) {               //飛機
+                    if (bullets.length > 0) {                   //子彈 
+                        for (var bkey in bullets) {             //子彈
+                            if (bullets[bkey] != undefined && enemies[ekey] != undefined) {   //子彈
+                                if (enemies[ekey].x <= bullets[bkey].x &&
+                                    enemies[ekey].x+enemies[ekey].w >= bullets[bkey].x &&
+                                    enemies[ekey].y <= bullets[bkey].y &&
+                                    enemies[ekey].y+enemies[ekey].h >= bullets[bkey].x ) {
+                                    
+                                    delete bullets[bkey];
+                                    delete enemies[ekey];
+                                }
+                            }
+                        }
+                    }    
+                }
+            }
+        }
+    }
+ 
+    
+    //滑鼠移動飛機
+    game_area_obj.onmousemove =function(event){
+        //alert(event.offsetX+'--'+event.offsetY);
+
+        if (event.offsetY < my_aircraft.h/2) {
+            my_aircraft.y = 0;
+        }
+        else if (event.offsetY > game_area_h-my_aircraft.h/2) {
+            my_aircraft.y = game_area_h-my_aircraft.h;
+        }
+        else {
+            my_aircraft.y = event.offsetY -my_aircraft.h/2;
+        }
+    }
+    
+    //鍵盤點擊 A發射
+    document.onkeydown=function(){
+        //  alert(window.event.keyCode);
+        if (window.event.keyCode == 65) {
+           bullets.push(new Bullet(my_aircraft.x+my_aircraft.w-10, my_aircraft.y+my_aircraft.w/2-15, 30, 30, 10, 'pic/aircraft/bullet.png'));
+        }
+    }
+    
+    //產生敵人 阿阿阿阿阿阿阿   
+    var enemy_h = 40;
+    var enemy_w = 40;
+    var rand_y;    //出生位置
+    var add_time;  //出生時間
+    
+    function addEnemy() {
+        clearInterval(add_work);
+        rand_y = getRand(0, game_area_h-enemy_h);
+        enemies.push(new Enemy(game_area_w, rand_y, enemy_w, enemy_h, 5, 'pic/aircraft/enemy_1.png'));
+
+        var add_time = getRand(10, 6000);
+        add_work = setInterval(addEnemy, add_time); // loop drawScene
+    }
+    
+    function getRand(x, y) {
+        return Math.floor(Math.random()*y)+x;
+    }
+    addEnemy();
+</script>
+
+</body>
+</html>
