@@ -1,8 +1,8 @@
 index
 =====
 
-100¦X1 by asap
+100åˆ1 by asap
 http://shesheshe.github.io/index/games/
 
-¥l´«¹Ïª©¤pÀ°¤â
+å¬æ›åœ–ç‰ˆå°å¹«æ‰‹
 http://shesheshe.github.io/index/summons-board/
