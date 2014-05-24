@@ -10,6 +10,8 @@
 		width: 40px;
 		height: 40px;
 		background-color: lightgrey;
+		text-align:center;
+		line-height:40px;
 	}
 
 	div.t {
@@ -17,69 +19,155 @@
 		width: 40px;
 		height: 40px;
 		background-color: red;
+		text-align:center;
+		line-height:40px;
 	}
 	
 	</style>
 </head>
 <body>
 
-<input type="button" id="init" value="init"/>
+<input type="button" id="init" value="init" style="display:none;"/>
 <input type="button" id="start" value="start"/>
 <div id="table"></div>
+<div id="guestbook"></div>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
 <script type="text/javascript">
 
 	var size = 5;			//寫死5*5
-	var check_ary1 = [];
-	var check_ary2 = [];
 	var end = false;
+	var round = 1;
+	var index = 1;
+	var tmp = 0;
+	var ary1 = {};
+	var ary2 = {};
 	
-	var create = function(num) {
-		var list = [];
-		var max = num * num ;
-		for(var i=0; i<max; i++) {
-			list[i] = i + 1;
+	
+	function Array2D(x, y){  // 以一維陣列模擬二維陣列的原型物件
+		this.length = x * y;
+		this.x = x;
+		this.y = y;
+		this.tmp = 0;
+		this.lines = 0;
+		
+		for(var i = 0; i < this.length; i++) {
+			this[i] = i + 1;
 		}
-		return list;
-	};
-	
-	var create_check_ary = function(ary, size) {
-		for(var i=0; i<size; i++) {
-			ary[i] = [];
-			for(var j=0; j<size; j++) {
-				ary[i][j] = 0;
+
+		this.get = function(x, y) {		// 成員函式：取得陣列第 [x,y]個元素值
+			return this[x*this.x + parseInt(y)];
+		}
+	  
+		this.set = function(x, y, value) {  // 成員函式：設定陣列第 [x,y] 個元素值
+			this[x*this.x + parseInt(y)] = value;
+		}
+	  
+		this.rand = function(cnt) {
+	  
+			var tmp_x = 0;
+			var tmp_y = 0;
+			
+			for(var i=0; i<cnt; i++) {
+			
+				tmp_x = usefloor(0, this.length-1);
+				tmp_y = usefloor(0, this.length-1);
+				
+				this.tmp = this[tmp_x];
+
+				this[tmp_x] = this[tmp_y];
+				this[tmp_y] = this.tmp;
 			}
 		}
-		return ary;
-	}
-	
-	var shuffle = function(ary) {
-		var tmp = 0, x = 0, y = 0;
-		for(var i=0; i<100; i++) {
-			x = usefloor(0, ary.length-1);
-			y = usefloor(0, ary.length-1);
-			tmp = ary[x];
-			ary[x] = ary[y];
-			ary[y] = tmp;
+	  
+		this.line = function() {
+	  
+			this.lines = 0;
+			//w
+			if(this[0] == '*' && this[1] == '*' && this[2] == '*' && this[3] == '*' && this[4] == '*') {
+				++this.lines;
+			}
+			if(this[5] == '*' && this[6] == '*' && this[7] == '*' && this[8] == '*' && this[9] == '*') {
+				++this.lines;
+			}
+			if(this[10] == '*' && this[11] == '*' && this[12] == '*' && this[13] == '*' && this[14] == '*') {
+				++this.lines;
+			}
+			if(this[15] == '*' && this[16] == '*' && this[17] == '*' && this[18] == '*' && this[17] == '*') {
+				++this.lines;
+			}
+			if(this[20] == '*' && this[21] == '*' && this[22] == '*' && this[23] == '*' && this[24] == '*') {
+				++this.lines;
+			}
+			//h
+			if(this[0] == '*' && this[5] == '*' && this[10] == '*' && this[15] == '*' && this[20] == '*') {
+				++this.lines;
+			}
+			if(this[1] == '*' && this[6] == '*' && this[11] == '*' && this[16] == '*' && this[21] == '*') {
+				++this.lines;
+			}
+			if(this[2] == '*' && this[7] == '*' && this[12] == '*' && this[17] == '*' && this[22] == '*') {
+				++this.lines;
+			}
+			if(this[3] == '*' && this[8] == '*' && this[13] == '*' && this[18] == '*' && this[23] == '*') {
+				++this.lines;
+			}
+			if(this[4] == '*' && this[9] == '*' && this[14] == '*' && this[19] == '*' && this[24] == '*') {
+				++this.lines;
+			}
+			//x
+			if(this[0] == '*' && this[6] == '*' && this[12] == '*' && this[18] == '*' && this[24] == '*') {
+				++this.lines;
+			}
+			if(this[4] == '*' && this[8] == '*' && this[12] == '*' && this[16] == '*' && this[20] == '*') {
+				++this.lines;
+			}			
+			return this.lines;
+		}
+		
+		this.win = function() {
+		
+			if(this.line()>4-1) {
+				return true;
+			} else {
+				return false;
+			}
 			
 		}
-		return ary;
-	};	
+		
+		this.search_set = function(val) {
+			for(var i=0; i<this.length; i++) {
+				if(this[i] == val) {
+					this[i] = '*';
+				}
+			}
+			
+		}
+		
+		/*
+		* 隨機抽一個, 沒被選過的
+		*/
+		this.search_get = function() {
 
-	var player1 = shuffle(create(size));
-	var player1_tmp = player1;
-	player1_tmp.reverse();
-	var player2 = shuffle(create(size));
-	
-	console.log(player1);
-	console.log(player1_tmp);
-	console.log(player2);
-	
-	check_ary1 = create_check_ary(check_ary1, size);
-	check_ary2 = create_check_ary(check_ary2, size);
-	console.log(check_ary1);
-	console.log(check_ary2);
+			function search(ary, len) {
+			
+				x = usefloor(0, len-1);
+				tmp = 0;
+				
+				if(ary[x] != '*') {
+					tmp = ary[x]
+					ary[x] = '*';
+					return [x, tmp]; //x = key, ary[x] = value;
+				}
+				
+				return arguments.callee(ary, len);
+			}
+			
+			return search(this, this.length);
+			
+		}	
+	  
+	}
 	
 	/*
 	* 建立棋盤
@@ -87,8 +175,7 @@
 	var createTable = function(size, val_ary) {
 		var table = document.getElementById('table');
 		var fragment = document.createDocumentFragment();
-
-		val_ary.reverse();
+		table.innerHTML = '';
 		
 		for(var i=0; i<size; i++) {
 			row = document.createElement('div');
@@ -96,7 +183,7 @@
 			row.setAttribute('val', i);
 			for(var j=0; j<size; j++) {
 				col = document.createElement('div');
-				col.innerHTML = val_ary.pop();
+				col.innerHTML = val_ary.get(i, j);
 				col.className = 'c';
 				col.setAttribute('val', j);
 				row.appendChild(col);
@@ -104,64 +191,28 @@
 			fragment.appendChild(row);
 		}
 		table.appendChild(fragment);
-	}
-	
-	var check_ary = function(ary) {
-		var total = 0;
-		//w
-		if(ary[0][0] == '*' && ary[0][1] == '*' && ary[0][2] == '*' && ary[0][3] == '*' && ary[0][4] == '*') {
-			++total;
-		}
-		if(ary[1][0] == '*' && ary[1][1] == '*' && ary[1][2] == '*' && ary[1][3] == '*' && ary[1][4] == '*') {
-			++total;
-		}
-		if(ary[2][0] == '*' && ary[2][1] == '*' && ary[2][2] == '*' && ary[2][3] == '*' && ary[2][4] == '*') {
-			++total;
-		}
-		if(ary[3][0] == '*' && ary[3][1] == '*' && ary[3][2] == '*' && ary[3][3] == '*' && ary[3][4] == '*') {
-			++total;
-		}
-		if(ary[4][0] == '*' && ary[4][1] == '*' && ary[4][2] == '*' && ary[4][3] == '*' && ary[4][4] == '*') {
-			++total;
-		}
-		//h
-		if(ary[0][0] == '*' && ary[1][0] == '*' && ary[2][0] == '*' && ary[3][0] == '*' && ary[4][0] == '*') {
-			++total;
-		}
-		if(ary[0][1] == '*' && ary[1][1] == '*' && ary[2][1] == '*' && ary[3][1] == '*' && ary[4][1] == '*') {
-			++total;
-		}
-		if(ary[0][2] == '*' && ary[1][2] == '*' && ary[2][2] == '*' && ary[3][2] == '*' && ary[4][2] == '*') {
-			++total;
-		}
-		if(ary[0][3] == '*' && ary[1][3] == '*' && ary[2][3] == '*' && ary[3][3] == '*' && ary[4][3] == '*') {
-			++total;
-		}
-		if(ary[0][4] == '*' && ary[1][4] == '*' && ary[2][4] == '*' && ary[3][4] == '*' && ary[4][4] == '*') {
-			++total;
-		}
-		//x
-		if(ary[0][0] == '*' && ary[1][1] == '*' && ary[2][2] == '*' && ary[3][3] == '*' && ary[4][4] == '*') {
-			++total;
-		}
-		if(ary[0][4] == '*' && ary[1][3] == '*' && ary[2][2] == '*' && ary[3][1] == '*' && ary[4][0] == '*') {
-			++total;
-		}			
-		return total;
-	}
+	}	
 	
 	/*
-	* 隨機抽一個, 沒被選過的
+	* 顯示棋盤 console.log ary2
 	*/
-	var search = function(ary) {
+	var showTable = function(ary, num) {
 
-		x = usefloor(0, size*size-1);
+		var txt = '', len = ary.length+1;
 		
-		if(ary[x] != '*') {
-			return [x, ary[x]];
+		console.log('--第' + num + '局--');
+
+		for(var i=1; i<len; i++) {
+		
+			if(i%5 == 0) {
+				console.log(txt + (ary[i]=='*'?'* ':'0 '));
+				txt = '';
+			} else {
+				txt = txt + (ary[i]=='*'?'* ':'0 ');
+			}
+			
 		}
-		
-		return arguments.callee(ary);
+
 	}
 	
 	/*
@@ -171,88 +222,105 @@
 		var table = document.getElementById('table');
 		table.innerHTML = '';
 	}
+
+    /*
+	* 寫入div
+	*/
+	var set_guestbook = function(content) {
+		var guestbook = document.getElementById('guestbook');
+		var guestbook_row = document.createElement('div');
+		var remove =  '';
+		
+		guestbook_row.setAttribute("id", "row" + index);
+		guestbook_row.innerHTML = index + ' : ' + content;
+
+		if(index > 8) {
+			remove = document.getElementById('row' + remove_index);
+			guestbook.removeChild(remove);
+			remove_index++;
+		} else {
+		
+		}
+
+		guestbook.appendChild(guestbook_row);
+
+		index++;
+	}
 	
 	/*
 	* 棋盤初始化
 	*/
 	$('input#init').on('click', function() {
-		clearTable();
-		createTable(size, player1);
+		ary1 = new Array2D(size, size);
+		ary2 = new Array2D(size, size);
+
+		ary1.rand(100);
+		ary2.rand(100);
+
+		createTable(size, ary1);
 	}).trigger('click');
 
 	/*
 	* 點擊紅點
 	*/
 	$('div.c').one('click', function() {
-	console.log(player1_tmp);
+		
 		if(end) {
 			console.log('game end!');
 		}
-	
-		//$(this).removeClass("c").addClass('t');
-		total1 = 0;
-		total2 = 0;
 		
-		
-		r = $(this).parent().attr('val');
-		c = $(this).attr('val');
+		r 	= $(this).parent().attr('val');
+		c 	= $(this).attr('val');
 		val = $(this).text();
-		check_ary1[r][c] = '*';
+		
 		$(this).text('*');
 		
-		total1 = check_ary(check_ary1);
+		ary1.set(r, c, '*');
 
-		for(var i=0; i<size*size; i++) {
-			if(player2[i] == val) {
-				//console.log(i+'_'+parseInt(i/size)+'_'+parseInt(i%size));
-				check_ary2[parseInt(i/size)][parseInt(i%size)] = '*';
-			}
-		}
-		
-		total2 = check_ary(check_ary2);
-		
-		if(total2>4) {
-			console.log('player1 lose!');
+		if(ary1.win()) {
+			set_guestbook('player1 win!');
 			end = true;
-		} else if(total1>4) {
-			console.log('player1 win!');
-			end = true;
+			return false;
 		} else {
-
+		
 		}
 		
-		///////
-console.log('-*-');
-		tmp = search(player2);
-		player2[tmp[0]] = '*';
-		check_ary2[parseInt(tmp[0]/size)][parseInt(tmp[0]%size)] = '*';
+		//從ary2找到ary1的值 寫入*
+		ary2.search_set(val);
+
+		if(ary2.win()) {
+			set_guestbook('player1 lose!');
+			end = true;
+			return false;
+		} else {
 		
-		console.log(tmp);
-		console.log(tmp[0]);
-		console.log(tmp[1]);
-		console.log(player1_tmp);
+		}
+		
+		//隨機抓一個ary2的值回傳, 之後變成*
+		tmp = ary2.search_get();
+		
+		showTable(ary2, round++);
+		
+		var z = 0;
 		for(var i=0; i<size; i++) {
 			for(var j=0; j<size; j++) {
-				if(check_ary1[i][j] == tmp[1]) {
-				console.log('**');
-					check_ary1[i][j] = '*';
-					$('div[val='+i+']').find('div[val='+j+']').removeClass("c").addClass('t').txt('*');
+				if(ary1[z] == tmp[1]) {
+
+					//$('div[val='+i+']').find('div[val='+j+']').removeClass("c").addClass('t').html('*');
+					$('div[val='+i+']').find('div[val='+j+']').html('*');
 				}
+				z++;
 			}
 		}
 		
+		ary1.search_set(tmp[1]);
 		
-		total2 = check_ary(check_ary2);
-		total1 = check_ary(check_ary1);
-		
-		if(total2>4) {
-			console.log('player1 lose!');
+		if(ary1.win()) {
+			set_guestbook('player1 win!');
 			end = true;
-		} else if(total1>4) {
-			console.log('player1 win!');
-			end = true;
+			return false;
 		} else {
-
+		
 		}
 		
 		return false;
@@ -263,10 +331,7 @@ console.log('-*-');
 	* 遊戲開始
 	*/
 	$('input#start').on('click', function() {
-		
-		
-		alert('還沒好!= _=');
-		alert('還沒好!= _=');
+		alert('beta!= _=');
 	});
 	
 	/*
