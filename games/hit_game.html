@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 	<title>hit_game</title>
 </head>
 <body>
@@ -23,60 +23,79 @@ var other_area = other_area_obj.getContext('2d');
 var other_area_w = other_area_obj.width;
 var other_area_h = other_area_obj.height;
 
+//飛機類class
+var aircraft_h= 50;
+var aircraft_w= 50;
+
+//子彈
 var bullets = []
+var bullet_h = 10;
+var bullet_w = 10;
+
+//敵人
 var enemies = []
-
 var add_work = null;
+var add_time = null;
 
-//飛機class
-my_aircraft = new My_aircraft(10, 0, 40, 40, 'pic/aircraft/my_aircraft.png');
-function My_aircraft (x, y, h, w, image_src){
-    //位置
-    this.x = x;
-    this.y = y;
-    //高寬
-    this.h = h;
-    this.w = w;
-    //圖片
-    this.image = new Image;
-    this.image.src = image_src;
-    
-}
+var score = 0;
+var my_life = 10;
 
-//子彈class
-function Bullet (x, y , h, w, speed, image_src) {
-    //位置
-    this.x = x;
-    this.y = y;
-    //高寬
-    this.h = h;
-    this.w = w;
-    //速度
-    this.speed = speed;
-    //圖片
-    this.image = new Image;
-    this.image.src = image_src;
-}
+	//飛機class
+	function Aircraft (x, y, h, w, image_src){
+		//位置
+		this.x = x;
+		this.y = y;
+		//高寬
+		this.h = h;
+		this.w = w;
+		//圖片
+		this.image = new Image;
+		this.image.src = image_src;
 
-//敵人阿阿阿阿阿阿阿
-function Enemy (x, y , h, w, speed, image_src) {
-    //位置
-    this.x = x;
-    this.y = y;
-    //高寬
-    this.h = h;
-    this.w = w;
-    //速度
-    this.speed = speed;
-    //圖片
-    this.image = new Image;
-    this.image.src = image_src;
-    
-}
+	}
+	
+	//我的飛機
+	function My_role (x, y, h, w, image_src) {
+		//繼承Aircraft 對象冒充繼承
+		this.aircraft = Aircraft;
+		this.aircraft(x, y, h, w, image_src);
+		
+		//可以發子彈
+		this.fire = function () {
+			bullets.push(new Bullet(this.x+this.w, this.y+this.h/2-bullet_h/2, bullet_w, bullet_h, 'pic/aircraft/bullet.png',15));
+		}
+	}
 
-game_ground ();
-other_ground ();
-var play = setInterval(drawCanvas,30);
+	//敵人的飛機
+	function Enemy (x, y, h, w, image_src, speed, life) {
+		//繼承Aircraft 對象冒充繼承
+		this.aircraft = Aircraft;
+		this.aircraft(x, y, h, w, image_src);
+		//生命
+		this.speed = speed;
+		this.life = life;
+		this.score = life;
+		//顯示生命值
+		this.show_life = function () {
+			game_area.fillStyle = '#000000';
+			game_area.fillText(this.life,this.x+this.w/4,this.y+this.h/4);
+		}
+	}
+	
+	//子彈class
+	function Bullet (x, y , h, w, image_src, speed) {
+		//位置
+		this.x = x;
+		this.y = y;
+		//高寬
+		this.h = h;
+		this.w = w;
+		//速度
+		this.speed = speed;
+		//圖片
+		this.image = new Image;
+		this.image.src = image_src;
+	}
     
     //遊戲區塊背景
     function game_ground () {
@@ -101,109 +120,168 @@ var play = setInterval(drawCanvas,30);
         other_area.fillRect(0,0,5,other_area_h);                         //左
         other_area.fillRect(other_area_w-5,0,5,other_area_h);            //右
     }
-    
-    
-    function drawCanvas() {
-        game_area.clearRect(0, 0, game_area_w, game_area_h);
-        game_ground ();
-        
-        //我的飛機呦
-        game_area.drawImage(my_aircraft.image,my_aircraft.x,my_aircraft.y,my_aircraft.w,my_aircraft.h);
-        
-        //讓子彈飛
-        if (bullets.length > 0) {
-            for (var key in bullets) {
-                if (bullets[key] != undefined) {
-                    game_area.drawImage(bullets[key].image, bullets[key].x, bullets[key].y,bullets[key].w, bullets[key].h);
-                    bullets[key].x += bullets[key].speed;
-                    
-                    if (bullets[key].x > game_area_w) {
-                        delete bullets[key];
-                    }
-                }
-            }
-        }
-        
-        //讓敵人飛機飛
+	
+//------------------------------------------------------------------------------------------------	
+	game_ground ();
+    other_ground ();
+	var my_role = new My_role(10,0,aircraft_w,aircraft_h,'pic/aircraft/my_aircraft.png');
+	add_enemy ();
+	
+    var play = setInterval(drawCanvas,30);
+	function drawCanvas() {
+		game_area.clearRect(0, 0, game_area_w, game_area_h);
+		game_ground ();
+		
+		//我的飛機呦
+        game_area.drawImage(my_role.image,my_role.x,my_role.y,my_role.w,my_role.h);
+		
+		//讓子彈飛
+		if (bullets.length > 0) {
+			for (var b_key in bullets) {
+				if (bullets[b_key] != undefined) {
+					game_area.drawImage(bullets[b_key].image, bullets[b_key].x, bullets[b_key].y,bullets[b_key].w, bullets[b_key].h);
+					bullets[b_key].x += bullets[b_key].speed;
+					
+					//超過邊界子彈消失
+					if (bullets[b_key].x > game_area_w) {
+						delete bullets[b_key];
+					}
+				}
+			}
+		}
+		
+		//讓敵人飛機飛
         if (enemies.length > 0) {
-            for (var key in enemies) {
-                if (enemies[key] != undefined) {
-                    game_area.drawImage(enemies[key].image, enemies[key].x, enemies[key].y,enemies[key].w, enemies[key].h);
-                    enemies[key].x -= enemies[key].speed;
-                    
-                    if (enemies[key].x < 0) {
-                        delete enemies[key];
-                    }
+            for (var e_key in enemies) {
+                if (enemies[e_key] != undefined) {
+                    game_area.drawImage(enemies[e_key].image, enemies[e_key].x, enemies[e_key].y,enemies[e_key].w, enemies[e_key].h);
+                    enemies[e_key].show_life();
+					enemies[e_key].x -= enemies[e_key].speed;
+					
+					//超過邊界飛機消失
+					if (enemies[e_key].x < 0) {
+						
+						//生命值減少 黑框的東西
+						my_life = my_life - enemies[e_key].life;
+						//當生命值為0就輸了
+						if (my_life <= 0) {
+							other_ground();
+							other_area.font = '24pt 標楷體';
+							other_area.fillText("你輸了"+" 得分: "+score,10,40);
+							clearInterval(play);
+						    clearInterval(add_work);							
+						}
+						else {
+							other_ground();
+							other_area.font = '24pt 標楷體';
+							other_area.fillText("生命值: "+my_life+" 得分: "+score,10,40);	
+						}
+						
+						delete enemies[e_key];
+					}
                 }
             }
         }
-        
-        //子彈撞飛機 子彈*飛機
-        if (enemies.length > 0) {                               //飛機
-            for (var ekey in enemies) {                         //飛機
-                if (enemies[ekey] != undefined) {               //飛機
-                    if (bullets.length > 0) {                   //子彈 
-                        for (var bkey in bullets) {             //子彈
-                            if (bullets[bkey] != undefined && enemies[ekey] != undefined) {   //子彈
-                                if (enemies[ekey].x <= bullets[bkey].x &&
-                                    enemies[ekey].x+enemies[ekey].w >= bullets[bkey].x &&
-                                    enemies[ekey].y <= bullets[bkey].y &&
-                                    enemies[ekey].y+enemies[ekey].h >= bullets[bkey].x ) {
-                                    
-                                    delete bullets[bkey];
-                                    delete enemies[ekey];
+		
+		//飛機撞到子彈
+		if (enemies.length > 0) {                               							     //飛機
+            for (var e_key in enemies) {                         							     //飛機
+                if (enemies[e_key] != undefined) {               							     //飛機
+                    if (bullets.length > 0) {                   							     //子彈 
+                        for (var b_key in bullets) {             							     //子彈
+                            if ( enemies[e_key] != undefined && bullets[b_key] != undefined) {   //子彈
+                                //alert('敵人飛機:('+enemies[e_key].x+','+enemies[e_key].y+'),('+parseInt(enemies[e_key].x+enemies[e_key].w)+','+parseInt(enemies[e_key].y+enemies[e_key].h)+')\n'+
+							    //      '我的子彈:('+bullets[b_key].x+','+bullets[b_key].y+'),('+parseInt(bullets[b_key].x+bullets[b_key].w)+','+parseInt(bullets[b_key].y+bullets[b_key].h)+')');
+									  
+								if (parseInt(enemies[e_key].x) <= parseInt(bullets[b_key].x + bullets[b_key].w) &&
+                                    parseInt(enemies[e_key].x + enemies[e_key].w) >= parseInt(bullets[b_key].x) &&
+                                    parseInt(enemies[e_key].y) <= parseInt(bullets[b_key].y + bullets[b_key].h) &&
+                                    parseInt(enemies[e_key].y + enemies[e_key].h) >= parseInt(bullets[b_key].y) ) {
+									
+									//敵人的生命值
+									if (enemies[e_key].life > 1) {
+										enemies[e_key].life --;
+										//碰撞後消除子彈
+										delete bullets[b_key];
+										enemies[e_key].show_life();
+									}
+									else {
+										//加分數
+										score = score + enemies[e_key].score*100;							
+
+										//碰撞後消除飛機與子彈	  
+										delete bullets[b_key];
+										delete enemies[e_key];
+	
+										//黑框的東西
+										other_ground();
+										other_area.font = '24pt 標楷體';
+										other_area.fillText("生命值: "+my_life+" 得分: "+score,10,40);	
+									}								
                                 }
                             }
-                        }
+						}	
                     }    
                 }
             }
         }
-    }
- 
-    
-    //滑鼠移動飛機
-    game_area_obj.onmousemove =function(event){
-        //alert(event.offsetX+'--'+event.offsetY);
+	}
 
-        if (event.offsetY < my_aircraft.h/2) {
-            my_aircraft.y = 0;
+	//滑鼠移動飛機
+    game_area_obj.onmousemove = function(event){
+        //alert('滑鼠座標 X軸:'+event.offsetX+' Y軸:'+event.offsetY);a
+        if (event.offsetY < my_role.h/2) {
+            my_role.y = 0;
         }
-        else if (event.offsetY > game_area_h-my_aircraft.h/2) {
-            my_aircraft.y = game_area_h-my_aircraft.h;
+        else if (event.offsetY > game_area_h-my_role.h/2) {
+            my_role.y = game_area_h-my_role.h;
         }
         else {
-            my_aircraft.y = event.offsetY -my_aircraft.h/2;
+            my_role.y = event.offsetY -my_role.h/2;;
         }
     }
-    
-    //鍵盤點擊 A發射
-    document.onkeydown=function(){
-        //  alert(window.event.keyCode);
+	
+	//鍵盤點擊 A發射子彈
+    document.onkeydown = function(event){
+        //alert('鍵盤碼:'+event.keyCode);
         if (window.event.keyCode == 65) {
-           bullets.push(new Bullet(my_aircraft.x+my_aircraft.w-10, my_aircraft.y+my_aircraft.w/2-15, 30, 30, 10, 'pic/aircraft/bullet.png'));
+			my_role.fire();
         }
     }
-    
-    //產生敵人 阿阿阿阿阿阿阿   
-    var enemy_h = 40;
-    var enemy_w = 40;
-    var rand_y;    //出生位置
-    var add_time;  //出生時間
-    
-    function addEnemy() {
-        clearInterval(add_work);
-        rand_y = getRand(0, game_area_h-enemy_h);
-        enemies.push(new Enemy(game_area_w, rand_y, enemy_w, enemy_h, 5, 'pic/aircraft/enemy_1.png'));
+	
+	//敵人飛機產生器
+	function add_enemy () {
+	    //清除產生 才不會一直增加產生
+	    clearInterval(add_work);
+		//飛機出生位置
+		enemy_y = Math.floor(Math.random()*(game_area_h-aircraft_h));
 
-        var add_time = getRand(10, 6000);
-        add_work = setInterval(addEnemy, add_time); // loop drawScene
-    }
-    
-    function getRand(x, y) {
-        return Math.floor(Math.random()*y)+x;
-    }
-    addEnemy();
+		//產生飛機的總類
+		switch(Math.floor(Math.random()*3+1)) {
+			case 1:
+			    enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_1.png',8,2));
+			break;
+			case 2:
+				enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_2.png',16,3));
+			break;
+			case 3:
+				enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_3.png',24,4));
+			break;
+			default: 
+			break;
+		}		
+		
+		//下一次產生的時間 分數用高產生越快
+		if (score < 3000) {
+			add_time = Math.floor(Math.random()*(3500-score)+500);
+		}
+		else {
+			add_time = Math.floor(Math.random()+300);
+		}
+		//產生
+        add_work = setInterval(add_enemy, add_time);
+	}
+	
 </script>
 
 </body>
