@@ -1,0 +1,84 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>fantasy_idea</title>
+</head>
+<body>
+
+<input type="button" id="idea" value="來吧!!"/>
+<div id="guestbook"></div>
+
+<script type="text/javascript" src="js/lib/common.js"> </script>
+<script type="text/javascript">
+	
+	var _type = ['洞穴', '城市', '國家', '森林', '叢林', '山區', '星球', '封閉棲息地', '村莊', '島嶼'];
+	var _material = ['超堅固質地', '水晶', '血肉', '黃金', '紙張', '陶瓷', '橡膠', '石頭', '水', '木頭'];
+	var _location = ['不明地點', '另一個宇宙', '太空', '沙漠', '夢境世界', '四度空間', '極地', '空中', '地下', '海底'];
+	var _inhabitants = ['外星人', '猩猩', '全然普通的人類', '精靈', '魚', '鬼魂', '巨人', '昆蟲', '智慧植物', '機械人'];
+	var _govt = ['社會主義烏托邦', '無政府狀態', '由企業統治', '由多族議會統治', '由神明統治', '由世襲君主統治', '由魔法精英統治', '受古老儀式統治', '由電腦統治', '由女人統治'];
+	var _special = ['超級好戰', '同類相殘', '大家都很快樂', '大家都瘋了', '尊崇學習', '盛行通靈', '無邊無際', '多維世界', '恐怖無比', '位置會變來變去'];
+	
+	var _mode = [
+		'位在{_type}, 由{_material}構成的一座{_location}, 那裡居住著{_inhabitants}, 是{_govt}, 特色是{_special}.'
+	];
+	
+	var context = '';
+	
+	var index = 1, remove_index = 1, max = 20;
+	
+	/*
+	* 寫入div
+	*/
+	var set_guestbook = function(content) {
+		var guestbook = document.getElementById('guestbook');
+		var guestbook_row = document.createElement('div');
+		var remove =  '';
+		
+		guestbook_row.setAttribute("id", "row" + index);
+		guestbook_row.innerHTML = index + ' : ' + content;
+
+		if(index > max) {
+			remove = document.getElementById('row' + remove_index);
+			guestbook.removeChild(remove);
+			remove_index++;
+		} else {
+		
+		}
+
+		guestbook.appendChild(guestbook_row);
+
+		//console.log(index + '_' + remove_index);
+		
+		index++;
+	}	
+	
+	document.getElementById('idea').onclick = function() {
+	
+	
+		context = _mode[0].replace("{_type}", _type[usefloor(0, _type.length-1)]);
+		context = context.replace("{_material}", _material[usefloor(0, _material.length-1)]);
+		context = context.replace("{_location}", _location[usefloor(0, _location.length-1)]);
+		context = context.replace("{_inhabitants}", _inhabitants[usefloor(0, _inhabitants.length-1)]);
+		context = context.replace("{_govt}", _govt[usefloor(0, _govt.length-1)]);
+		context = context.replace("{_special}", _special[usefloor(0, _special.length-1)]);
+	
+	
+		set_guestbook(context);
+	}
+	
+</script>
+
+<script>
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-50817771-1', 'shesheshe.github.io');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
