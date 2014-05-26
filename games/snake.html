@@ -12,42 +12,48 @@
 </style>
 
 <script>
-    var rederwidth = 200;
-    var rederheight = 200;
+    const REDER_WIDTH = 300;
+    const REDER_HEIGHT = 300;
+    const ROWCOUNT = 10;
+    const COLCOUNT = 10;
 
-    var rowcount = 10;
-    var colcount = 10;
-
+    const UP = 38;
+    const DOWN = 40;
+    const LEFT = 37;
+    const RIGHT = 39;
+    
+    
     var boxwidth = 0;
     var boxheight = 0;
-
     var scene = null;
     var cnv = null;
+    var foodpoint = null;
     
-    var sanke = new Array(1);
-    sanke[0] = new Array(2); //x,y
-    sanke[0][0] = 2;
-    sanke[0][1] = 2;
+    var sanke = new Array(3);
+    sanke[0] = [2,2];
+    sanke[1] = [2,1];
+    sanke[2] = [2,0];
     
-    direction = 0; //left:0,right:1,up:2,down:3
+    
+    direction = RIGHT; //default
     
     
     //init
     $(document).ready(function() {
         cnv = $('.snake')[0];    
-        $(cnv).attr('width',rederwidth + 'px');
-        $(cnv).attr('height',rederheight + 'px');
+        $(cnv).attr('width',REDER_WIDTH + 'px');
+        $(cnv).attr('height',REDER_HEIGHT + 'px');
 
         //definitions
-        boxwidth = $(cnv).width() / colcount;
-        boxheight = $(cnv).height() / rowcount;
+        boxwidth = $(cnv).width() / COLCOUNT;
+        boxheight = $(cnv).height() / ROWCOUNT;
         //debug
         //alert(boxwidth + "  " + boxheight);
         
-        scene = new Array(rowcount);
-        for (var y = 0; y < rowcount; y++) {
-            scene[y] = new Array(colcount);
-            for (var x = 0; x < colcount; x++) {
+        scene = new Array(ROWCOUNT);
+        for (var y = 0; y < ROWCOUNT; y++) {
+            scene[y] = new Array(COLCOUNT);
+            for (var x = 0; x < COLCOUNT; x++) {
                 scene[y][x] = 0;
             }
         }
@@ -56,10 +62,11 @@
         //$("#body").delegate(".snake","keypress",keyevent);
         $(cnv).keypress(keyevent);
         
-        scene[9][9] = 1;
-        setInterval("render()",1);
-        setInterval("move()",1000);
         
+        setInterval("render()",100);
+        setInterval("move()",100);
+        
+        cnv.focus();
         
     });
 
@@ -69,8 +76,8 @@
         paint.fillStyle = "#FF0000";
         
         //reset
-        for (var y = 0; y < rowcount; y++) {
-            for (var x = 0; x < colcount; x++) {
+        for (var y = 0; y < ROWCOUNT; y++) {
+            for (var x = 0; x < COLCOUNT; x++) {
                 scene[y][x] = 0;
             }
         }
@@ -80,10 +87,13 @@
             scene[sanke[i][1]][sanke[i][0]] = 1;
         }
         
-        paint.clearRect ( 0 , 0 , rederwidth , rederheight );
+        //食物勒?
+        food()
+        
+        paint.clearRect ( 0 , 0 , REDER_WIDTH , REDER_HEIGHT );
         //render
-        for (var y = 0; y < rowcount; y++) {
-            for (var x = 0; x < colcount; x++) {
+        for (var y = 0; y < ROWCOUNT; y++) {
+            for (var x = 0; x < COLCOUNT; x++) {
                 if (scene[y][x] == 1){
                     paint.fillRect(x * boxwidth , y * boxheight, boxwidth, boxheight);            
                 }
@@ -96,17 +106,21 @@
         var keynum = (eventobject.keyCode == 0)?eventobject.keyCode + eventobject.which:eventobject.keyCode;
         
 	    switch (keynum) {
-	        case 38://上
-	            direction=2;
+	        case UP://上
+	            if (direction == DOWN) return;
+	            direction=UP;
 	            break;
-	        case 40://下
-	            direction=3;
+	        case DOWN://下
+	            if (direction == UP) return;
+	            direction=DOWN;
 	            break;
-	        case 37://左
-	            direction=0;
+	        case LEFT://左
+	            if (direction == RIGHT) return;
+	            direction=LEFT;
 	            break;
-	        case 39://右
-	            direction=1;
+	        case RIGHT://右
+	            if (direction == LEFT) return;
+	            direction=RIGHT;
 	            break;
 	        default:
 	            break;
@@ -114,21 +128,70 @@
     }
     
     function move(){
+        //動一動
+        var newpoint = sanke[0].slice(0,2);
         switch (direction) {
-        case 0://left
-            sanke[0][1]--;
+        case UP:
+            newpoint[1]--;
+            if (newpoint[1] < 0) newpoint[1] = (ROWCOUNT - 1);
             break;
-        case 1://right
-            sanke[0][1]++;
+        case DOWN:
+            newpoint[1]++;
+            if (newpoint[1] > (ROWCOUNT-1)) newpoint[1] = 0;
             break;
-        case 2://up
-            sanke[0][0]--;
+        case LEFT:
+            newpoint[0]--;
+            if (newpoint[0] < 0) newpoint[0] = COLCOUNT-1;
             break;
-        case 3://down
-            sanke[0][0]++;
+        case RIGHT:
+            newpoint[0]++;
+            if (newpoint[0] > (COLCOUNT-1)) newpoint[0] = 0;
             break;
         default:
             break;
+        }
+        sanke.unshift(newpoint);
+        sanke.pop();
+        
+        //看看撞到誰拉~
+        //這條蛇不會甩尾 所以判斷頭就好XDDDDDD
+        if (foodpoint != null){
+            if (sanke[0][1] == foodpoint[0] && sanke[0][0] == foodpoint[1]){
+                var lastpoint = sanke[(sanke.length-1)].slice(0,2); 
+                sanke.push(lastpoint);  //賈霸妹
+                foodpoint = null;
+            }
+        }
+        
+        //看是不是自宮了
+        for (var z = 1; z < sanke.length; z++) {
+            if (sanke[z][1] == sanke[0][1] && sanke[z][0] == sanke[0][0]){
+                alert("哭吧~");
+                location.reload();
+            }
+        }
+        
+    }
+    
+    function food(){
+        if (foodpoint != null){
+            //食物還在
+            scene[foodpoint[0]][foodpoint[1]] = 1;
+            return;
+        }
+            
+        var maxNum = (ROWCOUNT-1);
+        var minNum = 0;  
+        var isOK = false;
+        while (!isOK) {
+            var r = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            maxNum = (COLCOUNT-1);  
+            var c = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            if (scene[r][c] == 0){
+                foodpoint = [r,c];
+                scene[r][c] = 1;
+                isOK = true;
+            }
         }
     }
 </script>
