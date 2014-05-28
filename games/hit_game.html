@@ -9,7 +9,7 @@
 
 <canvas id="game_area" width="600" height="300"></canvas><br>
 <canvas id="other_area" width="600" height="100"></canvas>
-
+按鍵盤A鍵攻擊 滑鼠移動
 <script type="text/javascript">
 //遊戲區塊
 var game_area_obj = document.getElementById('game_area');
@@ -259,13 +259,13 @@ var my_life = 10;
 		//產生飛機的總類
 		switch(Math.floor(Math.random()*3+1)) {
 			case 1:
-			    enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_1.png',8,2));
+			    enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_1.png',6,1));
 			break;
 			case 2:
-				enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_2.png',16,3));
+				enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_2.png',12,2));
 			break;
 			case 3:
-				enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_3.png',24,4));
+				enemies.push(new Enemy(game_area_w,enemy_y,aircraft_w,aircraft_h,'pic/aircraft/enemy_3.png',18,3));
 			break;
 			default: 
 			break;
