@@ -4,7 +4,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 	<title>rpg_game_01</title>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
 <style>
@@ -15,8 +14,8 @@
     <img src="pic/role_02.png" id = "role_02"/>
     <img src="pic/back_ground.png" id = "back_ground"/>
 </div>
-<div style="width:800px; margin: 0 auto; border: 1px solid black">
-    <div style="width:800px; height:384px;border:1px solid black">  <!--多層canvas-->
+<div style="width:800px; margin: 0 auto; border: 3px solid black">
+    <div style="width:800px; height:384px;">  <!--多層canvas-->
         <canvas id="ground_wall" width="800" height="384" style="position: absolute; z-index: 2"></canvas>
         <canvas id="mian" width="800" height="384" style="position: absolute; z-index: 1"></canvas>
         <canvas id="ground_pass" width="800" height="384" style="position: absolute; z-index: 0"></canvas>
