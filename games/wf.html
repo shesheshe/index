@@ -1,0 +1,28 @@
+<html>
+<h2>Create Text file in JavaScript</h2>
+<script>
+function createFile(){
+var object = new ActiveXObject("Scripting.FileSystemObject");
+console.log(object);
+/*
+var file = object.CreateTextFile("Hello.txt", false);
+file.WriteLine('Hello World');
+file.WriteLine('Hope is a thing with feathers, that perches on the soul.'); 
+file.Close();*/
+}
+
+/*
+var xmlhttp; 
+// 创建XMLHTTPRequest对象 
+function createXMLHTTPRequest(){ 
+if(window.ActiveXObject){ // 判断是否支持ActiveX控件 
+xmlhttp = new ActiveObject("Microsoft.XMLHTTP"); // 通过实例化ActiveXObject的一个新实例来创建XMLHTTPRequest对象 
+} 
+else if(window.XMLHTTPRequest){ // 判断是否把XMLHTTPRequest实现为一个本地javascript对象 
+xmlhttp = new XMLHTTPRequest(); // 创建XMLHTTPRequest的一个实例（本地javascript对象） 
+} *
+} */
+
+</script>
+<input type="Button" value="Create File" onClick='createFile()'>
+</html>
