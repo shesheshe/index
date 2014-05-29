@@ -1,0 +1,105 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>tts</title>
+</head>
+<body>
+
+
+<script type="text/javascript">
+	var cards = [], tmp = 0, x = 0, y = 0;
+	var me_val = [], me_txt = [], txt = '', num = 0;
+	var tmp_ary = [], tmp_ary2 = [];
+	
+	var val2txt = function(ary) {
+
+		for(var k in ary) {
+			txt = '';
+			switch(parseInt(ary[k]/13)) {
+				case 0: txt+='黑桃'; break;
+				case 1: txt+='紅心'; break;
+				case 2: txt+='梅花'; break;
+				case 3: txt+='方塊'; break;
+			}
+			
+			num = parseInt(ary[k]%13)+1;
+			switch(num) {
+				case 1: txt+='A'; break;
+				case 11: txt+='J'; break;
+				case 12: txt+='Q'; break;
+				case 13: txt+='K'; break;
+				default: txt+=num; break;
+			}
+			
+			me_txt[k] = txt;
+		}
+		
+		return me_txt;
+	};
+	
+	for(var i=0; i<52; i++) {
+		cards[i] = i;
+		tmp_ary[i] = parseInt(i/13);
+		tmp_ary2[i] = parseInt(i%13);
+		
+	}
+	
+	console.log(cards);
+	//console.log(tmp_ary);
+	//console.log(tmp_ary2);
+	//console.log(val2txt(cards));
+	
+	for(var i=0; i<100; i++) {
+		x = usefloor(0, cards.length-1);
+		y = usefloor(0, cards.length-1);
+		
+		tmp = cards[x];
+		cards[x] = cards[y];
+		cards[y] = tmp;
+
+	}	
+	
+	console.log(cards);
+	
+	me_val[0] = cards.pop();
+	me_val[1] = cards.pop();
+	me_val[2] = cards.pop();
+	me_val[3] = cards.pop();
+	me_val[4] = cards.pop();
+
+	var tcard = function(num) {
+		console.log(num%13);
+		console.log(parseInt(num/13));
+	}
+
+	console.log(me_val);
+	//console.log(cards);
+	console.log(val2txt(me_val));
+	
+	me_val.sort(function(a, b) { return a - b; });
+	console.log(me_val);
+	console.log(val2txt(me_val));
+	
+	/*
+	* 隨機數
+	*/
+	function usefloor(min, max) {
+		return Math.floor(Math.random()*(max-min+1)+min);
+	}
+	
+</script>
+
+<script>
+/*
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-50817771-1', 'shesheshe.github.io');
+  ga('send', 'pageview');
+*/
+</script>
+</body>
+</html>
