@@ -5,7 +5,47 @@
 	<title>poker games</title>
 </head>
 <body>
-...
+<script type="text/javascript" src="js/lib/common.js"> </script>
+<script type="text/javascript">
+	
+	function poker(set) {
+		this.x = 0;
+		this.y = 0;
+		this.temp = 0;
+		this.setsize = 52;
+		this.allset = set * this.setsize;
+		this.allcard = [];
+		
+		this.createSet = function() {
+			for(var i=0; i<this.allset; i++) {
+				this.allcard[i] = i%this.setsize+1;
+			}
+			for(var i=0; i<1000; i++) {
+				this.shuffling();		
+			}
+
+		}
+
+		this.shuffling = function() {
+			this.x = usefloor(0, this.setsize-1);
+			this.y = usefloor(0, this.setsize-1);
+			this.temp = this.allcard[this.x];
+			this.allcard[this.x] = this.allcard[this.y];
+			this.allcard[this.y] = this.temp;
+		}
+		
+
+		this.show = function() {
+			console.log(this.allcard);
+		}
+		
+		this.createSet();
+	}
+
+	var one = new poker(3);
+	one.show();
+	
+</script>
 <script>
 /*
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
