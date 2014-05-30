@@ -1,39 +1,52 @@
-//解析地圖
-draw_map();
-function draw_map() {
-    var back_ground = document.getElementById("back_ground");
-    //每個區塊為32x32
-    var block = 32;
-    //跑迴圈組地圖
-	var i,j
-	//迴圈轉字串 組成值傳到 back_ground 取得是否可通行的資料
-	var str_i,str_j
+//碰撞檢測陣列
+var map = [];
+//有24行每行要宣告
+for (j = 0; j < play_area_j; j++ ) {
+    map[j] = [];
+            
+}
+
+//解析地圖並且畫出來
+function draw_map(map_no) {
+    var image_object = document.getElementById("image_object");
+    var back_ground = this[map_no]["map_ground"]["back_ground"];
+
+	//迴圈轉字串 組成值傳到 cover_ground
+	var str_i,str_j;
     //字串轉數字 取得切圖的資料
-	var int_i,int_j
-	
-    for(i = 0; i < 25; i++ ) {       //x軸
-        for (j = 0; j < 12; j++ ) {  //y軸
-            //補0 i exp 0012
-            if (i < 10) {
-                str_i = "0"+i;
-            }
-            else {
-                str_i = ""+i;
-            }
+	var int_i,int_j;
+    //取得設定值
+    var image_object_set;
+    
+    for(j = 0; j < 24; j++ ) {       //y軸    
+        for (i = 0; i < 48; i++ ) {   //x軸
             //補0 j
-            if (j < 10) {
-                str_j = "0"+j; 
+            j < 10 ? str_j = "0"+j: str_j = ""+j;
+            //補0 i 
+            i < 10 ? str_i = "0"+i: str_i = ""+i;
+            //取得資料
+            if (this[map_no]["map_ground"]["cover_ground"]["M"+str_j+str_i]) {
+                int_j = parseInt(this[map_no]["map_ground"]["cover_ground"]["M"+str_j+str_i].substr(1,2));            
+                int_i = parseInt(this[map_no]["map_ground"]["cover_ground"]["M"+str_j+str_i].substr(3,2));
+                image_object_set = image_object_code[this[map_no]["map_ground"]["cover_ground"]["M"+str_j+str_i]];
             }
             else {
-                str_j = ""+j;
+                int_j = parseInt(back_ground.substr(1,2));
+                int_i = parseInt(back_ground.substr(3,2));
+                image_object_set = image_object_code[back_ground];
             }
-			//取得資料
-			int_i = parseInt(tristram["map_date"][j][i].substr(0,2));
-			int_j = parseInt(tristram["map_date"][j][i].substr(2,2));
-			
-			//alert("back_ground:"+str_i+str_j+"\n x:"+int_i+"y"+int_j);
-            //畫地圖
-            ground_pass_area.drawImage(back_ground, int_i*block, int_j*block, block, block, i*block, j*block, block, block);
-        }
+
+            //階層畫圖 1 or 3
+            switch (image_object_set[1]) {
+                case 1:
+                    play_area_01.drawImage(image_object, int_i*unit, int_j*unit, unit, unit, i*unit, j*unit, unit, unit);
+                break;
+                case 3:
+                    play_area_03.drawImage(image_object, int_i*unit, int_j*unit, unit, unit, i*unit, j*unit, unit, unit);
+                break;
+            }
+            
+            map[j][i] = image_object_set[0];
+        }    
     }
 }
