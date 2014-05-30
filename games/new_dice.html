@@ -1,0 +1,93 @@
+<html>
+	<head>
+	<title></title>
+		<style type="text/css">
+			.highlight{color:red}
+		</style>
+	<script type="text/javascript">
+			var totalMoney = 10000;
+			var theChoose = "BIG";
+			var inputMoney = 0;
+			function go(){
+			
+				document.getElementById("div1").style.display="none";
+				document.getElementById("game").style.display="block";
+				//alert(document.getElementById("input1").value);
+			}
+			function setChoose(){
+				var list = document.forms[0].chooseList;
+				theChoose = list.options[list.selectedIndex].value;
+			}
+			function ifAgain(){
+			
+			}
+			function myCommit(){
+				//alert("GGG");
+				inputMoney = parseInt(document.getElementById("inputMoney").value);
+				var randone = Math.floor(Math.random()*6 + 1);
+				var randtwo = Math.floor(Math.random()*6 + 1);
+				var randthree = Math.floor(Math.random()*6 + 1);
+				var sum = randone + randtwo + randthree;
+			
+				var message = "";
+				
+
+				if (randone == randtwo && randone == randthree){
+					
+					messge += "is POW";
+					if(theChoose == "POW")totalMoney += (2*inputMoney);
+					else{totalMoney -= inputMoney};
+				}else if(sum >= 11){
+					
+					message += "is Big";
+					if(theChoose == "BIG")totalMoney += inputMoney;
+					else{totalMoney -= inputMoney};
+				}else{
+					message += "is Small";
+					if(theChoose == "SMALL")totalMoney += inputMoney;
+					else{totalMoney -= inputMoney};
+				}
+				if(totalMoney < 0){
+					if(confirm("You are out of Money!Do you want to play again?")){
+						totalMoney = 10000;
+						alert("The new Game is Begin!,Enjoy it");
+					}else{
+						window.close();
+					}
+				}
+				document.getElementById("showResult").value = totalMoney;
+				document.getElementById("readout").innerHTML = 
+				"The three Number is " + 
+				"<span class='highlight'>" +
+				randone +" "+ randtwo + " "+randthree + "</span>"+message+"<hr />";
+			}
+			
+		</script>
+	</head>
+	<body>
+	<form>
+	<p><h1>Welcome to the Game!</h1>
+	<div id="div1">
+		<input type="button" id="input1" value="Start" onclick="go()"/>
+	</div>
+	</p>
+	<div id="game" style="display:none">
+			<p>Please input Your Money:<input type="text" id="inputMoney" value="1000" />
+			<select name="chooseList" onchange="setChoose()">
+				<option select value="BIG">BIG
+				<option value="SMALL">SMALL
+				<option value="POW">POW
+			</select> 
+				<input type="button" id="commit" value="commit" onclick="myCommit()"/><br/>
+			Your Last Money:<input type="text" id="showResult" readonly="true">
+			</p>
+			
+	</div>
+	<script type="text/javascript">
+	document.getElementById("showResult").value = totalMoney;
+	</script>
+	<div id="readout"></div>
+	</form>
+
+	</body>
+</html>
