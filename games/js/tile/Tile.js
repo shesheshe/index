@@ -34,6 +34,16 @@ Tile.prototype.init = function(){
 	this.render();
 	return this;
 }
+Tile.prototype.setDegreeOfDifficulty = function( event, target ){
+	var action = $(event).val();
+	if(action == '+'){
+		this.config.number *= 2;
+	}else if(action == '-'){
+		this.config.number /= 2;
+	}
+	$(target).val(this.config.number);
+	this.log();
+}
 
 // 抓取移動事件
 Tile.prototype.catchKeyDown = function( e ){
@@ -41,16 +51,16 @@ Tile.prototype.catchKeyDown = function( e ){
 	var moveStatus = false;
 	var action = {
 		37 : function(){ // LEFT
-			moveStatus = master.calculateMoveLeft('trigger');
+			moveStatus = master.calculateMoveLeft();
 		},
 		38 : function(){ // TOP
-			moveStatus = master.calculateMoveTop('trigger');
+			moveStatus = master.calculateMoveTop();
 		},
 		39 : function(){ // RIGHT
 			moveStatus = master.calculateMoveRight();
 		},
 		40 : function(){ // BOTTOM
-			moveStatus = master.calculateMoveBottom('trigger');
+			moveStatus = master.calculateMoveBottom();
 		},
 	};
 	if(!action[e.keyCode]){
@@ -62,6 +72,7 @@ Tile.prototype.catchKeyDown = function( e ){
 	}
 	this.moveClass.clearRecord();
 	this.render();
+	this.processGameOver();
 }
 
 Tile.prototype.calculateMoveRight = function(){
@@ -99,72 +110,67 @@ Tile.prototype._calculateMoveRight = function(x, y){
 	return this.moveClass.merge(local, moveRecord);
 }
 
-Tile.prototype.calculateMoveLeft = function(action, x, y){
-	if(action == 'trigger'){
-		var local = {x : 0, y : 0};
-		var moveStatus, checkStatus = false;
-		for(var x = 0; x < this.config.tilePoint.x; x++){
-			for(var y = 0; y < this.config.tilePoint.y; y++){
-				local.x = x;
-				local.y = y;
-				if(this.area[local.x][local.y] > 0){
-					this.calculateMoveLeft('', local.x, local.y);
-					if(checkStatus === true){
-						moveStatus = true;
-					}
-				}
+Tile.prototype.calculateMoveLeft = function(){
+	var local = {x : 0, y : 0};
+	var moveStatus, checkStatus = false;
+	for(var x = 0; x < this.config.tilePoint.x; x++){
+		for(var y = 0; y < this.config.tilePoint.y; y++){
+			local.x = x;
+			local.y = y;
+			if(this.area[local.x][local.y] < 1){
+				continue;
+			}
+			checkStatus = this._calculateMoveLeft(local.x, local.y);
+			if(checkStatus === true){
+				moveStatus = true;
 			}
 		}
-		return moveStatus;
 	}
-	
-	// 紀錄目前位置
+	return moveStatus;
+}
+
+Tile.prototype._calculateMoveLeft = function(x, y){
 	var local = {x : x, y : y};
 	var moveRecord = {x : x, y : y};
 	var moveAction;
-	
 	if(!this.moveClass.checkLocalMove(local, y, 0)){
 		return false;
 	}
-	
 	for(var i = y; i > 0; i--){
 		moveAction = this.moveClass.doMoveAction(local, {x:x, y:i-1}, moveRecord);
 		if(moveAction !== this.moveClass.moveDefine.space){
 			break;
 		}
 	}
-	
 	return this.moveClass.merge(local, moveRecord);
 }
 
-Tile.prototype.calculateMoveTop = function(action, x, y){
-	if(action == 'trigger'){
-		var local = {x : 0, y : 0};
-		var moveStatus, checkStatus = false;
-		for(var y = 0; y < this.config.tilePoint.y; y++){
-			for(var x = 0; x < this.config.tilePoint.x; x++){
-				local.x = x;
-				local.y = y;
-				if(this.area[local.x][local.y] > 0){
-					checkStatus = this.calculateMoveTop('', local.x, local.y);
-					if(checkStatus === true){
-						moveStatus = true;
-					}
-				}
+Tile.prototype.calculateMoveTop = function(x, y){
+	var local = {x : 0, y : 0};
+	var moveStatus, checkStatus = false;
+	for(var y = 0; y < this.config.tilePoint.y; y++){
+		for(var x = 0; x < this.config.tilePoint.x; x++){
+			local.x = x;
+			local.y = y;
+			if(this.area[local.x][local.y] < 1){
+				continue;
+			}
+			checkStatus = this._calculateMoveTop(local.x, local.y);
+			if(checkStatus === true){
+				moveStatus = true;
 			}
 		}
-		return moveStatus;
 	}
-	
-	// 紀錄目前位置
+	return moveStatus;
+}
+
+Tile.prototype._calculateMoveTop = function(x, y){
 	var local = {x : x, y : y};
 	var moveRecord = {x : x, y : y};
 	var moveAction;
-	
 	if(!this.moveClass.checkLocalMove(local, x, 0)){
 		return false;
 	}
-	
 	for(var i = x; i > 0; i--){
 		moveAction = this.moveClass.doMoveAction(local, {x:i-1, y:y}, moveRecord);
 		if(moveAction !== this.moveClass.moveDefine.space){
@@ -174,36 +180,33 @@ Tile.prototype.calculateMoveTop = function(action, x, y){
 	return this.moveClass.merge(local, moveRecord);
 }
 
-Tile.prototype.calculateMoveBottom = function(action, x, y){
-	if(action == 'trigger'){
-		var local = {x : 0, y : 0};
-		var moveStatus, checkStatus = false;
-		for(var y = 0; y < this.config.tilePoint.y; y++){
-			for(var x = 0; x < this.config.tilePoint.x; x++){
-				local.x = this.config.tilePoint.x - x - 1;
-				local.y = this.config.tilePoint.y - y - 1;
-				if(this.area[local.x][local.y] > 0){
-					checkStatus = this.calculateMoveBottom('', local.x, local.y);
-					if(checkStatus === true){
-						moveStatus = true;
-					}
-				}
+Tile.prototype.calculateMoveBottom = function(x, y){
+	var local = {x : 0, y : 0};
+	var moveStatus, checkStatus = false;
+	for(var y = 0; y < this.config.tilePoint.y; y++){
+		for(var x = 0; x < this.config.tilePoint.x; x++){
+			local.x = this.config.tilePoint.x - x - 1;
+			local.y = this.config.tilePoint.y - y - 1;
+			if(this.area[local.x][local.y] < 1){
+				continue;
+			}
+			checkStatus = this._calculateMoveBottom(local.x, local.y);
+			if(checkStatus === true){
+				moveStatus = true;
 			}
 		}
-		return moveStatus;
 	}
-	
-	// 紀錄目前位置
+	return moveStatus;
+}
+
+Tile.prototype._calculateMoveBottom = function(x, y){
 	var local = {x : x, y : y};
 	var moveRecord = {x : x, y : y};
 	var moveAction;
-	
 	if(!this.moveClass.checkLocalMove(local, x, this.config.tilePoint.x-1)){
 		return false;
 	}
-	
 	for(var i = x; i < this.config.tilePoint.x; i++){
-		// 已無法移動
 		if(i == this.config.tilePoint.x-1){
 			break;
 		}
@@ -212,7 +215,6 @@ Tile.prototype.calculateMoveBottom = function(action, x, y){
 			break;
 		}
 	}
-	
 	return this.moveClass.merge(local, moveRecord);
 }
 
@@ -311,6 +313,20 @@ Tile.prototype._createDiagram = function(context, x, y){
 			this.line.x - this.config.LineWeight,
 			this.line.y - this.config.LineWeight
 		);
+	}
+}
+
+Tile.prototype.processGameOver = function(){
+	var missionSucceed = false;
+	for(var x = 0; x < this.config.tilePoint.x; x++){
+		for(var y = 0; y < this.config.tilePoint.y; y++){
+			if(this.area[x][y] >= this.config.number){
+				missionSucceed = true;
+			}
+		}
+	}
+	if(missionSucceed === true){
+		alert('已完成目標!!');
 	}
 }
 
