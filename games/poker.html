@@ -114,7 +114,7 @@
 		this.change = function(player) {
 
 			if(this.change_max<=this.change_cnt) {
-				//alert('已達換牌上限, '+this.change_cnt+'次.');
+				alert('已達換牌上限, '+this.change_cnt+'次.');
 			} else {
 			
 				var tmp = document.getElementsByName("checked");
@@ -201,7 +201,11 @@
 		
 		this.duel = function() {
 		
-		
+			console.log('比牌好難!');
+			
+
+			
+			
 		}
 		
 		this.createSet();
