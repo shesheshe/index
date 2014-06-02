@@ -3,8 +3,28 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
 	<title>poker games</title>
+	<style type="text/css">
+		span {
+			display: inline-block;
+			width: 50px;
+			text-align: center;
+		}
+		
+		span.check {
+			border: 0px;
+		}
+		
+		span.checked {
+			border: 1px solid black;
+		}
+	</style>
 </head>
 <body>
+	<div id="player1"></div>
+	<div id="player0"></div>
+	<input type="button" value="change" onclick="deck.change(0);"/>
+	<input type="button" value="gogogo" onclick="deck.duel();"/>
+
 <script type="text/javascript" src="js/lib/common.js"> </script>
 <script type="text/javascript">
 	
@@ -13,19 +33,28 @@
 		this.y = 0;
 		this.temp = 0;
 		this.setsize = 52;
-		this.allset = set * this.setsize;
-		this.allcard = [];
+		this.allset = this.setsize * (set || 1);	//使用幾組poker, 預設1組
+		this.change_cnt = 0;
+		this.change_max = 3;
+		this.allcard = [];	//剩下的牌
+		this.hand = [];		//你的手牌
+		this.players = ['p1', 'p2', 'p3', 'p4'];
 		
+		/*
+		* 建立牌組 & 洗牌
+		*/
 		this.createSet = function() {
 			for(var i=0; i<this.allset; i++) {
 				this.allcard[i] = i%this.setsize+1;
 			}
-			for(var i=0; i<1000; i++) {
+			for(var i=0; i<1000; i++) {	//洗1000次
 				this.shuffling();		
 			}
-
 		}
 
+		/*
+		* 隨機交換兩個變數
+		*/
 		this.shuffling = function() {
 			this.x = usefloor(0, this.setsize-1);
 			this.y = usefloor(0, this.setsize-1);
@@ -34,17 +63,161 @@
 			this.allcard[this.y] = this.temp;
 		}
 		
+		/*
+		* 陣列大到小排序
+		*/
+		this.sort = function(cards) {
+			cards.sort(function(a, b) { return a - b; });
+		}
+		
+		/*
+		* 數字轉完整花色
+		*/
+		this.number2flower = function(card) {
+			return this.return_flower(card) + '' + this.return_number(card);
+		}
+		
+		/*
+		* 數字轉花色
+		*/
+		this.return_flower = function(number) {
+			var color = '', number = parseInt((number-1) / 13);
+			switch(number) {
+				case 0: color = 'S'; break;
+				case 1: color = 'H'; break;
+				case 2: color = 'D'; break;
+				case 3: color = 'C'; break;
+			}
+			return color;
+		}
+		
+		/*
+		* 數字轉點數
+		*/
+		this.return_number = function(number) {
 
-		this.show = function() {
+			var tmp = '', number = parseInt(number % 13);
+
+			switch(number) {
+				case 1: tmp = 'A'; break;
+				case 11: tmp = 'J'; break;
+				case 12: tmp = 'Q'; break;
+				case 0: tmp = 'K'; break;
+				default: tmp = number;
+			}
+			return tmp;		
+		}
+		
+		/*
+		* 換牌
+		*/
+		this.change = function(player) {
+
+			if(this.change_max<=this.change_cnt) {
+				//alert('已達換牌上限, '+this.change_cnt+'次.');
+			} else {
+			
+				var tmp = document.getElementsByName("checked");
+				var val = 0;
+
+				for(var i=0; i<tmp.length; i++) {
+					val = tmp[i].getAttribute('value');
+					this.players[player] = exec(val, this.players[player]);
+				}
+				
+				function exec(value, player) {
+					for(var i=0; i<player.length; i++) {
+						if(player[i] == value) {
+							player.splice(i, 1);
+							return player;
+						}
+					}
+				};
+				this.draw(player, tmp.length);
+				this.refresh(player);
+			}
+			this.change_cnt++;
+		}
+
+		this.show = function(player) {
+			this.output(this.players[player], player);
+		}
+		
+		/*
+		* 刷新頁面
+		*/
+		this.refresh = function(player) {
+			this.output(this.players[player], player);
+		}
+		
+		/*
+		* 輸出到HTML
+		*/
+		this.output = function(hand, player) {
+			var cards = document.getElementById('player'+player);
+			cards.innerHTML = '';	
+			for(var k in hand) {
+				var card = document.createElement("span");
+				card.innerHTML = this.number2flower(hand[k]);
+				card.setAttribute('value', hand[k]);
+				
+				if(player <= 0) {
+					card.onclick = function() {
+						
+						if(this.getAttribute('checked') == '1' ||
+						   this.getAttribute('checked') == undefined) {
+							this.setAttribute('class', 'checked');
+							this.setAttribute('name', 'checked');
+
+							this.setAttribute('checked', '0');
+						} else {
+							this.setAttribute('class', 'check');
+							this.setAttribute('name', 'check');
+							this.setAttribute('checked', '1');
+						}
+					
+					};				
+				}
+				
+				cards.appendChild(card);
+			}				
+		
+		}
+		
+		/*
+		* 抽cnt張
+		*/
+		this.draw = function(player, cnt) {
+			var tmp = [], cnt = cnt || 5;
+			for(var i=0; i<cnt; i++) {
+				tmp[i] = this.allcard.shift();
+			}
+			this.players[player] = this.players[player]==('p'+(player+1)) ? tmp : this.players[player].concat(tmp);
+			this.sort(this.players[player]);
+			
+			console.log('剩下:');
 			console.log(this.allcard);
+		}
+		
+		this.duel = function() {
+		
+		
 		}
 		
 		this.createSet();
 	}
 
-	var one = new poker(3);
-	one.show();
+	var deck = new poker();
 	
+	deck.draw(0);
+	deck.draw(1);
+
+	console.log(deck.players[0]);
+	console.log(deck.players[1]);
+
+	deck.show(1);
+	deck.show(0);
+
 </script>
 <script>
 /*
