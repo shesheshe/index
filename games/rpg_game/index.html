@@ -12,6 +12,10 @@
 
 <div id = "image_box" style="display:none">
     <img src="pic/image_ani_01.png" id = "image_ani_01"/>
+    <img src="pic/image_ani_02.png" id = "image_ani_02"/>
+    <img src="pic/image_ani_03.png" id = "image_ani_03"/>
+    <img src="pic/image_ani_04.png" id = "image_ani_04"/>
+    <img src="pic/image_ani_05.png" id = "image_ani_05"/>
     <img src="pic/image_object.png" id = "image_object"/>
 </div>
 <div style="width:768px; margin: 0 auto; border: 3px solid black">
@@ -32,15 +36,19 @@
 <script type="text/javascript" src ="enter.js"></script>
 <script type="text/javascript">
 //背景地圖
-draw_map("map_01");
+draw_map_ground("map_01");
+draw_map_ani("map_01");
 
 //建立一個英雄(自己)腳色
-var hero = new Hero(15,15,"image_ani_01",1);
+var hero = new Hero("hero",25,15,"image_ani_01",1,1);
 
 setInterval(drawCanvas,30);
 function drawCanvas() {
     play_area_02.clearRect(0, 0, play_area_02_w, play_area_02_h);
-    hero.draw();
+    
+	map_ani[0].do_work();
+	map_ani[1].do_work();
+	hero.draw();
 }
 
 </script>

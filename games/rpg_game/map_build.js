@@ -7,7 +7,7 @@ for (j = 0; j < play_area_j; j++ ) {
 }
 
 //解析地圖並且畫出來
-function draw_map(map_no) {
+function draw_map_ground(map_no) {
     var image_object = document.getElementById("image_object");
     var back_ground = this[map_no]["map_ground"]["back_ground"];
 
@@ -18,8 +18,8 @@ function draw_map(map_no) {
     //取得設定值
     var image_object_set;
     
-    for(j = 0; j < 24; j++ ) {       //y軸    
-        for (i = 0; i < 48; i++ ) {   //x軸
+    for(j = 0; j < play_area_j; j++ ) {        //y軸    
+        for (i = 0; i < play_area_i; i++ ) {   //x軸
             //補0 j
             j < 10 ? str_j = "0"+j: str_j = ""+j;
             //補0 i 
@@ -39,14 +39,41 @@ function draw_map(map_no) {
             //階層畫圖 1 or 3
             switch (image_object_set[1]) {
                 case 1:
-                    play_area_01.drawImage(image_object, int_i*unit, int_j*unit, unit, unit, i*unit, j*unit, unit, unit);
-                break;
+                    play_area_01.drawImage(image_object, int_i*unit, int_j*unit, unit, unit, i*unit, j*unit, unit, unit);	
+				break;
                 case 3:
                     play_area_03.drawImage(image_object, int_i*unit, int_j*unit, unit, unit, i*unit, j*unit, unit, unit);
-                break;
+				break;
             }
             
-            map[j][i] = image_object_set[0];
+			if (image_object_set[0] != 0) {
+				map[j][i] = "ground";
+			}
+			else {
+				map[j][i] = image_object_set[0];
+			}
+			
+			//輔助功能
+			//play_area_03.fillText(image_object_set[0],i*unit, j*unit+unit/2);	
         }    
+    }
+}
+
+var map_ani = []
+
+//畫出地圖上的人或怪物
+function draw_map_ani(map_no) {
+	//迴圈產出ani
+	for(var key in this[map_no]["map_ani"]){ 
+		map_ani[key] = new People ("map_ani["+key+"]", 
+						           this[map_no]["map_ani"][key][1], 
+						           this[map_no]["map_ani"][key][2], 
+						           this[map_no]["map_ani"][key][3], 
+						           this[map_no]["map_ani"][key][4],
+						           this[map_no]["map_ani"][key][5], 
+						           this[map_no]["map_ani"][key][0], 
+						           this[map_no]["map_ani"][key][6], 
+						           this[map_no]["map_ani"][key][7],
+						           this[map_no]["map_ani"][key][8]);
     }
 }
