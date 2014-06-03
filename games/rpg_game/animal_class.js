@@ -156,18 +156,62 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     //繼承Animal 對象冒充繼承
 	this.animal = Animal;
 	this.animal(varanem, x, y, image_name, real_h ,speed);
-    //說話記數
-	this.speak_count;
-	
+    //普通攻擊
+    this.attack_gen_con = 0;
+    this.attack_gen_x;
+    this.attack_gen_y;
+    
 	//對話!!
 	this.dialo = function () {
-		//取得對話人物編碼
-		eval(map[this.y][this.x]).speak();
-	}
+        if (map[this.y][this.x] != this.varanem && map[this.y][this.x] != "ground") {
+            play_area_03.clearRect(0, 0, play_area_03_w, play_area_03_h);
+            //取得對話人物編碼
+            eval(map[this.y][this.x]).speak();
+        }
+    }
 	
     //會攻擊(普通攻擊)
+    this.hero_attack_gen = function () {
+        switch (this.dir) {
+            case 0:
+                this.attack_gen_x = this.x;
+                this.attack_gen_y = this.y+this.h_unit;
+            break;
+            case 1:
+                this.attack_gen_x = this.x-1;
+                this.attack_gen_y = this.y+1;
+            break;
+            case 2:
+                this.attack_gen_x = this.x+this.w_unit;
+                this.attack_gen_y = this.y+1;
+            break;
+            case 3:
+                this.attack_gen_x = this.x;
+                this.attack_gen_y = this.y-1;
+            break;
+        }
+        
+        play_area_02.drawImage(attack_gen,
+                               0, 
+                               0, 
+                               attack_gen_size, 
+                               attack_gen_size, 
+                               this.attack_gen_x*unit,
+                               this.attack_gen_y*unit,
+                               unit, 
+                               unit);
+    }
     
     //會攻擊(技能攻擊)
+    
+    
+    this.do_work = function () {
+		this.draw();
+        
+        if (this.attack_gen_con == 1) {
+            this.hero_attack_gen();
+        }
+	}
 }
 
 //路人
@@ -184,19 +228,42 @@ function People (varanem, x, y, image_name, real_h ,speed, name, speak, route, b
     //計算運行幾次this.move function
     this.fun_move_count = 0;
     this.route_key = 0;
+    //移動開關
+    var stop_move = 1;
+    var timer;
 	//說話 對話
 	this.speak_count = 0;
-	this.speak = function () {
-		if (this.speak_count == speak.length) {
+    this.speak = function () {
+        //方向向下
+        this.dir = 0;
+        stop_move = 0;
+        clearTimeout(timer);
+        
+        if (this.speak_count == speak.length) {
 			this.speak_count = 0;
 		}
-
-		play_area_03.font = "bold 9pt Courier";
-		play_area_03.fillText(speak[this.speak_count],this.x*unit,(this.y-1)*unit);
-		
+        
+        play_area_03.beginPath();
+		play_area_03.fillStyle="#E0E0E0";
+        play_area_03.rect((this.x-3)*unit, (this.y-3)*unit,speak[this.speak_count].length*20, 25);
+        play_area_03.fill();
+        
+        play_area_03.fillStyle="black";
+        play_area_03.font = "bold 18px Courier";
+		play_area_03.fillText(speak[this.speak_count],(this.x-3)*unit,(this.y-2)*unit);
+        
 		this.speak_count++;
+        //暫停移動5秒
+        timer = setTimeout(this.speak_delay,5000);
 	}
 	
+    this.speak_delay = function () {
+        //清除對話
+        play_area_03.clearRect(0, 0, play_area_03_w, play_area_03_h);
+        //進行移動
+        stop_move = 1;
+    }
+    
 	this.move = function () {
 		//路人移動
 		this.fun_move_count++;
@@ -229,8 +296,12 @@ function People (varanem, x, y, image_name, real_h ,speed, name, speak, route, b
 	
 	this.do_work = function () {
 		this.draw();
-		play_area_02.font = "bold 9pt Courier";
+		play_area_02.font = "bold 9px Courier";
 		play_area_02.fillText(this.name,this.x*unit,this.y*unit);
-		this.move();
+
+        if (stop_move == 1) {
+            this.move();
+        }
+        
 	}
 }

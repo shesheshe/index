@@ -27,3 +27,8 @@ var status_area_obj = document.getElementById('status_area');
 var status_area = status_area_obj.getContext('2d');
 var status_area_w = status_area_obj.width;
 var status_area_h = status_area_obj.height;
+
+//載入圖片 普通攻擊
+var attack_gen = document.getElementById("attack_gen");
+//普通攻擊每張大小
+var attack_gen_size = 24;

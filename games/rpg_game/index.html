@@ -11,8 +11,8 @@
 </style>
 
 <div id = "image_box" style="display:none">
-    <img src="pic/image_ani_01.png" id = "image_ani_01"/>
-    <img src="pic/image_ani_02.png" id = "image_ani_02"/>
+    <img src="pic/image_hero.png" id = "image_hero"/>
+    <img src="pic/attack_gen.png" id = "attack_gen"/>
     <img src="pic/image_ani_03.png" id = "image_ani_03"/>
     <img src="pic/image_ani_04.png" id = "image_ani_04"/>
     <img src="pic/image_ani_05.png" id = "image_ani_05"/>
@@ -20,14 +20,15 @@
 </div>
 <div style="width:768px; margin: 0 auto; border: 3px solid black">
     <div id="play_box" style="width:768px; height:384px;">  <!--多層canvas-->
-        <canvas id="play_area_03" width="768" height="384" style="position: absolute; z-index: 3"></canvas>  <!--遮蔽物-->
+        <canvas id="play_area_03" width="768" height="384" style="position: absolute; z-index: 3"></canvas>  <!--對話框-->
         <canvas id="play_area_02" width="768" height="384" style="position: absolute; z-index: 2"></canvas>  <!--動物-->
-        <canvas id="play_area_01" width="768" height="384" style="position: absolute; z-index: 1"></canvas>  <!---->
+        <canvas id="play_area_01" width="768" height="384" style="position: absolute; z-index: 1"></canvas>  <!--背景-->
     </div>
     <div id="status_box" style="width:768px; height:100px;">
         <canvas id="status_area" width="768" height="96"></canvas>
     </div>
 </div>
+移動上下左右鍵，空白鍵對話(要在對話的角色下面)，Q鍵普通攻擊
 
 <script type="text/javascript" src ="variable.js"></script>
 <script type="text/javascript" src ="map_data.js"></script>
@@ -40,15 +41,19 @@ draw_map_ground("map_01");
 draw_map_ani("map_01");
 
 //建立一個英雄(自己)腳色
-var hero = new Hero("hero",25,15,"image_ani_01",1,1);
+var hero = new Hero("hero",25,15,"image_hero",1,1);
 
 setInterval(drawCanvas,30);
 function drawCanvas() {
+    //清除
     play_area_02.clearRect(0, 0, play_area_02_w, play_area_02_h);
+    //產生動物
+    for (var key in map_ani) {
+        map_ani[key].do_work();
+    }
+    //產生英雄
+	hero.do_work();
     
-	map_ani[0].do_work();
-	map_ani[1].do_work();
-	hero.draw();
 }
 
 </script>
