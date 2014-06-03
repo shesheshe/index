@@ -114,7 +114,6 @@
 	var start_run = document.getElementById('start_run');
 	start_run.onclick = function() {
             
-            check_compare_radio(true);//封鎖radio
             var money_check = parseInt(document.getElementById('money_check').innerHTML);
             var money = parseInt(document.getElementById('money').value);
             var money_new = (money>0)?money:0;
@@ -126,8 +125,10 @@
             
             if(check_compare()==0) return error_message("請選擇大or小！");
             
-            document.getElementById('start_run').setAttribute("disabled","disabled");
             
+            document.getElementById('start_run').setAttribute("disabled","disabled");
+            document.getElementById('money').setAttribute("disabled","disabled");
+            check_compare_radio(true);//封鎖radio
             //扣除金額
             var this_money_dice = document.getElementById("money_check");
             this_money_dice.innerHTML = money_check-money_new;
@@ -218,6 +219,7 @@
         function show_answer()
         {
             document.getElementById('start_run').removeAttribute("disabled");
+            document.getElementById('money').removeAttribute("disabled");
             var check_array = [];
             for(var i = 1; i<5; i++)
             {
