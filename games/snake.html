@@ -28,6 +28,8 @@
     var scene = null;
     var cnv = null;
     var foodpoint = null;
+	
+	var move_interval_id = null;
     
     var sanke = new Array(3);
     sanke[0] = [2,2];
@@ -61,8 +63,8 @@
         //delegate keypress event
         $(cnv).on( "keydown", keyevent );
         
-        setInterval("render()",100);
-        setInterval("move()",100);
+        setInterval("render()",50);
+        move_interval_id = setInterval("move()",100);
         
         cnv.focus();
         
@@ -164,11 +166,11 @@
         //看是不是自宮了
         for (var z = 1; z < sanke.length; z++) {
             if (sanke[z][1] == sanke[0][1] && sanke[z][0] == sanke[0][0]){
+				clearInterval(move_interval_id);
                 alert("哭吧~");
                 location.reload();
             }
         }
-        
     }
     
     function food(){
@@ -177,13 +179,13 @@
             scene[foodpoint[0]][foodpoint[1]] = 1;
             return;
         }
-            
+
         var maxNum = (ROWCOUNT-1);
         var minNum = 0;  
         var isOK = false;
         while (!isOK) {
             var r = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-            maxNum = (COLCOUNT-1);  
+            maxNum = (COLCOUNT-1);
             var c = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
             if (scene[r][c] == 0){
                 foodpoint = [r,c];
