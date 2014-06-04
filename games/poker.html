@@ -201,10 +201,21 @@
 		
 		this.duel = function() {
 		
-			console.log('比牌好難!');
+			//console.log('比牌好難!');
 			
 
 			
+			
+			
+		}
+		
+		this.monster = function(cards) { 
+			var cnt = 0;
+			for(var k in this.players[0]) {
+				if(parseInt(this.monster%13)) {
+					cnt++;
+				}
+			}
 			
 		}
 		
@@ -222,6 +233,7 @@
 	deck.show(1);
 	deck.show(0);
 
+	deck.monster();
 </script>
 <script>
 /*
