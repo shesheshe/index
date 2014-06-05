@@ -157,9 +157,16 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
 	this.animal = Animal;
 	this.animal(varanem, x, y, image_name, real_h ,speed);
     //普通攻擊
-    this.attack_gen_con = 0;
-    this.attack_gen_x;
-    this.attack_gen_y;
+    this.attack_con = 0;
+    this.attack_x;
+    this.attack_y;
+    //fire_ball
+    this.fire_ball_array = [];
+    
+    this.life ;
+    this.magic ;
+    this.level ;
+    this.exp ;
     
 	//對話!!
 	this.dialo = function () {
@@ -171,45 +178,97 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     }
 	
     //會攻擊(普通攻擊)
-    this.hero_attack_gen = function () {
+    this.hero_attack = function () {
         switch (this.dir) {
             case 0:
-                this.attack_gen_x = this.x;
-                this.attack_gen_y = this.y+this.h_unit;
+                this.attack_x = this.x;
+                this.attack_y = this.y+this.h_unit;
             break;
             case 1:
-                this.attack_gen_x = this.x-1;
-                this.attack_gen_y = this.y+1;
+                this.attack_x = this.x-1;
+                this.attack_y = this.y+1;
             break;
             case 2:
-                this.attack_gen_x = this.x+this.w_unit;
-                this.attack_gen_y = this.y+1;
+                this.attack_x = this.x+this.w_unit;
+                this.attack_y = this.y+1;
             break;
             case 3:
-                this.attack_gen_x = this.x;
-                this.attack_gen_y = this.y-1;
+                this.attack_x = this.x;
+                this.attack_y = this.y-1;
             break;
         }
         
-        play_area_02.drawImage(attack_gen,
-                               0, 
-                               0, 
-                               attack_gen_size, 
-                               attack_gen_size, 
-                               this.attack_gen_x*unit,
-                               this.attack_gen_y*unit,
-                               unit, 
-                               unit);
+        play_area_02.drawImage(attack,
+                               attack_array[this.dir][0], 
+                               attack_array[this.dir][1], 
+                               attack_array[this.dir][2], 
+                               attack_array[this.dir][3], 
+                               this.attack_x*unit,
+                               this.attack_y*unit,
+                               attack_array[this.dir][2]/2, 
+                               attack_array[this.dir][3]/2);
+        //判斷有沒有攻擊到敵人 有的話敵人會失血
     }
     
     //會攻擊(技能攻擊)
-    
+    this.fire_ball = function () {
+        
+        //魔力判斷 fun
+        
+        //產生火球
+        this.fire_ball_array.push([this.x,this.y,this.dir]);
+    }
     
     this.do_work = function () {
 		this.draw();
         
-        if (this.attack_gen_con == 1) {
-            this.hero_attack_gen();
+        if (this.attack_con == 1) {
+            this.hero_attack();
+        }
+        
+        for (var key in this.fire_ball_array) {
+            switch (this.fire_ball_array[key][2]) {
+                case 0:
+                    this.fire_ball_array[key][0];
+                    this.fire_ball_array[key][1]++;
+                break;
+                case 1:
+                    this.fire_ball_array[key][0]--;
+                    this.fire_ball_array[key][1];
+                break;
+                case 2:
+                    this.fire_ball_array[key][0]++;
+                    this.fire_ball_array[key][1];
+                break;
+                case 3:
+                    this.fire_ball_array[key][0];
+                    this.fire_ball_array[key][1]--;
+                break;
+            }
+            
+            play_area_02.drawImage(magic,
+                                   magic_array[0][0], 
+                                   magic_array[0][1], 
+                                   magic_array[0][2], 
+                                   magic_array[0][3], 
+                                   this.fire_ball_array[key][0]*unit,
+                                   this.fire_ball_array[key][1]*unit,
+                                   magic_array[0][2]/2, 
+                                   magic_array[0][3]/2)
+            
+            //打到東西或出界會消失
+            if (this.fire_ball_array[key][0] <= 0 || 
+                     this.fire_ball_array[key][0] >= play_area_i ||
+                     this.fire_ball_array[key][1] <= 0 || 
+                     this.fire_ball_array[key][1] >= play_area_j) {
+                delete this.fire_ball_array[key];
+            }
+            else if (map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != 0 && 
+                map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != this.varanem) {
+                
+                delete this.fire_ball_array[key];
+            }
+
         }
 	}
 }
@@ -304,4 +363,10 @@ function People (varanem, x, y, image_name, real_h ,speed, name, speak, route, b
         }
         
 	}
+}
+
+function Monster (varanem, x, y, image_name, real_h ,speed, ) {
+    //繼承Animal 對象冒充繼承
+	this.animal = Animal;
+	this.animal(varanem, x, y, image_name, real_h ,speed);
 }

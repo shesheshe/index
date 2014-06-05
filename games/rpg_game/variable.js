@@ -29,6 +29,12 @@ var status_area_w = status_area_obj.width;
 var status_area_h = status_area_obj.height;
 
 //載入圖片 普通攻擊
-var attack_gen = document.getElementById("attack_gen");
-//普通攻擊每張大小
-var attack_gen_size = 24;
+var attack = document.getElementById("attack");
+//普通攻擊每張圖片 [開始x位置,開始Y位置,圖寬,圖高]
+var attack_array = [[0,0,64,32],[64,0,32,64],[96,0,32,64],[128,0,64,32]];
+//載入圖片 法術攻擊
+var magic = document.getElementById("magic");
+//法術攻擊每張圖片 [開始x位置,開始Y位置,圖寬,圖高]
+var magic_array = [[0,0,64,64],[64,0,64,128],[128,0,64,128]];
+
+var this_map = "map_02";
