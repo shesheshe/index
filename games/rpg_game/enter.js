@@ -20,6 +20,7 @@ document.onkeydown = function(event){
 		break;
 		//按鍵普通攻擊
 		case 81:  //q 
+            hero.level_cheak();
             clearTimeout(attack_time);
             
             hero.attack_con = 1;

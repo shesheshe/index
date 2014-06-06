@@ -162,11 +162,41 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     this.attack_y;
     //fire_ball
     this.fire_ball_array = [];
+    this.fire_ball_mp =20;
     
-    this.life ;
-    this.magic ;
-    this.level ;
-    this.exp ;
+    this.exp = 0;
+    this.exp_array = {
+        1:[0,100,50,10,10],2:[10,110,60,12,12],3:[20,120,70,14,14],4:[30,130,80,16,16],5:[40,140,90,18,18],
+        6:[50,150,100,20,20],7:[60,160,110,22,22],8:[70,170,120,24,24],9:[80,180,130,26,26],10:[90,200,150,30,30]
+    }
+    this.level = 1;
+    this.hp = this.exp_array[this.level][1];
+    this.mp = this.exp_array[this.level][2];
+    this.atk = this.exp_array[this.level][3];
+    this.def = this.exp_array[this.level][4];
+    //level => exp, hp, mp, atk, def
+    
+    //素質
+    this.level_cheak = function () {
+        //alert(this.exp_array[this.level+1][0]);
+        //取得下一等級的需求經驗值
+        if (this.exp >= this.exp_array[this.level+1][0]) {
+            this.level = this.level+1;
+            this.hp = this.exp_array[this.level][1];
+            this.mp = this.exp_array[this.level][2];
+            this.atk = this.exp_array[this.level][3];
+            this.def = this.exp_array[this.level][4];
+        }
+    }   
+    
+    //魔力每秒回復
+    this.mp_up = function () {
+        if (this.mp < this.exp_array[this.level][2]) {
+            this.mp++;
+            status_area_update ();
+        }
+    }
+    
     
 	//對話!!
 	this.dialo = function () {
@@ -214,13 +244,19 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     this.fire_ball = function () {
         
         //魔力判斷 fun
+        if (this.mp > this.fire_ball_mp) {
+            //產生火球
+            this.fire_ball_array.push([this.x,this.y,this.dir]);
+            //扣魔力
+            this.mp = this.mp - this.fire_ball_mp;
+        }
         
-        //產生火球
-        this.fire_ball_array.push([this.x,this.y,this.dir]);
+        status_area_update ();
     }
     
     this.do_work = function () {
 		this.draw();
+
         
         if (this.attack_con == 1) {
             this.hero_attack();
@@ -267,9 +303,11 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
                 map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != this.varanem) {
                 
                 delete this.fire_ball_array[key];
+             
             }
 
         }
+
 	}
 }
 
@@ -365,8 +403,10 @@ function People (varanem, x, y, image_name, real_h ,speed, name, speak, route, b
 	}
 }
 
-function Monster (varanem, x, y, image_name, real_h ,speed, ) {
+function Monster (varanem, x, y, image_name, real_h ,speed ,hp ,atk, def, drop_exp) {
     //繼承Animal 對象冒充繼承
 	this.animal = Animal;
 	this.animal(varanem, x, y, image_name, real_h ,speed);
+    
+    
 }
