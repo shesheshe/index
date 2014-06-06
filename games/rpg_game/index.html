@@ -12,7 +12,8 @@
 
 <div id = "image_box" style="display:none">
     <img src="pic/image_hero.png" id = "image_hero"/>
-    <img src="pic/attack_gen.png" id = "attack_gen"/>
+    <img src="pic/attack.png" id = "attack"/>
+    <img src="pic/magic.png" id = "magic"/>
     <img src="pic/image_ani_03.png" id = "image_ani_03"/>
     <img src="pic/image_ani_04.png" id = "image_ani_04"/>
     <img src="pic/image_ani_05.png" id = "image_ani_05"/>
@@ -24,11 +25,11 @@
         <canvas id="play_area_02" width="768" height="384" style="position: absolute; z-index: 2"></canvas>  <!--動物-->
         <canvas id="play_area_01" width="768" height="384" style="position: absolute; z-index: 1"></canvas>  <!--背景-->
     </div>
-    <div id="status_box" style="width:768px; height:100px;">
+    <div id="status_box" style="width:768px; height:96px; border: 3px solid black">
         <canvas id="status_area" width="768" height="96"></canvas>
     </div>
 </div>
-移動上下左右鍵，空白鍵對話(要在對話的角色下面)，Q鍵普通攻擊
+移動上下左右鍵，道路底端按ENTER可以換地圖，空白鍵對話(要在對話的角色下面)，Q鍵普通攻擊，W鍵射火球
 
 <script type="text/javascript" src ="variable.js"></script>
 <script type="text/javascript" src ="map_data.js"></script>
@@ -36,26 +37,44 @@
 <script type="text/javascript" src ="animal_class.js"></script>
 <script type="text/javascript" src ="enter.js"></script>
 <script type="text/javascript">
-//背景地圖
-draw_map_ground("map_01");
-draw_map_ani("map_01");
-
 //建立一個英雄(自己)腳色
 var hero = new Hero("hero",25,15,"image_hero",1,1);
 
-setInterval(drawCanvas,30);
-function drawCanvas() {
-    //清除
-    play_area_02.clearRect(0, 0, play_area_02_w, play_area_02_h);
-    //產生動物
-    for (var key in map_ani) {
-        map_ani[key].do_work();
+function status_area_update () {
+    status_area.fillStyle='#d0d0d0';
+    status_area.fillRect(0,0,status_area_w,status_area_h); 
+    status_area.fillStyle='black';
+    status_area.font = "bold 18px Courier";
+    status_area.fillText("等級: "+hero.level,10,1*unit);
+    status_area.fillText("生命: "+hero.hp+"/"+hero.exp_array[hero.level][1],10,2*unit);
+    status_area.fillText("魔力: "+hero.mp+"/"+hero.exp_array[hero.level][2],10,3*unit);
+    status_area.fillText("攻擊: "+hero.atk,10,4*unit);
+    status_area.fillText("防禦: "+hero.def,10,5*unit);
+}
+//setTimeout(window.onload,1000);
+window.onload = function () {
+    //背景地圖
+    draw_map_ground(this_map);
+    draw_map_ani(this_map);
+    
+    status_area_update ();
+    
+    setInterval(drawCanvas,30);
+    function drawCanvas() {
+        //清除
+        play_area_02.clearRect(0, 0, play_area_02_w, play_area_02_h);
+        //產生動物
+        for (var key in map_ani) {
+            map_ani[key].do_work();
+        }
+        //產生英雄
+        hero.do_work();
+        
+        
     }
-    //產生英雄
-	hero.do_work();
+    
     
 }
-
 </script>
 
 </body>

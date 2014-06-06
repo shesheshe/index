@@ -59,7 +59,7 @@ function draw_map_ground(map_no) {
     }
 }
 
-var map_ani = []
+var map_ani = [];
 
 //畫出地圖上的人或怪物
 function draw_map_ani(map_no) {
