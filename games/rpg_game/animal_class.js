@@ -162,7 +162,7 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     this.attack_y;
     //fire_ball
     this.fire_ball_array = [];
-    this.fire_ball_mp =20;
+    this.fire_ball_mp =50;
     
     this.exp = 0;
     this.exp_array = {
@@ -191,10 +191,8 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     
     //魔力每秒回復
     this.mp_up = function () {
-        if (this.mp < this.exp_array[this.level][2]) {
             this.mp++;
             status_area_update ();
-        }
     }
     
     
@@ -237,14 +235,40 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
                                this.attack_y*unit,
                                attack_array[this.dir][2]/2, 
                                attack_array[this.dir][3]/2);
+        
         //判斷有沒有攻擊到敵人 有的話敵人會失血
+        if (map[this.attack_y][this.attack_x] != 0) {
+                
+                var obj_touch = map[this.attack_y][this.attack_x];
+                eval(obj_touch).hp -= Math.ceil(this.atk/6);
+                
+                if (obj_touch.match("map_mon")) {
+                    if ( eval(obj_touch).hp >= 0) {
+                        
+                    }
+                    else {
+                        //得到經驗值
+                       this.exp += eval(obj_touch).drop_exp;
+                       this.level_cheak();
+                       eval(obj_touch).clear_occ(); 
+                       status_area_update ();
+                       
+                        for(var key2 in eval(this_map)["map_mon"]) {
+                            if (eval(obj_touch) == map_mon[key2]) {
+
+                                delete map_mon[key2];
+                            }
+                        }
+                    }                 
+                }        
+            }
     }
     
     //會攻擊(技能攻擊)
     this.fire_ball = function () {
         
         //魔力判斷 fun
-        if (this.mp > this.fire_ball_mp) {
+        if (this.mp >= this.fire_ball_mp) {
             //產生火球
             this.fire_ball_array.push([this.x,this.y,this.dir]);
             //扣魔力
@@ -302,10 +326,40 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
             else if (map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != 0 && 
                 map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != this.varanem) {
                 
+                var obj_touch = map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]];
+                eval(obj_touch).hp -= Math.ceil(this.atk-eval(obj_touch).def*0.7);
+                
+
+                
+                if (obj_touch.match("map_mon")) {
+                    if ( eval(obj_touch).hp >= 0) {
+                        
+                    }
+                    else {
+                        //得到經驗值
+                       this.exp += eval(obj_touch).drop_exp;
+                       this.level_cheak();
+                       eval(obj_touch).clear_occ(); 
+                       status_area_update ();
+                         
+                        for(var key2 in eval(this_map)["map_mon"]) {
+                            if (eval(obj_touch) == map_mon[key2]) {
+
+                                delete map_mon[key2];
+                            }
+                        }
+                    }
+                    
+                }
+
                 delete this.fire_ball_array[key];
              
             }
 
+        }
+        
+        if (this.mp < this.exp_array[this.level][2]) {
+            this.mp_up();
         }
 
 	}
@@ -403,10 +457,83 @@ function People (varanem, x, y, image_name, real_h ,speed, name, speak, route, b
 	}
 }
 
-function Monster (varanem, x, y, image_name, real_h ,speed ,hp ,atk, def, drop_exp) {
+function Monster (varanem, x, y, image_name, real_h ,speed,name ,hp ,atk, def, drop_exp) {
     //繼承Animal 對象冒充繼承
 	this.animal = Animal;
 	this.animal(varanem, x, y, image_name, real_h ,speed);
     
+    this.name = name;
+    this.hp = hp;
+    this.atk = atk;
+    this.def = def;
+    this.drop_exp = drop_exp;
+
+	//緩衝 不要讓圖片動太快(移動)
+    this.butter_move = 20;
+    //計算運行幾次this.move function
+    this.fun_move_count = 0;
+
+	this.move = function () {
+		//
+		this.fun_move_count++;
+        if (this.fun_move_count == this.butter_move) {
+			switch (Math.floor(Math.random()*5)) {
+				case 0:
+				break;
+				case 1:
+					this.move_down();
+				break;
+				case 2:
+					this.move_left();
+				break;
+				case 3:
+					this.move_right();
+				break;
+				case 4:
+					this.move_up();
+				break;
+			}
+	
+            this.fun_move_count = 0;
+        }
+	}
     
+    this.attack = function () {
+        if (this.atk - hero.def > 0) {
+            hero.hp -= this.atk - hero.def;
+        }
+        else {
+            hero.hp -= 1;
+        }
+        
+        status_area_update ();
+    }
+    
+    this.do_work = function () {
+		this.draw();
+		play_area_02.font = "bold 9px Courier";
+		play_area_02.fillText(this.name+" HP"+this.hp,this.x*unit,this.y*unit);
+        
+        if (this.y+this.h_unit < play_area_j && map[this.y+this.h_unit][this.x] == "hero") {
+            this.dir = 0;
+            this.attack();
+        }
+        else if (this.x-1 > 0 && map[this.y][this.x-1] == "hero") {
+            this.dir = 1;
+            this.attack();
+        }
+        else if (this.x+this.w_unit < play_area_i && map[this.y][this.x+this.w_unit] == "hero") {
+            this.dir = 2;
+            this.attack();
+        }
+        else if (this.y-1 > 0 && map[this.y-1][this.x] == "hero") {
+            this.dir = 3;
+            this.attack();
+        }
+        else {
+            this.move();
+        }
+        
+
+	}
 }
