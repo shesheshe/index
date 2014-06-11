@@ -14,9 +14,15 @@
     <img src="pic/image_hero.png" id = "image_hero"/>
     <img src="pic/attack.png" id = "attack"/>
     <img src="pic/magic.png" id = "magic"/>
+    <img src="pic/image_ani_02.png" id = "image_ani_02"/>
     <img src="pic/image_ani_03.png" id = "image_ani_03"/>
     <img src="pic/image_ani_04.png" id = "image_ani_04"/>
     <img src="pic/image_ani_05.png" id = "image_ani_05"/>
+    <img src="pic/image_ani_06.png" id = "image_ani_06"/>
+    <img src="pic/image_ani_07.png" id = "image_ani_07"/>
+    <img src="pic/image_ani_08.png" id = "image_ani_08"/>
+    <img src="pic/image_ani_09.png" id = "image_ani_09"/>
+    <img src="pic/image_ani_10.png" id = "image_ani_10"/>
     <img src="pic/image_object.png" id = "image_object"/>
 </div>
 <div style="width:768px; margin: 0 auto; border: 3px solid black">
@@ -51,6 +57,20 @@ function status_area_update () {
     status_area.fillText("攻擊: "+hero.atk,10,4*unit);
     status_area.fillText("防禦: "+hero.def,10,5*unit);
 }
+
+function game_over () {
+    play_area_01.clearRect(0, 0, play_area_01_w, play_area_01_h);
+    play_area_02.clearRect(0, 0, play_area_02_w, play_area_02_h);
+    play_area_03.clearRect(0, 0, play_area_03_w, play_area_03_h);
+    
+    play_area_01.beginPath();
+	play_area_01.fillStyle="#000000";
+    play_area_01.rect(0,0,play_area_01_w,play_area_01_h);
+    play_area_01.fill();
+    play_area_01.fillStyle='#FFFFFF';
+    play_area_01.font = "bold 72px Courier";
+    play_area_01.fillText("GAME OVER",200,200);
+}
 //setTimeout(window.onload,1000);
 window.onload = function () {
     //背景地圖
@@ -59,21 +79,27 @@ window.onload = function () {
     
     status_area_update ();
     
-    setInterval(drawCanvas,30);
+    var play_game = setInterval(drawCanvas,30);
     function drawCanvas() {
         //清除
         play_area_02.clearRect(0, 0, play_area_02_w, play_area_02_h);
         //產生動物
-        for (var key in map_ani) {
-            map_ani[key].do_work();
+        for (var key1 in map_ani) {
+            map_ani[key1].do_work();
         }
+        
+        for (var key2 in map_mon) {
+            map_mon[key2].do_work();
+        }
+        
         //產生英雄
         hero.do_work();
         
-        
+        if (hero.hp <= 0) {
+            window.clearInterval(play_game);
+            game_over();
+        }
     }
-    
-    
 }
 </script>
 

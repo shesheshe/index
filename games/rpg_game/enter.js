@@ -48,6 +48,7 @@ document.onkeydown = function(event){
                 this_map = eval(this_map)["map_change"]["M"+enter_y+enter_x];
                 play_area_01.clearRect(0, 0, play_area_01_w, play_area_01_h);
                 map_ani = [];
+                map_mon = [];
                 
                 draw_map_ground(this_map);
                 draw_map_ani(this_map);
