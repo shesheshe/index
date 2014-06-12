@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>塔防遊戲</title>
+</head>
+<body>
+
+<!--style-->
+<style>
+</style>
+
+<div id = "image_box" style="display:none">
+    <img src="pic/image_back_ground.png" id = "image_back_ground"/>
+</div>
+
+<!--遊戲區塊-->
+<div style="width:1024px; margin: 0 auto; border: 3px solid black">
+    <div id="play_box" style="width:1024px; height:512px;">  <!--多層canvas-->
+        <canvas id="choose_area" width="1024" height="512" style="position: absolute; z-index: 3"></canvas>
+        <canvas id="play_area" width="1024" height="512" style="position: absolute; z-index: 2"></canvas>
+        <canvas id="back_ground" width="1024" height="512" style="position: absolute; z-index: 1"></canvas>
+    </div>
+    <div id="status_box" style="width:1024px; height:64px;">
+        <canvas id="status_area" width="1024" height="64"></canvas>
+    </div>
+</div>
+
+<!--載入需要的js-->
+<script type="text/javascript" src ="variable.js"></script>
+<script type="text/javascript" src ="map_data.js"></script>
+<script type="text/javascript" src ="tower.js"></script>
+<script type="text/javascript" src ="enemy.js"></script>
+<script type="text/javascript" src ="map_build.js"></script>
+
+<script type="text/javascript">
+//載入時間 =>讓資料有充分的時間載入
+function load_time() {
+    setTimeout(game_start,1000);
+}
+function game_start () {
+    alert(123);
+}
+window.onload = function () {
+    load_time();
+}
+
+</script>
+
+</body>
+</html>
