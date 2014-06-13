@@ -13,6 +13,9 @@
 
 <div id = "image_box" style="display:none">
     <img src="pic/image_back_ground.png" id = "image_back_ground"/>
+    <img src="pic/image_arrow_tower.png" id = "image_arrow_tower"/>
+    <img src="pic/image_enemy_01.png" id = "image_enemy_01"/>
+    <img src="pic/image_enemy_02.png" id = "image_enemy_02"/>
 </div>
 
 <!--遊戲區塊-->
@@ -40,8 +43,20 @@ function load_time() {
     setTimeout(game_start,1000);
 }
 function game_start () {
-    alert(123);
+    draw_back_ground(map_no);
+    draw_enemy(map_no);
+    var enemy = new Enemy("image_enemy_01",0,5,15,1,10);
+    
+    var play_game = setInterval(drawCanvas,50);
+    
+    function drawCanvas() {
+        //清除
+        play_area.clearRect(0, 0, play_area_w, play_area_h);
+        
+        enemy.working();
+    }
 }
+
 window.onload = function () {
     load_time();
 }

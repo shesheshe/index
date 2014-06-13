@@ -36,3 +36,11 @@ var status_area_h = canvas_status_area.height;
 var status_unit_x = status_area_w/unit;
 var status_unit_y = status_area_h/unit;
 
+//地圖
+var map_no = "map_01";
+
+//敵人資料
+var enemy_data = {
+    "enemy_01" : ["image_enemy_01",15,1,5],
+    "enemy_02" : ["image_enemy_02",30,2,10]
+}
