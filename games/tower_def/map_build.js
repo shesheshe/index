@@ -1,5 +1,5 @@
 //解析地圖並且畫出來 x=i , y=j
-function draw_back_ground(map_no) {
+function draw_back_ground() {
     //背景圖片開始位置
 	var strat_x = this[map_no]["back_ground"]*2;
     var strat_y = 0;	
@@ -41,8 +41,11 @@ function draw_back_ground(map_no) {
 }
 
 //畫出地圖敵人
-function draw_enemy(map_no) {
+function draw_enemy() {
     //alert(this[map_no]["enemy"].length);
     
     //迴圈產出敵人 
+	//第一次要按確定才能產生敵人
+	//敵人全部消失才能開始倒數計時
+	//每一波敵人要多久才能產生
 }

@@ -1,5 +1,5 @@
 function Enemy (image_enemy, x, y, hp, speed, drop_money) {
-    //圖片資料
+	//圖片資料
     this.get_image_enemy = document.getElementById(image_enemy);
     this.w_quar = this.get_image_enemy.width/4;       //圖片寬1/4像素
     this.h_quar = this.get_image_enemy.height/4;	     //圖片高1/4像素
@@ -17,44 +17,76 @@ function Enemy (image_enemy, x, y, hp, speed, drop_money) {
     this.speed =  speed;
     this.drop_money =  drop_money;
     
-    //移動
-    this.move_down = function () {
-        this.dir = 0; 
-        this.y = this.y + this.speed;
-    }
-    
-    this.move_left = function () {
-        this.dir = 1; 
-        this.x = this.x - this.speed;
-    }
-    
-    this.move_right = function () {
-        this.dir = 2;   
-        this.x = this.x + this.speed;
-    }
-    
-    this.move_up = function () {
-        this.dir = 3;  
-        this.y = this.y - this.speed;
-    }
-    
     //敵人移動
+	this.road_no = 0;
+	this.road_total = eval(map_no)["route"]["road"].length;
+	this.road_count = 1;
+	
     this.move = function () {
-        //alert(eval(map_no)["route"]["road"][0]);
-        
+		//判斷走路方向
+		if (this.road_total > this.road_no) {
+			switch (eval(map_no)["route"]["road"][this.road_no][4]) {
+				case 0:  //move_down
+					this.dir = 0; 
+					this.y++;
+					this.walk_y();
+				break;			
+				case 1:  //move_left
+					this.dir = 1; 
+					this.x--;
+					this.walk_x();
+				break;			
+				case 2:  //move_right
+					this.dir = 2;   
+					this.x++;
+					this.walk_x();
+				break;			
+				case 3:  //move_up
+					this.dir = 3;  
+					this.y--;
+					this.walk_y();
+				break;
+			}
+		}
+		else {
+			//走到底了
+			
+		}
+		//alert(this.road_no+"-"+this.road_count);
     }
+	
+	this.walk_x = function() {
+		if (eval(map_no)["route"]["road"][this.road_no][2] == this.road_count) {
+			this.road_count = 1;
+			this.road_no++;
+		}
+		else {
+			this.road_count++;
+		}
+	}
+	
+	this.walk_y = function() {
+		if (eval(map_no)["route"]["road"][this.road_no][3] == this.road_count) {
+			this.road_count = 1;
+			this.road_no++;
+		}
+		else {
+			this.road_count++;
+		}
+	}	
     
     //畫出敵人
     this.draw = function () {
-        back_ground.drawImage(this.get_image_enemy, 
-                              this.w_quar*this.spo, 
-                              this.h_quar*this.dir, 
-                              this.w_quar, 
-                              this.h_quar, 
-                              this.x*unit,
-                              this.y*unit,
-                              this.w_quar, 
-                              this.h_quar);
+        play_area.drawImage(this.get_image_enemy, 
+                            this.w_quar*this.spo, 
+                            this.h_quar*this.dir, 
+                            this.w_quar, 
+                            this.h_quar, 
+                            this.x*unit,
+                            this.y*unit,
+                            this.w_quar, 
+                            this.h_quar);
+		//血條					
     }
     
     //控制速度
