@@ -20,13 +20,13 @@
 
 <!--遊戲區塊-->
 <div style="width:1024px; margin: 0 auto; border: 3px solid black">
-    <div id="play_box" style="width:1024px; height:512px;">  <!--多層canvas-->
-        <canvas id="choose_area" width="1024" height="512" style="position: absolute; z-index: 3"></canvas>
-        <canvas id="play_area" width="1024" height="512" style="position: absolute; z-index: 2"></canvas>
-        <canvas id="back_ground" width="1024" height="512" style="position: absolute; z-index: 1"></canvas>
-    </div>
     <div id="status_box" style="width:1024px; height:64px;">
         <canvas id="status_area" width="1024" height="64"></canvas>
+    </div>
+    <div id="play_box" style="width:1024px; height:512px;">  <!--多層canvas-->
+        <canvas id="menu_area" width="1024" height="512" style="position: absolute; z-index: 3"></canvas>
+        <canvas id="play_area" width="1024" height="512" style="position: absolute; z-index: 2"></canvas>
+        <canvas id="back_ground" width="1024" height="512" style="position: absolute; z-index: 1"></canvas>
     </div>
 </div>
 
@@ -38,27 +38,57 @@
 <script type="text/javascript" src ="map_build.js"></script>
 
 <script type="text/javascript">
+//載入時的動畫 var
+var load; 
+var load_word = 'LOADING';
+
 //載入時間 =>讓資料有充分的時間載入
-function load_time() {
-    setTimeout(game_start,1000);
-}
+load_time();
+
+//載入完成
 function game_start () {
+    //loading 完成
+    clearInterval(load);
+    
+    menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
+    status_area.clearRect(0, 0, status_area_w, status_area_h);
+    
     draw_back_ground();
-    draw_enemy();
-    var enemy = new Enemy("image_enemy_01",0,5,15,1,10);
     
     var play_game = setInterval(drawCanvas,40);
     
-    function drawCanvas() {
+    function drawCanvas() {      
+        draw_enemy();
         //清除
         play_area.clearRect(0, 0, play_area_w, play_area_h);
         
-        enemy.working();
+        for (var key in enemies) {
+            enemies[key].working();
+        }
     }
 }
+//載入時間
+function load_time() {
+    //loding .....
+    load_text();
+    load = setInterval(load_text,500);
+ 
+    status_area.fillStyle='rgba(209,209,209,0.7)';
+    status_area.fillRect(0,0,status_area_w,status_area_h);
 
-window.onload = function () {
-    load_time();
+    setTimeout(game_start,1000);
+}
+//載入時的動畫 load...
+function load_text() {
+    menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
+    
+    menu_area.fillStyle='rgba(209,209,209,0.7)'; 
+    menu_area.fillRect(0,0,menu_area_w,menu_area_h);
+    
+    menu_area.fillStyle = "black";
+    menu_area.font = '72px 微軟正黑體';
+    menu_area.fillText(load_word,8*unit, 8*unit);
+    load_word = load_word+".";
 }
 
 </script>

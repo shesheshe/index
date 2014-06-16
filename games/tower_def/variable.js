@@ -3,10 +3,10 @@
 var unit = 16;
 
 //遊戲區塊 三層
-var canvas_choose_area = document.getElementById('choose_area');
-var choose_area = canvas_choose_area.getContext('2d');
-var choose_area_w = canvas_choose_area.width;
-var choose_area_h = canvas_choose_area.height;
+var canvas_menu_area = document.getElementById('menu_area');
+var menu_area = canvas_menu_area.getContext('2d');
+var menu_area_w = canvas_menu_area.width;
+var menu_area_h = canvas_menu_area.height;
 
 var canvas_play_area = document.getElementById('play_area');
 var play_area = canvas_play_area.getContext('2d');
@@ -38,9 +38,3 @@ var status_unit_y = status_area_h/unit;
 
 //地圖
 var map_no = "map_01";
-
-//敵人資料
-var enemy_data = {
-    "enemy_01" : ["image_enemy_01",15,1,5],
-    "enemy_02" : ["image_enemy_02",30,2,10]
-}

@@ -1,8 +1,12 @@
-function Enemy (image_enemy, x, y, hp, speed, drop_money) {
-	//圖片資料
+//第幾個敵人,圖片,x,y,生命,速度,掉落金錢
+function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
+    //第幾個敵人
+    this.enemy_count = enemy_count;
+    
+    //圖片資料
     this.get_image_enemy = document.getElementById(image_enemy);
     this.w_quar = this.get_image_enemy.width/4;       //圖片寬1/4像素
-    this.h_quar = this.get_image_enemy.height/4;	     //圖片高1/4像素
+    this.h_quar = this.get_image_enemy.height/4;	  //圖片高1/4像素
 
     //圖片方向 0向下,1向左,2向右,3向上
     this.dir = 0;  
@@ -49,8 +53,8 @@ function Enemy (image_enemy, x, y, hp, speed, drop_money) {
 			}
 		}
 		else {
-			//走到底了
-			
+			//走到底了 砍掉
+            enemies.splice(0,1);
 		}
 		//alert(this.road_no+"-"+this.road_count);
     }
@@ -90,8 +94,37 @@ function Enemy (image_enemy, x, y, hp, speed, drop_money) {
     }
     
     //控制速度
-    this.working = function () {
-        this.draw();
-        this.move();
+    this.speed_count = 0;
+    
+    this.spo_change = 10;
+    this.spo_count = 0;
+    
+    this.working = function () {       
+        //移動
+        if (this.speed == this.speed_count) {
+            this.move();
+            this.speed_count = 0;
+        }
+        else {
+            this.speed_count ++;
+        }
+        //--------------------------------------------
+        //動作
+        this.draw(); 
+        
+        if (this.spo_change == this.spo_count) {
+            if (this.spo < 3) {
+                this.spo++;
+            }
+            else {
+                this.spo = 0;
+            }
+            this.spo_count = 0;
+        }
+        else {
+            this.spo_count ++;
+        }
+        
+        
     }
 }

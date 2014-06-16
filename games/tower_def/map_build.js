@@ -40,12 +40,47 @@ function draw_back_ground() {
     }
 }
 
+//敵人陣列
+var enemies = [];
+//敵人批次
+var enemy_batch = 0;
+//每批幾個敵人記數
+var enemy_count = 0;
+//產生間隔記數
+var pro_time_count = 0;
+//下一批次敵人準備時間
+var next_batch = 200;
+//準備時間記數
+var next_batch_count = 0;
+
 //畫出地圖敵人
 function draw_enemy() {
-    //alert(this[map_no]["enemy"].length);
+    var enemy_now = this[map_no]["enemy"][enemy_batch];
     
     //迴圈產出敵人 
-	//第一次要按確定才能產生敵人
-	//敵人全部消失才能開始倒數計時
-	//每一波敵人要多久才能產生
+    if (enemy_batch < this[map_no]["enemy"].length) {
+        if (enemy_now[0] > enemy_count) {
+            if (enemy_now[1] < pro_time_count) {
+                enemies[enemy_count] = new Enemy(enemy_count, enemy_now[2], this[map_no]["route"]["start"][0], this[map_no]["route"]["start"][1], enemy_now[3], enemy_now[4], enemy_now[5]);
+                enemy_count++;
+                pro_time_count = 0;
+            }
+            else {
+                pro_time_count ++;
+            }
+        }
+        else {
+            //敵人全部消失才能開始下一批次
+            if (enemies.length == 0) {
+                if (next_batch == next_batch_count) {
+                    enemy_count = 0;
+                    enemy_batch++;
+                    next_batch_count = 0;
+                }
+                else {
+                    next_batch_count++;
+                }  
+            }     
+        }
+    }
 }
