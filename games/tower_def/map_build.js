@@ -76,6 +76,9 @@ function draw_enemy() {
                     enemy_count = 0;
                     enemy_batch++;
                     next_batch_count = 0;
+					
+					//狀態欄位更新
+					status_update ();
                 }
                 else {
                     next_batch_count++;

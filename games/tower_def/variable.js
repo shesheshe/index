@@ -38,3 +38,9 @@ var status_unit_y = status_area_h/unit;
 
 //地圖
 var map_no = "map_01";
+
+//狀態
+//生命
+var my_hp = 10;
+//金錢
+var my_money = 100;

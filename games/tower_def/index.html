@@ -12,9 +12,15 @@
 </style>
 
 <div id = "image_box" style="display:none">
-    <img src="pic/image_back_ground.png" id = "image_back_ground"/>
+    <!--back_ground-->
+	<img src="pic/image_back_ground.png" id = "image_back_ground"/>
+	<!--塔-->
     <img src="pic/image_arrow_tower.png" id = "image_arrow_tower"/>
-    <img src="pic/image_enemy_01.png" id = "image_enemy_01"/>
+    <img src="pic/image_turret_tower.png" id = "image_turret_tower"/>
+    <img src="pic/image_ice_tower.png" id = "image_ice_tower"/>
+    <img src="pic/image_up_tower.png" id = "image_up_tower"/>
+    <!--enemy-->
+	<img src="pic/image_enemy_01.png" id = "image_enemy_01"/>
     <img src="pic/image_enemy_02.png" id = "image_enemy_02"/>
 </div>
 
@@ -54,6 +60,7 @@ function game_start () {
     status_area.clearRect(0, 0, status_area_w, status_area_h);
     
     draw_back_ground();
+	status_update ();
     
     var play_game = setInterval(drawCanvas,40);
     
@@ -72,7 +79,7 @@ function load_time() {
     //loding .....
     load_text();
     load = setInterval(load_text,500);
- 
+	
     status_area.fillStyle='rgba(209,209,209,0.7)';
     status_area.fillRect(0,0,status_area_w,status_area_h);
 
@@ -90,7 +97,53 @@ function load_text() {
     menu_area.fillText(load_word,8*unit, 8*unit);
     load_word = load_word+".";
 }
+//狀態欄位更新
+function status_update () {
+	var status_y = unit*2+unit/2;
+	var text_style = "bold 18px 微軟正黑體";
+	var status_tower = [];
+	
+	status_area.fillStyle='#d0d0d0';
+    status_area.fillRect(0,0,status_area_w,status_area_h); 
+	
+	//開始按鈕
+	status_area.fillStyle='#EA0000';
+    status_area.fillRect(unit,unit,unit*5,unit*2); 
+	status_area.fillStyle='#000000';
+	status_area.font = text_style;
+    status_area.fillText("遊戲開始",unit+unit/3, status_y); 
+	
+	//目前波數/總波數
+	status_area.fillStyle='#000000';
+	status_area.font = text_style;
+    status_area.fillText("目前波數:"+(enemy_batch+1)+"/總波數:"+this[map_no]["enemy"].length,unit*8, status_y);
 
+	//生命
+	status_area.fillStyle='#000000';
+	status_area.font = text_style;
+    status_area.fillText("生命:"+my_hp,unit*20, status_y);
+	
+	//金錢
+	status_area.fillStyle='#000000';
+	status_area.font = text_style;
+    status_area.fillText("金錢:"+my_money,unit*25, status_y);
+	
+	//砲塔 4
+	status_tower[0] = new Arrow_tower(33, 0, status_area);
+	status_tower[1] = new Turret_tower(40, 0, status_area);
+	status_tower[2] = new Ice_tower(47, 0, status_area);
+	status_tower[3] = new Up_tower(54, 0, status_area);
+	
+	for (var key in status_tower) {
+		status_tower[key].draw();
+
+		status_area.font = text_style;
+		status_area.fillText(status_tower[key].name,(status_tower[key].x+2)*unit,unit);
+		status_area.fillText(status_tower[key].cost_money,(status_tower[key].x+2)*unit,status_y);
+
+	}
+	
+}
 </script>
 
 </body>
