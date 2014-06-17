@@ -88,8 +88,8 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
                             this.h_quar, 
                             this.x*unit,
                             this.y*unit,
-                            this.w_quar, 
-                            this.h_quar);
+                            set_size_x, 
+                            set_size_y);
 		//血條					
     }
     
@@ -124,7 +124,5 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
         else {
             this.spo_count ++;
         }
-        
-        
     }
 }

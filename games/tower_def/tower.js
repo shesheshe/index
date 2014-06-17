@@ -1,4 +1,6 @@
 //塔 
+tower_array = [Arrow_tower,Turret_tower,Ice_tower,Up_tower];
+
 function Tower (x, y, area, image_tower) {
 	this.x = x;
 	this.y = y;
@@ -21,8 +23,8 @@ function Tower (x, y, area, image_tower) {
                             this.h_quar, 
                             this.x*unit,
                             this.y*unit,
-                            this.w_quar, 
-                            this.h_quar);				
+                            set_size_x, 
+                            set_size_y);				
     }
 	
 	//升等

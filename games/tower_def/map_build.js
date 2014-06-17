@@ -1,3 +1,14 @@
+//碰撞檢查陣列
+var map = [];
+//有每欄要宣告
+for (i = 0; i < play_unit_x; i++ ) {
+    map[i] = [];  
+    
+    for (j = 0; j < play_unit_y; j++ ) {
+        map[i][j] = 0;  
+    }          
+}
+
 //解析地圖並且畫出來 x=i , y=j
 function draw_back_ground() {
     //背景圖片開始位置
@@ -19,6 +30,8 @@ function draw_back_ground() {
                                      (this[map_no]["route"]["road"][key][0]+i)*unit, 
                                      (this[map_no]["route"]["road"][key][1]+j)*unit, 
                                       unit, unit);
+            
+                map[this[map_no]["route"]["road"][key][0]+i][this[map_no]["route"]["road"][key][1]+j] = "road";
             }
         }
     }
@@ -82,6 +95,7 @@ function draw_enemy() {
                 }
                 else {
                     next_batch_count++;
+                    status_update ();
                 }  
             }     
         }

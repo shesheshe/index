@@ -26,8 +26,8 @@
 
 <!--遊戲區塊-->
 <div style="width:1024px; margin: 0 auto; border: 3px solid black">
-    <div id="status_box" style="width:1024px; height:64px;">
-        <canvas id="status_area" width="1024" height="64"></canvas>
+    <div id="status_box" style="width:1024px; height:80px;">
+        <canvas id="status_area" width="1024" height="80"></canvas>
     </div>
     <div id="play_box" style="width:1024px; height:512px;">  <!--多層canvas-->
         <canvas id="menu_area" width="1024" height="512" style="position: absolute; z-index: 3"></canvas>
@@ -42,6 +42,7 @@
 <script type="text/javascript" src ="tower.js"></script>
 <script type="text/javascript" src ="enemy.js"></script>
 <script type="text/javascript" src ="map_build.js"></script>
+<script type="text/javascript" src ="enter.js"></script>
 
 <script type="text/javascript">
 //載入時的動畫 var
@@ -63,17 +64,25 @@ function game_start () {
 	status_update ();
     
     var play_game = setInterval(drawCanvas,40);
-    
+
     function drawCanvas() {      
-        draw_enemy();
-        //清除
-        play_area.clearRect(0, 0, play_area_w, play_area_h);
+        if (game_start_button == 1) {
+            draw_enemy();
         
-        for (var key in enemies) {
-            enemies[key].working();
+            //清除
+            play_area.clearRect(0, 0, play_area_w, play_area_h);
+            
+            for (var key in enemies) {
+                enemies[key].working();
+            }
+        }
+        
+        for (var key1 in play_tower) {
+            play_tower[key1].draw();
         }
     }
 }
+
 //載入時間
 function load_time() {
     //loding .....
@@ -85,6 +94,7 @@ function load_time() {
 
     setTimeout(game_start,1000);
 }
+
 //載入時的動畫 load...
 function load_text() {
     menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
@@ -97,21 +107,33 @@ function load_text() {
     menu_area.fillText(load_word,8*unit, 8*unit);
     load_word = load_word+".";
 }
+
 //狀態欄位更新
+var status_tower = [];
+var status_tower_box_x = 6;
+var status_tower_box_y = 3;
 function status_update () {
-	var status_y = unit*2+unit/2;
-	var text_style = "bold 18px 微軟正黑體";
-	var status_tower = [];
-	
+    var text_style = "bold 18px 微軟正黑體";
+    var status_y = unit*2+unit/2;
+    
 	status_area.fillStyle='#d0d0d0';
     status_area.fillRect(0,0,status_area_w,status_area_h); 
 	
 	//開始按鈕
-	status_area.fillStyle='#EA0000';
-    status_area.fillRect(unit,unit,unit*5,unit*2); 
-	status_area.fillStyle='#000000';
-	status_area.font = text_style;
-    status_area.fillText("遊戲開始",unit+unit/3, status_y); 
+    if (game_start_button == 0) {
+        status_area.fillStyle='#EA0000';
+        status_area.fillRect(unit,unit,unit*5,unit*2); 
+        status_area.fillStyle='#000000';
+        status_area.font = text_style;
+        status_area.fillText("遊戲開始",unit+unit/3, status_y); 
+    }
+    else {
+        status_area.fillStyle='#02C874';
+        status_area.fillRect(unit,unit,unit*5,unit*2); 
+        status_area.fillStyle='#000000';
+        status_area.font = text_style;
+        status_area.fillText(next_batch_count+"/"+next_batch,unit+unit/3, status_y); 
+    }
 	
 	//目前波數/總波數
 	status_area.fillStyle='#000000';
@@ -129,19 +151,24 @@ function status_update () {
     status_area.fillText("金錢:"+my_money,unit*25, status_y);
 	
 	//砲塔 4
-	status_tower[0] = new Arrow_tower(33, 0, status_area);
-	status_tower[1] = new Turret_tower(40, 0, status_area);
-	status_tower[2] = new Ice_tower(47, 0, status_area);
-	status_tower[3] = new Up_tower(54, 0, status_area);
-	
-	for (var key in status_tower) {
-		status_tower[key].draw();
-
+	for (var key in tower_array) {
+		status_tower[key] = new tower_array[key](33+key*7, 1, status_area);
+        status_tower[key].draw();
+        
 		status_area.font = text_style;
-		status_area.fillText(status_tower[key].name,(status_tower[key].x+2)*unit,unit);
-		status_area.fillText(status_tower[key].cost_money,(status_tower[key].x+2)*unit,status_y);
-
+        status_area.fillText(status_tower[key].name,status_tower[key].x*unit+set_size_x,(status_tower[key].y+1)*unit);
+		status_area.fillText("費用:"+status_tower[key].cost_money,status_tower[key].x*unit+set_size_x,(status_tower[key].y+2)*unit+unit/2);
+        
+        status_area.strokeStyle='#000000';
+        status_area.beginPath();
+        status_area.rect(status_tower[key].x*unit, status_tower[key].y*unit, status_tower_box_x*unit, status_tower_box_y*unit);
+        status_area.stroke(); 
 	}
+    
+    if (choose_tower != null) {
+        status_area.fillStyle='rgba(28, 253, 155, 0.5)';
+        status_area.fillRect(status_tower[choose_tower].x*unit, status_tower[choose_tower].y*unit, status_tower_box_x*unit, status_tower_box_y*unit);  
+    }
 	
 }
 </script>

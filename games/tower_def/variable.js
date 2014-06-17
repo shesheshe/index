@@ -38,6 +38,11 @@ var status_unit_y = status_area_h/unit;
 
 //地圖
 var map_no = "map_01";
+//遊戲開始控制項
+var game_start_button = 0;
+//圖片大小 塔與敵人
+var set_size_x = unit*2;
+var set_size_y = unit*3;
 
 //狀態
 //生命
