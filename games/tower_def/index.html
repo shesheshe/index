@@ -66,7 +66,7 @@ function game_start () {
     var play_game = setInterval(drawCanvas,40);
 
     function drawCanvas() {      
-        if (game_start_button == 1) {
+        if (game_start_button == true) {
             draw_enemy();
         
             //清除
@@ -77,8 +77,8 @@ function game_start () {
             }
         }
         
-        for (var key1 in play_tower) {
-            play_tower[key1].draw();
+        for (var key in play_tower) {
+            play_tower[key].draw();
         }
     }
 }
@@ -112,50 +112,64 @@ function load_text() {
 var status_tower = [];
 var status_tower_box_x = 6;
 var status_tower_box_y = 3;
-function status_update () {
-    var text_style = "bold 18px 微軟正黑體";
-    var status_y = unit*2+unit/2;
-    
+function status_update () {   
 	status_area.fillStyle='#d0d0d0';
     status_area.fillRect(0,0,status_area_w,status_area_h); 
 	
 	//開始按鈕
-    if (game_start_button == 0) {
+    if (game_start_button == false) {
         status_area.fillStyle='#EA0000';
         status_area.fillRect(unit,unit,unit*5,unit*2); 
         status_area.fillStyle='#000000';
-        status_area.font = text_style;
-        status_area.fillText("遊戲開始",unit+unit/3, status_y); 
+        status_area.font = "bold 18px 微軟正黑體";
+        status_area.fillText("遊戲開始",unit+unit/3, unit*2+unit/2); 
     }
     else {
         status_area.fillStyle='#02C874';
         status_area.fillRect(unit,unit,unit*5,unit*2); 
         status_area.fillStyle='#000000';
-        status_area.font = text_style;
-        status_area.fillText(next_batch_count+"/"+next_batch,unit+unit/3, status_y); 
+        status_area.font = "bold 18px 微軟正黑體";
+        status_area.fillText(next_batch_count+"/"+next_batch,unit+unit/3, unit*2+unit/2); 
     }
 	
 	//目前波數/總波數
 	status_area.fillStyle='#000000';
-	status_area.font = text_style;
-    status_area.fillText("目前波數:"+(enemy_batch+1)+"/總波數:"+this[map_no]["enemy"].length,unit*8, status_y);
+    status_area.fillText("目前波數:"+(enemy_batch+1)+"/總波數:"+this[map_no]["enemy"].length,unit*8, unit*2);
 
 	//生命
 	status_area.fillStyle='#000000';
-	status_area.font = text_style;
-    status_area.fillText("生命:"+my_hp,unit*20, status_y);
+    status_area.fillText("生命:"+my_hp,unit*8, unit*4);
 	
 	//金錢
 	status_area.fillStyle='#000000';
-	status_area.font = text_style;
-    status_area.fillText("金錢:"+my_money,unit*25, status_y);
+    status_area.fillText("金錢:"+my_money,unit*14, unit*4);
+	
+	if (this_tower != null) {
+		//塔升級 
+		status_area.fillStyle='rgb(193, 123, 185)';
+		status_area.fillRect(unit*21,unit,unit*3,unit*2); 
+		status_area.fillStyle='#000000';
+		status_area.fillText("升級",unit*21+unit/3,unit*2+unit/2); 	
+		
+		//轉向 
+		status_area.fillStyle='rgb(167, 167, 211)';
+		status_area.fillRect(unit*25,unit,unit*3,unit*2);  
+		status_area.fillStyle='#000000';
+		status_area.fillText("轉向",unit*25+unit/3,unit*2+unit/2); 	
+		
+		//變賣
+		status_area.fillStyle='rgb(130, 192, 192)';
+		status_area.fillRect(unit*29,unit,unit*3,unit*2);  
+		status_area.fillStyle='#000000';
+		status_area.fillText("變賣",unit*29+unit/3,unit*2+unit/2); 	
+	}
 	
 	//砲塔 4
 	for (var key in tower_array) {
-		status_tower[key] = new tower_array[key](33+key*7, 1, status_area);
+		status_tower[key] = new tower_array[key](34+key*7, 1, status_area);
         status_tower[key].draw();
         
-		status_area.font = text_style;
+		status_area.fillStyle='#000000';
         status_area.fillText(status_tower[key].name,status_tower[key].x*unit+set_size_x,(status_tower[key].y+1)*unit);
 		status_area.fillText("費用:"+status_tower[key].cost_money,status_tower[key].x*unit+set_size_x,(status_tower[key].y+2)*unit+unit/2);
         

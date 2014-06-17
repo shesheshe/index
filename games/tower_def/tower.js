@@ -24,7 +24,13 @@ function Tower (x, y, area, image_tower) {
                             this.x*unit,
                             this.y*unit,
                             set_size_x, 
-                            set_size_y);				
+                            set_size_y);
+		//顯示等級
+		if (this.area == play_area) {
+			play_area.fillStyle='#FFFFFF';
+			play_area.font = "normal 9px 微軟正黑體";
+			play_area.fillText(this.level,this.x*unit,(this.y+1)*unit); 			
+		}
     }
 	
 	//升等
