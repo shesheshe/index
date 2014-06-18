@@ -20,7 +20,7 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
     this.hp = hp;
     this.speed =  speed;
     this.drop_money =  drop_money;
-    
+
     //敵人移動
 	this.road_no = 0;
 	this.road_total = eval(map_no)["route"]["road"].length;
@@ -53,8 +53,11 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
 			}
 		}
 		else {
-			//走到底了 砍掉
-            enemies.splice(0,1);
+			//走到底了 減生命
+            my_hp--;
+            status_update ();
+            //砍掉
+            delete enemies[this.enemy_count];
 		}
 		//alert(this.road_no+"-"+this.road_count);
     }
@@ -90,7 +93,10 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
                             this.y*unit,
                             set_size_x, 
                             set_size_y);
-		//血條					
+		//血條		
+        play_area.fillStyle='#FFFFFF';
+		play_area.font = "normal 9px 微軟正黑體";
+		play_area.fillText(this.hp,this.x*unit,(this.y+1)*unit); 
     }
     
     //控制速度

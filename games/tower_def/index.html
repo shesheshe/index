@@ -14,6 +14,7 @@
 <div id = "image_box" style="display:none">
     <!--back_ground-->
 	<img src="pic/image_back_ground.png" id = "image_back_ground"/>
+	<img src="pic/image_bullet.png" id = "image_bullet"/>
 	<!--塔-->
     <img src="pic/image_arrow_tower.png" id = "image_arrow_tower"/>
     <img src="pic/image_turret_tower.png" id = "image_turret_tower"/>
@@ -78,7 +79,7 @@ function game_start () {
         }
         
         for (var key in play_tower) {
-            play_tower[key].draw();
+            play_tower[key].working();
         }
     }
 }
@@ -112,6 +113,7 @@ function load_text() {
 var status_tower = [];
 var status_tower_box_x = 6;
 var status_tower_box_y = 3;
+
 function status_update () {   
 	status_area.fillStyle='#d0d0d0';
     status_area.fillRect(0,0,status_area_w,status_area_h); 
@@ -150,6 +152,7 @@ function status_update () {
 		status_area.fillRect(unit*21,unit,unit*3,unit*2); 
 		status_area.fillStyle='#000000';
 		status_area.fillText("升級",unit*21+unit/3,unit*2+unit/2); 	
+		status_area.fillText("-"+level_up_money(),unit*21,unit*4); 	
 		
 		//轉向 
 		status_area.fillStyle='rgb(167, 167, 211)';
@@ -162,6 +165,7 @@ function status_update () {
 		status_area.fillRect(unit*29,unit,unit*3,unit*2);  
 		status_area.fillStyle='#000000';
 		status_area.fillText("變賣",unit*29+unit/3,unit*2+unit/2); 	
+		status_area.fillText("+"+sell_tower_money(),unit*29,unit*4); 	
 	}
 	
 	//砲塔 4
@@ -183,7 +187,6 @@ function status_update () {
         status_area.fillStyle='rgba(28, 253, 155, 0.5)';
         status_area.fillRect(status_tower[choose_tower].x*unit, status_tower[choose_tower].y*unit, status_tower_box_x*unit, status_tower_box_y*unit);  
     }
-	
 }
 </script>
 

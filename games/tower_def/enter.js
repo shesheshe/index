@@ -1,9 +1,10 @@
 //有輸入的時候 鍵盤 滑鼠 等
-//按鍵事件
+//按鍵事件----------------------------------------------------------
 document.onkeydown = function(event){
     //alert('鍵盤碼:'+event.keyCode);
 }
-//滑鼠事件
+
+//滑鼠事件----------------------------------------------------------
 //塔的編號
 var choose_tower;
 //建塔事件
@@ -14,7 +15,6 @@ var build_can = false;
 var play_tower = [];
 //塔焦點
 var this_tower;
-
 //狀態區域
 canvas_status_area.onmousedown = function(event){
     //alert(event.offsetX+'--'+event.offsetY);
@@ -46,19 +46,28 @@ canvas_status_area.onmousedown = function(event){
 	
 	
 	if (this_tower) {
-		//升級
+		play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
+        //升級
 		if (event.offsetX >= unit*21 && event.offsetX <= unit*24) {
 			if (event.offsetY >= unit && event.offsetY <= unit*3) {
-				play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
-				
-				this_tower.level_up();
+
+                //金錢 檢查
+                if (level_up_money() != false) {
+                    if (my_money >= level_up_money()) {
+                        //減金錢
+                        my_money = my_money - level_up_money();
+                        this_tower.level_up();
+                    }
+                    else {
+                        alert("錢不夠!!!");
+                    }
+                }
 			}	
 		}
 		
 		//轉向
 		if (event.offsetX >= unit*25 && event.offsetX <= unit*28) {
 			if (event.offsetY >= unit && event.offsetY <= unit*3) {
-				play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
 				
 				if (this_tower.dir < 3) {
 					this_tower.dir++;
@@ -74,12 +83,23 @@ canvas_status_area.onmousedown = function(event){
 		if (event.offsetX >= unit*29 && event.offsetX <= unit*32) {
 			if (event.offsetY >= unit && event.offsetY <= unit*3) {
 				
-				//delete play_tower[];
-				play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
-				this_tower = null;
-				menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
+				delete play_tower[map[this_tower.x][this_tower.y][1]];
+                my_money = my_money + sell_tower_money();
+				
+                //清除佔位置 2x3
+				for (var i=0; i<set_size_x/unit; i++) {
+					for (var j=0; j<set_size_y/unit; j++) {
+						map[this_tower.x+i][this_tower.y+j] = 0;
+					}
+				}
+                
+                play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
 			}	
 		}
+        
+        this_tower = null;
+		menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
+        status_update();
 	}
 }
 
@@ -107,7 +127,7 @@ canvas_menu_area.onmousedown = function(event){
 				play_tower.push(build_temp);
 			}     
 			else {
-				alert("沒錢了!!!");
+				alert("錢不夠!!!");
 			}
 		
 		//結束建立事件
@@ -118,16 +138,23 @@ canvas_menu_area.onmousedown = function(event){
 		status_update();
     }
 	
-	//塔升級 轉向 變賣 取得焦點
+	//塔取得焦點
 	if (build_event == false && map[build_x][build_y] != 0 && map[build_x][build_y] != "road") {
 		if (this_tower == null || this_tower != eval(map[build_x][build_y][0])) {
 			menu_area.clearRect(0, 0, menu_area_w, menu_area_h); 
 			
-			//更新狀態欄
 			this_tower = eval(map[build_x][build_y][0]);
-			status_update();
+            //更新狀態欄
+            status_update();
 			
-			menu_area.fillStyle='rgba(255, 145, 36, 0.5)';
+            //攻擊範圍
+            menu_area.fillStyle='rgba(41, 148, 255, 0.5)';
+            menu_area.fillRect((this_tower.x-this_tower.atk_range)*unit,
+                               (this_tower.y-this_tower.atk_range)*unit,
+                               (this_tower.atk_range*2+set_size_x/unit)*unit,
+                               (this_tower.atk_range*2+set_size_y/unit)*unit);
+            
+			menu_area.fillStyle='rgba(255, 145, 36, 0.7)';
 			menu_area.fillRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
 	    }
 	}
@@ -173,4 +200,25 @@ canvas_menu_area.onmousemove = function(event){
         menu_area.stroke();     
         menu_area.fillRect(move_x*unit, move_y*unit, set_size_x, set_size_y);     
     }
+}
+
+//變賣 的錢
+function sell_tower_money() {
+    var sell_money = 0;
+    
+    for (var i=1; i <= this_tower.level ;i++) {
+        sell_money = sell_money + Math.floor(this_tower.level_array[i][0]*0.5);
+    }
+    
+    return sell_money;
+}
+
+//升級 的錢
+function level_up_money() {
+    if (this_tower.level_array[this_tower.level+1] != undefined) {
+        return this_tower.level_array[this_tower.level+1][0];
+    }
+    else {
+        return false;
+    }  
 }

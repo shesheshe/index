@@ -83,21 +83,34 @@ function draw_enemy() {
             }
         }
         else {
-            //敵人全部消失才能開始下一批次
-            if (enemies.length == 0) {
+            //檢查是否敵人都消失
+            var enemies_null_check = false;
+            for (var i=0 ; i < enemies.length; i++) {
+                if (enemies[i] != undefined) {
+                    enemies_null_check = true;
+                }
+            }
+            
+            //檢查敵人都消失了
+            if (enemies_null_check == false) {
+                //敵人陣列清空
+                if (enemies.length > 0) {
+                    enemies = [];
+                }
+                
                 if (next_batch == next_batch_count) {
                     enemy_count = 0;
                     enemy_batch++;
                     next_batch_count = 0;
-					
-					//狀態欄位更新
-					status_update ();
+                    
+                    //狀態欄位更新
+                    status_update ();
                 }
                 else {
                     next_batch_count++;
                     status_update ();
-                }  
-            }     
+                }    
+            }
         }
     }
 }
