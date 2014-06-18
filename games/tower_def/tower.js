@@ -1,5 +1,7 @@
 //塔 
-tower_array = [Arrow_tower,Turret_tower,Ice_tower,Up_tower];
+var tower_array = [Arrow_tower,Turret_tower,Ice_tower,Up_tower];
+//子彈陣列
+var bullets = [];
 
 function Tower (x, y, area, image_tower) {
 	this.x = x;
@@ -11,9 +13,6 @@ function Tower (x, y, area, image_tower) {
     this.w_quar = this.get_image_tower.width/4;       //圖片寬1/4像素
     this.h_quar = this.get_image_tower.height/4;	  //圖片高1/4像素
 	
-    //子彈資料
-    this.get_image_bullet = document.getElementById("image_bullet");
-    
 	//圖片方向 0向下,1向左,2向右,3向上
     this.dir = 0;  
     this.spo = 0;
@@ -67,31 +66,28 @@ function Tower (x, y, area, image_tower) {
                             key_min_hp = key;
                         }
                     }
-
-                    for (var i=this.x*unit; i<=enemies[key_min_hp].x*unit; i++) {
-                        for (var j=this.y*unit; j<=enemies[key_min_hp].y*unit; j++) {
-                            play_area.drawImage(this.get_image_bullet, 16, 0, 16, 16, i,j,16, 16);
-                        }
-                    }
-                    
-                    if (enemies[key_min_hp].hp >= this.atk) {
-                        enemies[key_min_hp].hp = enemies[key_min_hp].hp - this.atk;
-                    }
-                    else {  //打死敵人
-                        //得到錢
-                        my_money = my_money + enemies[key_min_hp].drop_money;
-                        delete enemies[key_min_hp];
-                        key_min_hp = null;
-                        status_update();
-                    }
-                }
+                }				
             }
         }
+		
+		if (key_min_hp != null) {
+			//產生子彈
+			bullets.push(new Bullet(bullets.length, this.x, this.y, this.atk, this.image_bullet, enemies[key_min_hp]));
+		}
     }
     
+	var attack_count = 0;
+	
     this.working = function () {
-        this.attack();
-        this.draw();
+        if (this.atk_speed < attack_count) {
+			this.attack();
+			attack_count = 0;
+		}
+		else {
+			attack_count++;
+		}
+		
+		this.draw();
     }
 }
 
@@ -101,10 +97,11 @@ function Arrow_tower (x, y, area) {
 	this.tower(x, y, area, "image_arrow_tower");
 	
 	this.name = "箭塔";
+	this.image_bullet = 0;
     this.level = 0;
     //耗費金錢,攻擊力,攻擊範圍,攻擊速度
     this.level_array = {
-        1:[20,1,3,1000],2:[30,6,4,950],3:[40,7,5,900],
+        1:[20,1,3,10],2:[30,6,4,5],3:[40,7,5,1],
     }
     
 	this.level_up(); 
@@ -116,10 +113,11 @@ function Turret_tower (x, y, area) {
 	this.tower(x, y, area, "image_turret_tower");
 	
 	this.name = "炮塔";
+	this.image_bullet = 1;
     this.level = 0;
     //耗費金錢,攻擊力,攻擊範圍,攻擊速度
     this.level_array = {
-        1:[50,5,4,1000],2:[10,6,3,950],3:[20,7,3,900],
+        1:[50,50,4,10],2:[10,6,3,5],3:[20,7,3,1],
     }
     
 	this.level_up();   
@@ -131,10 +129,11 @@ function Ice_tower (x, y, area) {
 	this.tower(x, y, area, "image_ice_tower");
 	
 	this.name = "冰塔";
+	this.image_bullet = 2;
     this.level = 0;
     //耗費金錢,攻擊力,攻擊範圍,攻擊速度
     this.level_array = {
-		1:[40,5,5,1000],2:[10,6,3,950],3:[20,7,3,900],
+		1:[40,50,5,1000],2:[10,6,3,950],3:[20,7,3,900],
     }
     
 	this.level_up();
@@ -153,5 +152,60 @@ function Up_tower (x, y, area) {
     }
     
     this.level_up();
-    
+}
+
+//子彈控制類
+function Bullet(bullet_count, x, y, atk, image_bullet, this_enemy) {
+	this.bullet_count = bullet_count;
+	
+	//子彈資料
+    this.get_image_bullet = document.getElementById("image_bullet");
+	
+	this.move_x = x;
+	this.move_y = y;
+	this.atk = atk;
+	this.image_bullet = image_bullet;
+	this.size = unit;
+	
+	this.this_enemy = this_enemy;
+	
+	this.draw = function () {
+		play_area.drawImage(this.get_image_bullet,this.image_bullet*unit,0,this.size,this.size,this.move_x*unit,this.move_y*unit,this.size,this.size);	
+	}
+	
+	this.working = function () {
+		//子彈移動
+		if (this.move_x > this.this_enemy.x) {
+			this.move_x--;
+		}
+		else if (this.move_x < this.this_enemy.x){
+			this.move_x++;
+		}
+		
+		if (this.move_y > this.this_enemy.y) {
+			this.move_y--;
+		}
+		else if (this.move_y < this.this_enemy.y){
+			this.move_y++;
+		}
+		
+		this.draw();
+
+		//打中了
+		if (this.move_x == this.this_enemy.x && this.move_y == this.this_enemy.y) {
+
+			if (this.this_enemy.hp > this.atk) {
+				this.this_enemy.hp = this.this_enemy.hp - this.atk;
+				
+			}
+			else {  //打死敵人
+				//得到錢
+				my_money = my_money + this.this_enemy.drop_money;
+				delete enemies[this.this_enemy.enemy_count];
+				status_update();
+			}
+			
+			delete bullets[this.bullet_count];
+		}
+	}
 }

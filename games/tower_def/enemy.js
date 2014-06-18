@@ -58,6 +58,18 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
             status_update ();
             //砍掉
             delete enemies[this.enemy_count];
+			
+			//GAME OVER
+			if (my_hp <= 0) {
+				clearInterval(play_game);
+				
+				//GAME OVER
+				menu_area.fillStyle='rgba(209,209,209,0.7)'; 
+				menu_area.fillRect(0,0,menu_area_w,menu_area_h);
+				menu_area.fillStyle = "black";
+				menu_area.font = '72px 微軟正黑體';
+				menu_area.fillText("GAME OVER",8*unit, 8*unit);
+			}
 		}
 		//alert(this.road_no+"-"+this.road_count);
     }

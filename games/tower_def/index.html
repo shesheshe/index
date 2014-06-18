@@ -49,6 +49,7 @@
 //載入時的動畫 var
 var load; 
 var load_word = 'LOADING';
+var play_game;
 
 //載入時間 =>讓資料有充分的時間載入
 load_time();
@@ -64,22 +65,28 @@ function game_start () {
     draw_back_ground();
 	status_update ();
     
-    var play_game = setInterval(drawCanvas,40);
+    play_game = setInterval(drawCanvas,40);
 
     function drawCanvas() {      
-        if (game_start_button == true) {
-            draw_enemy();
-        
-            //清除
-            play_area.clearRect(0, 0, play_area_w, play_area_h);
-            
-            for (var key in enemies) {
-                enemies[key].working();
-            }
+        //清除
+        play_area.clearRect(0, 0, play_area_w, play_area_h);
+		
+		//塔
+        for (var tower_key in play_tower) {
+            play_tower[tower_key].working();
         }
-        
-        for (var key in play_tower) {
-            play_tower[key].working();
+		
+		if (game_start_button == true) {
+            draw_enemy();
+
+            //敵人
+            for (var en_key in enemies) {
+                enemies[en_key].working();
+            }
+			//子彈
+			for (var bu_key in bullets) {
+                bullets[bu_key].working();
+            }
         }
     }
 }
