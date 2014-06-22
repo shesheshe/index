@@ -23,13 +23,13 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
 
     //敵人移動
 	this.road_no = 0;
-	this.road_total = eval(map_no)["route"]["road"].length;
+	this.road_total = eval(map_no[map_no_key])["route"]["road"].length;
 	this.road_count = 1;
 	
     this.move = function () {
 		//判斷走路方向
 		if (this.road_total > this.road_no) {
-			switch (eval(map_no)["route"]["road"][this.road_no][4]) {
+			switch (eval(map_no[map_no_key])["route"]["road"][this.road_no][4]) {
 				case 0:  //move_down
 					this.dir = 0; 
 					this.y++;
@@ -75,7 +75,7 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
     }
 	
 	this.walk_x = function() {
-		if (eval(map_no)["route"]["road"][this.road_no][2] == this.road_count) {
+		if (eval(map_no[map_no_key])["route"]["road"][this.road_no][2] == this.road_count) {
 			this.road_count = 1;
 			this.road_no++;
 		}
@@ -85,7 +85,7 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
 	}
 	
 	this.walk_y = function() {
-		if (eval(map_no)["route"]["road"][this.road_no][3] == this.road_count) {
+		if (eval(map_no[map_no_key])["route"]["road"][this.road_no][3] == this.road_count) {
 			this.road_count = 1;
 			this.road_no++;
 		}
@@ -106,10 +106,22 @@ function Enemy (enemy_count, image_enemy, x, y, hp, speed, drop_money) {
                             set_size_x, 
                             set_size_y);
 		//血條		
-        play_area.fillStyle='#FFFFFF';
-		play_area.font = "normal 9px 微軟正黑體";
-		play_area.fillText(this.hp,this.x*unit,(this.y+1)*unit); 
-    }
+        //play_area.fillStyle='#FFFFFF';
+		//play_area.font = "normal 9px 微軟正黑體";
+		//play_area.fillText(this.hp,this.x*unit,(this.y+1)*unit); 
+        play_area.strokeStyle='#000000';
+        play_area.lineWidth="3";
+        play_area.beginPath();
+        play_area.rect(this.x*unit, (this.y-0.5)*unit+set_size_y, unit*2, unit/2);
+        play_area.stroke(); 
+        play_area.fillStyle='rgb(0, 219, 0)';
+		play_area.fillRect(this.x*unit,(this.y-0.5)*unit+set_size_y,unit*2,unit/2); 
+        play_area.fillStyle='rgb(173, 0, 0)';
+        if (this.hp <=0) {
+            this.hp = 0;
+        }
+        play_area.fillRect(this.x*unit,(this.y-0.5)*unit+set_size_y,(1-this.hp/hp)*2*unit,unit/2); 
+    } 
     
     //控制速度
     this.speed_count = 0;

@@ -143,7 +143,7 @@ function status_update () {
 	
 	//目前波數/總波數
 	status_area.fillStyle='#000000';
-    status_area.fillText("目前波數:"+(enemy_batch+1)+"/總波數:"+this[map_no]["enemy"].length,unit*8, unit*2);
+    status_area.fillText("目前波數:"+(enemy_batch+1)+"/總波數:"+map_no[map_no_key]["enemy"].length,unit*8, unit*2);
 
 	//生命
 	status_area.fillStyle='#000000';
@@ -175,7 +175,7 @@ function status_update () {
 		status_area.fillText("+"+sell_tower_money(),unit*29,unit*4); 	
 	}
 	
-	//砲塔 4
+	//砲塔 3
 	for (var key in tower_array) {
 		status_tower[key] = new tower_array[key](34+key*7, 1, status_area);
         status_tower[key].draw();

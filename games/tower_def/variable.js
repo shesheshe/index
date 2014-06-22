@@ -37,7 +37,8 @@ var status_unit_x = status_area_w/unit;
 var status_unit_y = status_area_h/unit;
 
 //地圖
-var map_no = "map_01";
+var map_no = [];
+var map_no_key = 0;
 //遊戲開始控制項
 var game_start_button = false;
 //圖片大小 塔與敵人
@@ -48,4 +49,4 @@ var set_size_y = unit*3;
 //生命
 var my_hp = 10;
 //金錢
-var my_money = 100;
+var my_money = 1000;

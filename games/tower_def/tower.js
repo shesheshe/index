@@ -1,5 +1,5 @@
 //塔 
-var tower_array = [Arrow_tower,Turret_tower,Ice_tower,Up_tower];
+var tower_array = [Arrow_tower,Turret_tower,Ice_tower];
 //子彈陣列
 var bullets = [];
 
@@ -72,7 +72,7 @@ function Tower (x, y, area, image_tower) {
 		
 		if (key_min_hp != null) {
 			//產生子彈
-			bullets.push(new Bullet(bullets.length, this.x, this.y, this.atk, this.image_bullet, enemies[key_min_hp]));
+			bullets.push(new Bullet(bullets.length, this.x, this.y, this.hit(key_min_hp), this.image_bullet, enemies[key_min_hp]));
 		}
     }
     
@@ -101,10 +101,13 @@ function Arrow_tower (x, y, area) {
     this.level = 0;
     //耗費金錢,攻擊力,攻擊範圍,攻擊速度
     this.level_array = {
-        1:[20,1,3,10],2:[30,6,4,5],3:[40,7,5,1],
+        1:[20,1,3,10],2:[30,2,4,5],3:[40,3,5,1],
     }
     
 	this.level_up(); 
+    this.hit = function (key_min_hp) {
+        enemies[key_min_hp].hp = enemies[key_min_hp].hp - this.atk;
+    }
 }
 
 function Turret_tower (x, y, area) {
@@ -120,7 +123,25 @@ function Turret_tower (x, y, area) {
         1:[50,50,4,10],2:[10,6,3,5],3:[20,7,3,1],
     }
     
-	this.level_up();   
+	this.level_up(); 
+    this.hit = function (key_min_hp) {
+        enemies[key_min_hp].hp = enemies[key_min_hp].hp - this.atk;
+        
+        //範圍攻擊 range(3) 
+        for (var key in enemies) {
+            if (enemies[key_min_hp].x-5 <= enemies[key].x+set_size_x/unit &&
+                enemies[key_min_hp].x+5 >= enemies[key].x &&
+                enemies[key_min_hp].y-5 <= enemies[key].y+set_size_y/unit &&
+                enemies[key_min_hp].y+5 >= enemies[key].y && key != key_min_hp) {
+                
+                enemies[key].hp = enemies[key].hp - Math.ceil(this.atk/2);
+                if (enemies[key].hp <= 0) {
+                    delete enemies[key];
+                }
+            
+            }	
+        }
+    }
 }
 
 function Ice_tower (x, y, area) {
@@ -133,29 +154,20 @@ function Ice_tower (x, y, area) {
     this.level = 0;
     //耗費金錢,攻擊力,攻擊範圍,攻擊速度
     this.level_array = {
-		1:[40,50,5,1000],2:[10,6,3,950],3:[20,7,3,900],
+		1:[40,50,5,10],2:[10,6,3,5],3:[20,7,3,1],
     }
     
 	this.level_up();
-}
-
-function Up_tower (x, y, area) {
-	//繼承Tower 對象冒充繼承
-	this.tower = Tower;
-	this.tower(x, y, area, "image_up_tower");
-	
-	this.name = "增強塔";
-    this.level = 0;
-    //耗費金錢,攻擊力,攻擊範圍,攻擊速度
-    this.level_array = {
-		1:[30,5,6,1000],2:[10,6,3,950],3:[20,7,3,900],
+    this.hit = function (key_min_hp) {
+        enemies[key_min_hp].hp = enemies[key_min_hp].hp - this.atk;
+        
+        //減速度
+        enemies[key_min_hp].speed_count -= 5 + this.level; 
     }
-    
-    this.level_up();
 }
 
 //子彈控制類
-function Bullet(bullet_count, x, y, atk, image_bullet, this_enemy) {
+function Bullet(bullet_count, x, y, hit, image_bullet, this_enemy) {
 	this.bullet_count = bullet_count;
 	
 	//子彈資料
@@ -163,17 +175,13 @@ function Bullet(bullet_count, x, y, atk, image_bullet, this_enemy) {
 	
 	this.move_x = x;
 	this.move_y = y;
-	this.atk = atk;
 	this.image_bullet = image_bullet;
 	this.size = unit;
+	this.hit = hit;
 	
 	this.this_enemy = this_enemy;
 	
 	this.draw = function () {
-		play_area.drawImage(this.get_image_bullet,this.image_bullet*unit,0,this.size,this.size,this.move_x*unit,this.move_y*unit,this.size,this.size);	
-	}
-	
-	this.working = function () {
 		//子彈移動
 		if (this.move_x > this.this_enemy.x) {
 			this.move_x--;
@@ -188,17 +196,18 @@ function Bullet(bullet_count, x, y, atk, image_bullet, this_enemy) {
 		else if (this.move_y < this.this_enemy.y){
 			this.move_y++;
 		}
-		
+        
+        play_area.drawImage(this.get_image_bullet,this.image_bullet*unit,0,this.size,this.size,this.move_x*unit,this.move_y*unit,this.size,this.size);	
+	}
+	
+	this.working = function () {
 		this.draw();
-
+        
 		//打中了
 		if (this.move_x == this.this_enemy.x && this.move_y == this.this_enemy.y) {
-
-			if (this.this_enemy.hp > this.atk) {
-				this.this_enemy.hp = this.this_enemy.hp - this.atk;
-				
-			}
-			else {  //打死敵人
+            this.hit;
+            //打死敵人
+			if (this.this_enemy.hp <= 0) {
 				//得到錢
 				my_money = my_money + this.this_enemy.drop_money;
 				delete enemies[this.this_enemy.enemy_count];
