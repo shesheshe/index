@@ -1,7 +1,23 @@
 //有輸入的時候 鍵盤 滑鼠 等
 //按鍵事件----------------------------------------------------------
+var key_pass_code ="";
 document.onkeydown = function(event){
     //alert('鍵盤碼:'+event.keyCode);
+    //取數字與字母
+    if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90)) {
+        //最多5個字
+        if (key_pass_code.length < 5) {
+            key_pass_code = key_pass_code + String.fromCharCode(event.keyCode);
+        }  
+    }
+    else if (event.keyCode == 8) {
+        key_pass_code = key_pass_code.substr(0,key_pass_code.length-1);
+        //禁止回上一頁
+        event.returnValue = false; 
+    }
+    
+    menu()
+    //alert(key_pass_code);
 }
 
 //滑鼠事件----------------------------------------------------------
