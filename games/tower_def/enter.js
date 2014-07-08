@@ -1,240 +1,209 @@
 //有輸入的時候 鍵盤 滑鼠 等
 //按鍵事件----------------------------------------------------------
-var key_pass_code ="";
 document.onkeydown = function(event){
     //alert('鍵盤碼:'+event.keyCode);
-    //取數字與字母
-    if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90)) {
-        //最多5個字
-        if (key_pass_code.length < 5) {
-            key_pass_code = key_pass_code + String.fromCharCode(event.keyCode);
-        }  
-    }
-    else if (event.keyCode == 8) {
-        key_pass_code = key_pass_code.substr(0,key_pass_code.length-1);
-        //禁止回上一頁
-        event.returnValue = false; 
-    }
     
-    menu()
-    //alert(key_pass_code);
+    //開始畫面才有功用
+    if (status_switch['start_menu'] == true) {
+        if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90)) {
+            //最多5個字
+            if (pass_code.length < 5) {
+                pass_code = pass_code + String.fromCharCode(event.keyCode);
+            }  
+        }
+        else if (event.keyCode == 8) {
+            pass_code = pass_code.substr(0,pass_code.length-1);
+            //禁止回上一頁
+            event.returnValue = false; 
+        }
+        
+        start_menu();
+    }
 }
 
 //滑鼠事件----------------------------------------------------------
-//塔的編號
-var choose_tower;
-//建塔事件
-var build_event = false;
-//阻擋建塔
-var build_can = false;
-//塔陣列
-var play_tower = [];
-//塔焦點
-var this_tower;
-//狀態區域
-canvas_status_area.onmousedown = function(event){
-    //alert(event.offsetX+'--'+event.offsetY);
-    
-    //要跟 status_update () 內的一樣
-    //開始按鈕座標
-    if (event.offsetX >= unit && event.offsetX <= unit*6) {
-        if (event.offsetY >= unit && event.offsetY <= unit*3) {
-            if (game_start_button == false) {
-                game_start_button = true;
-                status_update ();
-            }
-        }
-    }
-    
-    //塔點擊事件
-    for (var key in status_tower) {
-        if (event.offsetX >= status_tower[key].x*unit && event.offsetX <= (status_tower[key].x+status_tower_box_x)*unit) {
-            if (event.offsetY >= status_tower[key].y*unit && event.offsetY <= (status_tower[key].y+status_tower_box_y)*unit) {
-                build_event = true;
-                
-                choose_tower = key; 
-				this_tower = null;
-				menu_area.clearRect(0, 0, menu_area_w, menu_area_h);				
-                status_update();   
-            }
-        }
-    }
-	
-	
-	if (this_tower) {
-		play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
-        //升級
-		if (event.offsetX >= unit*21 && event.offsetX <= unit*24) {
-			if (event.offsetY >= unit && event.offsetY <= unit*3) {
-
-                //金錢 檢查
-                if (level_up_money() != false) {
-                    if (my_money >= level_up_money()) {
-                        //減金錢
-                        my_money = my_money - level_up_money();
-                        this_tower.level_up();
-                    }
-                    else {
-                        alert("錢不夠!!!");
-                    }
-                }
-			}	
-		}
-		
-		//轉向
-		if (event.offsetX >= unit*25 && event.offsetX <= unit*28) {
-			if (event.offsetY >= unit && event.offsetY <= unit*3) {
-				
-				if (this_tower.dir < 3) {
-					this_tower.dir++;
-				}
-				else {
-					this_tower.dir = 0; 
-				}	
-				
-			}
-		}
-		
-		//變賣
-		if (event.offsetX >= unit*29 && event.offsetX <= unit*32) {
-			if (event.offsetY >= unit && event.offsetY <= unit*3) {
-				
-				delete play_tower[map[this_tower.x][this_tower.y][1]];
-                my_money = my_money + sell_tower_money();
-				
-                //清除佔位置 2x3
-				for (var i=0; i<set_size_x/unit; i++) {
-					for (var j=0; j<set_size_y/unit; j++) {
-						map[this_tower.x+i][this_tower.y+j] = 0;
-					}
-				}
-                
-                play_area.clearRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
-			}	
-		}
-        
-        this_tower = null;
-		menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
-        status_update();
-	}
-}
-
 //遊戲區域
-canvas_menu_area.onmousedown = function(event){
-    //alert(event.offsetX+'--'+event.offsetY);
-    var build_x = Math.floor(event.offsetX/unit);
-    var build_y = Math.floor(event.offsetY/unit);
+canvas_block['menu_area']['object'].onmousedown = function(event){
+    //alert(event.offsetX/unit+'--'+event.offsetY/unit);
     
-    //建塔 建塔事件 阻擋建塔 檢查
-    if (build_event == true && build_can == true) {
-        //金錢 檢查
-		var build_temp = new tower_array[choose_tower](build_x, build_y, play_area);
-			if (my_money >= build_temp.cost_money) {
-				//減金錢
-				my_money = my_money - build_temp.cost_money;
-				//佔位置 2x3
-				for (var i=0; i<set_size_x/unit; i++) {
-					for (var j=0; j<set_size_y/unit; j++) {
-						map[build_x+i][build_y+j] = ["play_tower["+play_tower.length+"]",play_tower.length];
-					}
-				}
-
-				//建塔
-				play_tower.push(build_temp);
-			}     
-			else {
-				alert("錢不夠!!!");
-			}
-		
-		//結束建立事件
-		build_event = false;       
-		menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
-		choose_tower = null;  
-		//更新狀態欄
-		status_update();
-    }
-	
-	//塔取得焦點
-	if (build_event == false && map[build_x][build_y] != 0 && map[build_x][build_y] != "road") {
-		if (this_tower == null || this_tower != eval(map[build_x][build_y][0])) {
-			menu_area.clearRect(0, 0, menu_area_w, menu_area_h); 
-			
-			this_tower = eval(map[build_x][build_y][0]);
-            //更新狀態欄
-            status_update();
-			
-            //攻擊範圍
-            menu_area.fillStyle='rgba(41, 148, 255, 0.5)';
-            menu_area.fillRect((this_tower.x-this_tower.atk_range)*unit,
-                               (this_tower.y-this_tower.atk_range)*unit,
-                               (this_tower.atk_range*2+set_size_x/unit)*unit,
-                               (this_tower.atk_range*2+set_size_y/unit)*unit);
-            
-			menu_area.fillStyle='rgba(255, 145, 36, 0.7)';
-			menu_area.fillRect(this_tower.x*unit, this_tower.y*unit, set_size_x, set_size_y);
-	    }
-	}
-	else {
-		this_tower = null;
-		status_update();
-		menu_area.clearRect(0, 0, menu_area_w, menu_area_h); 
-	}
-}
-
-canvas_menu_area.onmousemove = function(event){
-    if (build_event == true) {
-        menu_area.clearRect(0, 0, menu_area_w, menu_area_h); 
-    
-        var move_x = Math.floor(event.offsetX/unit);
-        var move_y = Math.floor(event.offsetY/unit);
-        //alert(event.offsetX+','+event.offsetY+"--"+move_x+','+move_y);
-
-        //出界
-        if (move_x > (play_unit_x-set_size_x/unit) || move_y > (play_unit_y-set_size_y/unit)) { 
-			menu_area.strokeStyle='#FF0000';
-            menu_area.fillStyle='rgba(255, 0, 0, 0.5)';
-			build_can = false;
-		}
-		//檢查有沒有東西擋住 四邊
-		else if (map[move_x][move_y] == 0 &&                                    //左上 x    y
-            map[move_x+set_size_x/unit-1][move_y] == 0 &&                       //右上 x-1  y
-            map[move_x][move_y+set_size_y/unit-1] == 0 &&                       //左下 x    y-1
-            map[move_x+set_size_x/unit-1][move_y+set_size_y/unit-1] == 0 ) {    //右下 x-1  y-1
-            
-            menu_area.strokeStyle='#1AFD9C';
-            menu_area.fillStyle='rgba(28, 253, 155, 0.5)';
-			build_can = true;
-        }
-        else {  //被擋住
-            menu_area.strokeStyle='#FF0000';
-            menu_area.fillStyle='rgba(255, 0, 0, 0.5)';
-			build_can = false;
-        }
+    if (status_switch['start_menu'] == true) {
+        var chk_pass_code = false;
         
-        menu_area.beginPath();
-        menu_area.rect(move_x*unit, move_y*unit, set_size_x, set_size_y);
-        menu_area.stroke();     
-        menu_area.fillRect(move_x*unit, move_y*unit, set_size_x, set_size_y);     
-    }
-}
-
-//變賣 的錢
-function sell_tower_money() {
-    var sell_money = 0;
-    
-    for (var i=1; i <= this_tower.level ;i++) {
-        sell_money = sell_money + Math.floor(this_tower.level_array[i][0]*0.5);
-    }
-    
-    return sell_money;
-}
-
-//升級 的錢
-function level_up_money() {
-    if (this_tower.level_array[this_tower.level+1] != undefined) {
-        return this_tower.level_array[this_tower.level+1][0];
+        //按開始遊戲鈕
+        if(trigger_button ('start_gmae', event.offsetX, event.offsetY) == true) {
+            //檢查通關碼是第幾關的
+            for (var key in stage) {    
+                if (stage[key]['stage_code'] == pass_code) {
+                    counter['now_stage'] = key;
+                    chk_pass_code = true;
+                    status_switch['start_menu'] = false;                   
+                    start_game ();
+                    
+                    break;
+                }
+            }
+            
+            if (chk_pass_code == false) {
+                alert('找無此號碼,通關碼輸入錯誤 第一關通關碼為:'+stage[0]['stage_code']);
+            }
+        }        
     }
     else {
-        return false;
-    }  
+        var down_x = Math.floor(event.offsetX/unit);
+        var down_y = Math.floor(event.offsetY/unit);
+        
+        //建塔 建塔檢查
+        if (status_switch['build_focus'] == true && status_switch['build_tower'] == true) {
+            var this_tower_num = towers.length;
+            
+            //金錢 檢查
+            if (counter['money'] >= status_tower[counter['choose_tower']].cost_money) {
+                //減金錢
+                counter['money'] = counter['money'] - status_tower[counter['choose_tower']].cost_money;
+                //建塔
+				towers[this_tower_num] = new tower_class[counter['choose_tower']](this_tower_num, down_x, down_y);
+                towers[this_tower_num].tower_occ();
+            }
+            else {
+                alert('錢不夠');
+            }
+            
+            //結束建立事件
+            status_switch['build_focus'] = false;       
+            status_switch['build_tower'] = false;  
+            counter['choose_tower'] = undefined;
+            canvas_block['menu_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+            //更新狀態欄
+            status_menu();
+        }
+        
+        //塔取得焦點
+        if (status_switch['build_focus'] == false && map_unit[down_x][down_y] != "road" && map_unit[down_x][down_y] != undefined) {
+            canvas_block['menu_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+            
+            status_switch['tower_focus'] = true;
+            //遊戲區選到的塔編號
+            counter['choose_tower_num'] = map_unit[down_x][down_y];
+            
+            //更新狀態欄
+            status_menu();
+            //攻擊範圍框
+            atk_range_box(towers[map_unit[down_x][down_y]],towers[map_unit[down_x][down_y]].x,towers[map_unit[down_x][down_y]].y);
+            fill_block('menu_area','rgba(255, 145, 36, 0.4)',towers[map_unit[down_x][down_y]].x,towers[map_unit[down_x][down_y]].y,tower_size['width_unit'],tower_size['height_unit']);
+        }	
+        else {
+            canvas_block['menu_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+            status_switch['tower_focus'] = false;
+            counter['choose_tower_num'] = undefined;
+            //更新狀態欄
+            status_menu();
+        }
+    }
+}
+
+canvas_block['menu_area']['object'].onmousemove = function(event){
+    if (status_switch['start_menu'] == false && status_switch['build_focus'] == true) {
+        var move_x = Math.floor(event.offsetX/unit);
+        var move_y = Math.floor(event.offsetY/unit);
+        var color;
+        
+        //清畫面
+        canvas_block['menu_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+        
+        //出界
+        if (move_x > (canvas_block['menu_area']['width']/unit-tower_size['width_unit']) || move_y > (canvas_block['menu_area']['height']/unit-tower_size['height_unit'])) { 
+            color='rgba(255, 0, 0, 0.5)';
+            status_switch['build_tower'] = false;
+		}
+		//檢查有沒有東西擋住 四邊 可建塔
+		else if (map_unit[move_x][move_y] == undefined &&                                                      //左上 x    y
+            map_unit[move_x+tower_size['width_unit']-1][move_y] == undefined &&                                //右上 x-1  y
+            map_unit[move_x][move_y+tower_size['height_unit']-1] == undefined &&                               //左下 x    y-1
+            map_unit[move_x+tower_size['width_unit']-1][move_y+tower_size['height_unit']-1] == undefined ) {   //右下 x-1  y-1
+            
+            color='rgba(82, 255, 82, 0.5)';
+            status_switch['build_tower'] = true;
+        }
+        else {  //被擋住
+            color='rgba(255, 0, 0, 0.5)';
+            status_switch['build_tower'] = false;
+        }
+        
+        //攻擊範圍框
+        atk_range_box(status_tower[counter['choose_tower']],move_x,move_y);
+        
+        fill_block('menu_area',color,move_x,move_y,tower_size['width_unit'],tower_size['height_unit']);
+        canvas_block['menu_area']['context'].drawImage(status_tower[counter['choose_tower']].image_tower,
+                                                         0,
+                                                         status_tower[counter['choose_tower']].image_num*tower_size['height'],
+                                                         status_tower[counter['choose_tower']].w_quar,
+                                                         status_tower[counter['choose_tower']].h_quar,
+                                                         move_x*unit,
+                                                         move_y*unit,
+                                                         tower_size['width'], 
+                                                         tower_size['height']);
+        
+    }
+}
+
+//狀態區域
+canvas_block['status_area']['object'].onmousedown = function(event){
+    //alert(event.offsetX+'--'+event.offsetY);
+    
+    if (status_switch['start_menu'] == false) {
+        //按準備完成鈕
+        if(trigger_button ('ready_go', event.offsetX, event.offsetY) == true) {
+            status_switch['chk_ready'] = true;
+            status_menu();
+        }
+        
+        //點擊塔 status_menu()有修改這邊也要改
+        for (var key in tower_class) {
+            if (event.offsetX >= (status_tower[key].x-0.5)*unit && event.offsetX <= (status_tower[key].x-0.5+8)*unit) {
+                if (event.offsetY >= (status_tower[key].y-0.5)*unit && event.offsetY <= (status_tower[key].x-0.5+4)*unit) {
+                    status_menu();
+                    fill_block('status_area','rgba(82, 255, 82,0.4)',status_tower[key].x-0.5,status_tower[key].y-0.5,8,4);
+                    //建塔 取得key
+                    status_switch['build_focus'] = true;
+                    counter['choose_tower'] = key;
+                }
+            }
+        }
+        
+        if (status_switch['tower_focus'] == true && counter['choose_tower_num'] != undefined) {
+            //升級
+            if(trigger_button ('level_up', event.offsetX, event.offsetY) == true) {
+                //檢查有沒有下一個等級資料
+                if (towers[counter['choose_tower_num']].next_cost != "最高等") {
+                    //檢查金錢夠不夠
+                    if (counter['money'] >= towers[counter['choose_tower_num']].next_cost) {
+                        //減金錢
+                        counter['money'] = counter['money'] - towers[counter['choose_tower_num']].next_cost;
+                        //升級
+                        towers[counter['choose_tower_num']].level_up();
+                    }
+                    else {
+                        alert('錢不夠');
+                    }
+                }
+            }
+            
+            //變賣
+            if(trigger_button ('tower_sell', event.offsetX, event.offsetY) == true) {
+                
+                //加錢
+                counter['money'] = counter['money'] + tower_sell(counter['choose_tower_num']);
+                //清除佔位置
+                towers[counter['choose_tower_num']].tower_clear_occ();
+                delete towers[counter['choose_tower_num']];
+                
+                status_switch['tower_focus'] = false;
+                counter['choose_tower_num'] = undefined;
+                //清畫面
+                canvas_block['menu_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+            }
+            
+            status_menu();
+        }
+    }
 }

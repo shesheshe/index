@@ -1,99 +1,124 @@
-//碰撞檢查陣列
-var map = [];
-//有每欄要宣告
-for (i = 0; i < play_unit_x; i++ ) {
-    map[i] = [];  
-    
-    for (j = 0; j < play_unit_y; j++ ) {
-        map[i][j] = 0;  
-    }          
-}
-
-//解析地圖並且畫出來 x=i , y=j
+//橫列 直欄
+//解析地圖並且畫出來 X=i , Y=j
 function draw_back_ground() {
-    back_ground.fillRect(0,0,back_ground_w,back_ground_h);
-    //背景圖片開始位置
-	var strat_x = map_no[map_no_key]["back_ground"]*2;
-    var strat_y = 0;	
-	//背景 32x32 圖片 兩單位
-    for(var i = 0; i < play_unit_x; i+=2 ) {       //x
-        for(var j = 0; j < play_unit_y; j+=2 ) {   //y	
-            back_ground.drawImage(image_back_ground, strat_x*unit, strat_y*unit, unit*2, unit*2, i*unit, j*unit, unit*2, unit*2);
-            //back_ground.fillText(i+","+j, i*unit, j*unit);
+    //先清空畫面
+    canvas_block['menu_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+    canvas_block['play_area']['context'].clearRect(0, 0, canvas_block['play_area']['width'], canvas_block['play_area']['height']);
+    canvas_block['back_ground']['context'].clearRect(0,0,canvas_block['back_ground']['width'],canvas_block['back_ground']['height']);
+    //初始值
+    enemies = [];
+    towers = [];
+    counter['now_batch_num'] = 0;
+    counter['enemy_num'] = 0;
+    status_switch['chk_ready'] = false;
+    //輸入生命金錢
+    counter['life'] = stage[counter['now_stage']]['life'];
+    counter['money'] = stage[counter['now_stage']]['money'];
+    
+    //清空佔位
+    for (var i = 0; i < canvas_info['play_box']['width_unit']; i++ ) {
+        for (var j = 0; j < canvas_info['play_box']['height_unit']; j++ ) {
+            map_unit[i][j] = undefined;  
+        } 
+    }
+    
+	//背景
+    for(var i = 0; i < canvas_info['play_box']['width_unit']; i+=stage[counter['now_stage']]['back_ground'][2]/unit ) {        //x
+        for(var j = 0; j < canvas_info['play_box']['height_unit']; j+=stage[counter['now_stage']]['back_ground'][3]/unit ) {   //y	
+            canvas_block['back_ground']['context'].drawImage(get_image['back_ground'], 
+                                                             stage[counter['now_stage']]['back_ground'][0], 
+                                                             stage[counter['now_stage']]['back_ground'][1], 
+                                                             stage[counter['now_stage']]['back_ground'][2], 
+                                                             stage[counter['now_stage']]['back_ground'][3], 
+                                                             i*unit, 
+                                                             j*unit, 
+                                                             stage[counter['now_stage']]['back_ground'][2], 
+                                                             stage[counter['now_stage']]['back_ground'][3]);
         }
     }
-	
+    
     //道路
-    for (var key in map_no[map_no_key]["route"]["road"]) {
-        for (var i = 0; i < map_no[map_no_key]["route"]["road"][key][2]; i++ ) {
-            for (var j = 0; j < map_no[map_no_key]["route"]["road"][key][3]; j++ ) {
-                back_ground.drawImage(image_back_ground, strat_x*unit, (strat_y+2)*unit, unit, unit, 
-                                     (map_no[map_no_key]["route"]["road"][key][0]+i)*unit, 
-                                     (map_no[map_no_key]["route"]["road"][key][1]+j)*unit, 
-                                      unit, unit);
-            
-                map[map_no[map_no_key]["route"]["road"][key][0]+i][map_no[map_no_key]["route"]["road"][key][1]+j] = "road";
+    for(var key in stage[counter['now_stage']]['road']) {
+        for(var i = 0; i < stage[counter['now_stage']]['road'][key][2]; i++ ) {
+            for(var j = 0; j < stage[counter['now_stage']]['road'][key][3]; j++ ) {
+                canvas_block['back_ground']['context'].drawImage(get_image['back_ground'],
+                                                                 stage[counter['now_stage']]['back_ground'][0], 
+                                                                 stage[counter['now_stage']]['back_ground'][1]+2*unit, 
+                                                                 unit, 
+                                                                 unit,
+                                                                 (stage[counter['now_stage']]['road'][key][0]+i)*unit, 
+                                                                 (stage[counter['now_stage']]['road'][key][1]+j)*unit, 
+                                                                 unit, 
+                                                                 unit);
+                
+                map_unit[stage[counter['now_stage']]['road'][key][0]+i][stage[counter['now_stage']]['road'][key][1]+j]= "road";
             }
         }
     }
     
-    //敵人出生點
-    for (var j = 0; j < map_no[map_no_key]["route"]["start"][2]; j++ ) {
-         back_ground.drawImage(image_back_ground, 6*unit, strat_y*unit, unit*2, unit, 
-                                     (map_no[map_no_key]["route"]["start"][0])*unit, 
-                                     (map_no[map_no_key]["route"]["start"][1]+j)*unit, 
-                                      unit*2, unit);
+    //敵人出現點
+    for(var i = 0; i < stage[counter['now_stage']]['road_start'][2]; i++ ) {
+        for(var j = 0; j < stage[counter['now_stage']]['road_start'][3]; j++ ) {
+            canvas_block['back_ground']['context'].drawImage(get_image['back_ground'],
+                                                             6*unit, 
+                                                             0, 
+                                                             unit, 
+                                                             unit,
+                                                             (stage[counter['now_stage']]['road_start'][0]+i)*unit, 
+                                                             (stage[counter['now_stage']]['road_start'][1]+j)*unit, 
+                                                             unit, 
+                                                             unit);
+        }
     }
-
+    
     //敵人結束點
-    for (var j = 0; j < map_no[map_no_key]["route"]["end"][2]; j++ ) {
-        back_ground.drawImage(image_back_ground, 6*unit, (strat_y+2)*unit, unit*2, unit, 
-                             (map_no[map_no_key]["route"]["end"][0])*unit, 
-                             (map_no[map_no_key]["route"]["end"][1]+j)*unit, 
-                              unit*2, unit);
+	for(var i = 0; i < stage[counter['now_stage']]['road_end'][2]; i++ ) {
+        for(var j = 0; j < stage[counter['now_stage']]['road_end'][3]; j++ ) {
+            canvas_block['back_ground']['context'].drawImage(get_image['back_ground'],
+                                                             6*unit, 
+                                                             2*unit, 
+                                                             unit, 
+                                                             unit,
+                                                             (stage[counter['now_stage']]['road_end'][0]+i)*unit, 
+                                                             (stage[counter['now_stage']]['road_end'][1]+j)*unit, 
+                                                             unit, 
+                                                             unit);
+        }
     }
 }
-
-//敵人陣列
-var enemies = [];
-//敵人批次
-var enemy_batch = 0;
-//每批幾個敵人記數
-var enemy_count = 0;
-//產生間隔記數
-var pro_time_count = 0;
-//下一批次敵人準備時間
-var next_batch = 200;
-//準備時間記數
-var next_batch_count = 0;
 
 //畫出地圖敵人
 function draw_enemy() {
-    var enemy_now = map_no[map_no_key]["enemy"][enemy_batch];
-    
-    //迴圈產出敵人 
-    if (enemy_batch < map_no[map_no_key]["enemy"].length) {
-        if (enemy_now[0] > enemy_count) {
-            if (enemy_now[1] < pro_time_count) {
-                enemies[enemy_count] = new Enemy(enemy_count, enemy_now[2], map_no[map_no_key]["route"]["start"][0], map_no[map_no_key]["route"]["start"][1], enemy_now[3], enemy_now[4], enemy_now[5]);
-                enemy_count++;
-                pro_time_count = 0;
-            }
-            else {
-                pro_time_count ++;
+    //迴圈產出敵人
+    //到第幾關
+    if (counter['now_stage'] < stage.length) {
+        //到第幾個敵人
+        if (counter['enemy_num'] < stage[counter['now_stage']]['enemy'][counter['now_batch_num']][0]) {
+            //產生間隔
+            counter['loop_new_enemy'] = number_loop(counter['loop_new_enemy'],0,stage[counter['now_stage']]['enemy'][counter['now_batch_num']][1]);
+            if (counter['loop_new_enemy'] == 0) {
+                //產生敵人
+                enemies[counter['enemy_num']] = new Enemy(counter['enemy_num'],
+                                                          stage[counter['now_stage']]['road_start'][0], 
+                                                          stage[counter['now_stage']]['road_start'][1], 
+                                                          stage[counter['now_stage']]['enemy'][counter['now_batch_num']][2], 
+                                                          stage[counter['now_stage']]['enemy'][counter['now_batch_num']][3], 
+                                                          stage[counter['now_stage']]['enemy'][counter['now_batch_num']][4], 
+                                                          stage[counter['now_stage']]['enemy'][counter['now_batch_num']][5]);
+                counter['enemy_num']++;
             }
         }
         else {
+            status_switch['chk_enemies'] = false;
             //檢查是否敵人都消失
-            var enemies_null_check = false;
-            for (var i=0 ; i < enemies.length; i++) {
-                if (enemies[i] != undefined) {
-                    enemies_null_check = true;
+            for (var key in enemies) {
+                if (enemies[key] != undefined) {
+                    status_switch['chk_enemies'] = true;
                 }
             }
             
-            //檢查敵人都消失了
-            if (enemies_null_check == false) {
+            //敵人都消失了
+            if (status_switch['chk_enemies'] == false) {
                 //敵人陣列清空
                 if (enemies.length > 0) {
                     enemies = [];
@@ -102,34 +127,30 @@ function draw_enemy() {
                 if (bullets.length > 0) {
                     bullets = [];
                 }
-                
-                if (next_batch == next_batch_count) {
-                enemy_count = 0;
-                enemy_batch++;
-                next_batch_count = 0;
-                //狀態欄位更新
-                status_update ();
+                //每波敵人間隔 
+                counter['loop_enemy_batch'] = number_loop(counter['loop_enemy_batch'],0,100);
+                if (counter['loop_enemy_batch'] == 0) {
+                    //產生敵人歸0
+                    counter['enemy_num'] = 0;
+                    //下一批
+                    counter['now_batch_num']++;
+                    
                     //下一關
-                    if (enemy_batch == map_no[map_no_key]["enemy"].length) {
-                        map_no_key++;
-                        if (map_no_key < map_no.length) {
-                            enemy_batch = 0;
-                            game_start_button  = false;
-                            play_tower = [];
-                            draw_back_ground();
-                            status_update ();
-                        }
-                        else {
-                            alert("全破關")
-                        }
+                    if (counter['now_batch_num'] == stage[counter['now_stage']]['enemy'].length) {
+                        counter['now_batch_num'] = 0;
+                        //下一關
+                        counter['now_stage']++;
+                        //換地圖
+                        draw_back_ground();
                     }
                 }
-                else {
-                    next_batch_count++;
-                    status_update ();
-                }    
                 
+                status_menu();                
             }
         }
+        
+    }
+    else {
+        //alert('全破關')
     }
 }

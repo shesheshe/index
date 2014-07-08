@@ -16,13 +16,28 @@
 	<img src="pic/image_back_ground.png" id = "image_back_ground"/>
 	<img src="pic/image_bullet.png" id = "image_bullet"/>
 	<!--塔-->
-    <img src="pic/image_arrow_tower.png" id = "image_arrow_tower"/>
-    <img src="pic/image_turret_tower.png" id = "image_turret_tower"/>
-    <img src="pic/image_ice_tower.png" id = "image_ice_tower"/>
-    <img src="pic/image_up_tower.png" id = "image_up_tower"/>
+    <img src="pic/image_tower.png" id = "image_tower"/>
     <!--enemy-->
 	<img src="pic/image_enemy_01.png" id = "image_enemy_01"/>
     <img src="pic/image_enemy_02.png" id = "image_enemy_02"/>
+    <img src="pic/image_enemy_03.png" id = "image_enemy_03"/>
+    <img src="pic/image_enemy_04.png" id = "image_enemy_04"/>
+    <img src="pic/image_enemy_05.png" id = "image_enemy_05"/>
+    <img src="pic/image_enemy_06.png" id = "image_enemy_06"/>
+    <img src="pic/image_enemy_07.png" id = "image_enemy_07"/>
+    <img src="pic/image_enemy_08.png" id = "image_enemy_08"/>
+    <img src="pic/image_enemy_09.png" id = "image_enemy_09"/>
+    <img src="pic/image_enemy_10.png" id = "image_enemy_10"/>
+    <img src="pic/image_enemy_11.png" id = "image_enemy_11"/>
+    <img src="pic/image_enemy_12.png" id = "image_enemy_12"/>
+    <img src="pic/image_enemy_13.png" id = "image_enemy_13"/>
+    <img src="pic/image_enemy_14.png" id = "image_enemy_14"/>
+    <img src="pic/image_enemy_15.png" id = "image_enemy_15"/>
+    <img src="pic/image_enemy_16.png" id = "image_enemy_16"/>
+    <img src="pic/image_enemy_17.png" id = "image_enemy_17"/>
+    <img src="pic/image_enemy_18.png" id = "image_enemy_18"/>
+    <img src="pic/image_enemy_19.png" id = "image_enemy_19"/>
+    <img src="pic/image_enemy_20.png" id = "image_enemy_20"/>
 </div>
 
 <!--遊戲區塊-->
@@ -39,6 +54,7 @@
 
 <!--載入需要的js-->
 <script type="text/javascript" src ="variable.js"></script>
+<script type="text/javascript" src ="public_fun.js"></script>
 <script type="text/javascript" src ="map_data.js"></script>
 <script type="text/javascript" src ="tower.js"></script>
 <script type="text/javascript" src ="enemy.js"></script>
@@ -46,153 +62,28 @@
 <script type="text/javascript" src ="enter.js"></script>
 
 <script type="text/javascript">
-//載入時的動畫 var
-var load; 
-var load_word = 'LOADING';
-var play_game;
+loading();
 
-//載入時間 =>讓資料有充分的時間載入
-load_time();
-
-//載入完成
-function game_start () {
-    //loading 完成
-    clearInterval(load);
+function drawCanvas() { 
+    //清除
+    canvas_block['play_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
     
-    menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
-    status_area.clearRect(0, 0, status_area_w, status_area_h);
-    
-    draw_back_ground();
-	status_update ();
-    
-    play_game = setInterval(drawCanvas,40);
-
-    function drawCanvas() {      
-        //清除
-        play_area.clearRect(0, 0, play_area_w, play_area_h);
-		
-		//塔
-        for (var tower_key in play_tower) {
-            play_tower[tower_key].working();
-        }
-		
-		if (game_start_button == true) {
-            draw_enemy();
-
-            //敵人
-            for (var en_key in enemies) {
-                enemies[en_key].working();
-            }
-			//子彈
-			for (var bu_key in bullets) {
-                bullets[bu_key].working();
-            }
-        }
+    for (var to_key in towers) {
+        towers[to_key].working();
     }
-}
-
-//載入時間
-function load_time() {
-    //loding .....
-    load_text();
-    load = setInterval(load_text,500);
-	
-    status_area.fillStyle='rgba(209,209,209,0.7)';
-    status_area.fillRect(0,0,status_area_w,status_area_h);
-
-    setTimeout(game_start,1000);
-}
-
-//載入時的動畫 load...
-function load_text() {
-    menu_area.clearRect(0, 0, menu_area_w, menu_area_h);
     
-    menu_area.fillStyle='rgba(209,209,209,0.7)'; 
-    menu_area.fillRect(0,0,menu_area_w,menu_area_h);
-    
-    menu_area.fillStyle = "black";
-    menu_area.font = '72px 微軟正黑體';
-    menu_area.fillText(load_word,8*unit, 8*unit);
-    load_word = load_word+".";
-}
-
-//狀態欄位更新
-var status_tower = [];
-var status_tower_box_x = 6;
-var status_tower_box_y = 3;
-
-function status_update () {   
-	status_area.fillStyle='#d0d0d0';
-    status_area.fillRect(0,0,status_area_w,status_area_h); 
-	
-	//開始按鈕
-    if (game_start_button == false) {
-        status_area.fillStyle='#EA0000';
-        status_area.fillRect(unit,unit,unit*5,unit*2); 
-        status_area.fillStyle='#000000';
-        status_area.font = "bold 18px 微軟正黑體";
-        status_area.fillText("遊戲開始",unit+unit/3, unit*2+unit/2); 
-    }
-    else {
-        status_area.fillStyle='#02C874';
-        status_area.fillRect(unit,unit,unit*5,unit*2); 
-        status_area.fillStyle='#000000';
-        status_area.font = "bold 18px 微軟正黑體";
-        status_area.fillText(next_batch_count+"/"+next_batch,unit+unit/3, unit*2+unit/2); 
-    }
-	
-	//目前波數/總波數
-	status_area.fillStyle='#000000';
-    status_area.fillText("目前波數:"+(enemy_batch+1)+"/總波數:"+map_no[map_no_key]["enemy"].length,unit*8, unit*2);
-
-	//生命
-	status_area.fillStyle='#000000';
-    status_area.fillText("生命:"+my_hp,unit*8, unit*4);
-	
-	//金錢
-	status_area.fillStyle='#000000';
-    status_area.fillText("金錢:"+my_money,unit*14, unit*4);
-	
-	if (this_tower != null) {
-		//塔升級 
-		status_area.fillStyle='rgb(193, 123, 185)';
-		status_area.fillRect(unit*21,unit,unit*3,unit*2); 
-		status_area.fillStyle='#000000';
-		status_area.fillText("升級",unit*21+unit/3,unit*2+unit/2); 	
-		status_area.fillText("-"+level_up_money(),unit*21,unit*4); 	
-		
-		//轉向 
-		status_area.fillStyle='rgb(167, 167, 211)';
-		status_area.fillRect(unit*25,unit,unit*3,unit*2);  
-		status_area.fillStyle='#000000';
-		status_area.fillText("轉向",unit*25+unit/3,unit*2+unit/2); 	
-		
-		//變賣
-		status_area.fillStyle='rgb(130, 192, 192)';
-		status_area.fillRect(unit*29,unit,unit*3,unit*2);  
-		status_area.fillStyle='#000000';
-		status_area.fillText("變賣",unit*29+unit/3,unit*2+unit/2); 	
-		status_area.fillText("+"+sell_tower_money(),unit*29,unit*4); 	
-	}
-	
-	//砲塔 3
-	for (var key in tower_array) {
-		status_tower[key] = new tower_array[key](34+key*7, 1, status_area);
-        status_tower[key].draw();
+    if (status_switch['chk_ready'] == true) {  
+        draw_enemy();
         
-		status_area.fillStyle='#000000';
-        status_area.fillText(status_tower[key].name,status_tower[key].x*unit+set_size_x,(status_tower[key].y+1)*unit);
-		status_area.fillText("費用:"+status_tower[key].cost_money,status_tower[key].x*unit+set_size_x,(status_tower[key].y+2)*unit+unit/2);
-        
-        status_area.strokeStyle='#000000';
-        status_area.beginPath();
-        status_area.rect(status_tower[key].x*unit, status_tower[key].y*unit, status_tower_box_x*unit, status_tower_box_y*unit);
-        status_area.stroke(); 
-	}
-    
-    if (choose_tower != null) {
-        status_area.fillStyle='rgba(28, 253, 155, 0.5)';
-        status_area.fillRect(status_tower[choose_tower].x*unit, status_tower[choose_tower].y*unit, status_tower_box_x*unit, status_tower_box_y*unit);  
+        //子彈
+        for (var bu_key in bullets) {
+            bullets[bu_key].working();
+        }
+
+        //敵人
+        for (var en_key in enemies) {
+            enemies[en_key].working();
+        }
     }
 }
 </script>
