@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>塔防遊戲</title>
+</head>
+<body>
+
+<!--style-->
+<style>
+</style>
+
+<div id = "image_box" style="display:none">
+    <!--back_ground-->
+	<img src="pic/image_back_ground.png" id = "image_back_ground"/>
+	<img src="pic/image_bullet.png" id = "image_bullet"/>
+	<!--塔-->
+    <img src="pic/image_tower.png" id = "image_tower"/>
+    <!--enemy-->
+	<img src="pic/image_enemy_01.png" id = "image_enemy_01"/>
+    <img src="pic/image_enemy_02.png" id = "image_enemy_02"/>
+    <img src="pic/image_enemy_03.png" id = "image_enemy_03"/>
+    <img src="pic/image_enemy_04.png" id = "image_enemy_04"/>
+    <img src="pic/image_enemy_05.png" id = "image_enemy_05"/>
+    <img src="pic/image_enemy_06.png" id = "image_enemy_06"/>
+    <img src="pic/image_enemy_07.png" id = "image_enemy_07"/>
+    <img src="pic/image_enemy_08.png" id = "image_enemy_08"/>
+    <img src="pic/image_enemy_09.png" id = "image_enemy_09"/>
+    <img src="pic/image_enemy_10.png" id = "image_enemy_10"/>
+    <img src="pic/image_enemy_11.png" id = "image_enemy_11"/>
+    <img src="pic/image_enemy_12.png" id = "image_enemy_12"/>
+    <img src="pic/image_enemy_13.png" id = "image_enemy_13"/>
+    <img src="pic/image_enemy_14.png" id = "image_enemy_14"/>
+    <img src="pic/image_enemy_15.png" id = "image_enemy_15"/>
+    <img src="pic/image_enemy_16.png" id = "image_enemy_16"/>
+    <img src="pic/image_enemy_17.png" id = "image_enemy_17"/>
+    <img src="pic/image_enemy_18.png" id = "image_enemy_18"/>
+    <img src="pic/image_enemy_19.png" id = "image_enemy_19"/>
+    <img src="pic/image_enemy_20.png" id = "image_enemy_20"/>
+</div>
+
+<!--遊戲區塊-->
+<div style="width:1024px; margin: 0 auto; border: 3px solid black">
+    <div id="status_box" style="width:1024px; height:80px;">
+        <canvas id="status_area" width="1024" height="80"></canvas>
+    </div>
+    <div id="play_box" style="width:1024px; height:512px;">  <!--多層canvas-->
+        <canvas id="menu_area" width="1024" height="512" style="position: absolute; z-index: 3"></canvas>
+        <canvas id="play_area" width="1024" height="512" style="position: absolute; z-index: 2"></canvas>
+        <canvas id="back_ground" width="1024" height="512" style="position: absolute; z-index: 1"></canvas>
+    </div>
+</div>
+
+<!--載入需要的js-->
+<script type="text/javascript" src ="variable.js"></script>
+<script type="text/javascript" src ="public_fun.js"></script>
+<script type="text/javascript" src ="map_data.js"></script>
+<script type="text/javascript" src ="tower.js"></script>
+<script type="text/javascript" src ="enemy.js"></script>
+<script type="text/javascript" src ="map_build.js"></script>
+<script type="text/javascript" src ="enter.js"></script>
+
+<script type="text/javascript">
+loading();
+
+function drawCanvas() { 
+    //清除
+    canvas_block['play_area']['context'].clearRect(0, 0, canvas_block['menu_area']['width'], canvas_block['menu_area']['height']);
+    
+    for (var to_key in towers) {
+        towers[to_key].working();
+    }
+    
+    if (status_switch['chk_ready'] == true) {  
+        draw_enemy();
+        
+        //子彈
+        for (var bu_key in bullets) {
+            bullets[bu_key].working();
+        }
+
+        //敵人
+        for (var en_key in enemies) {
+            enemies[en_key].working();
+        }
+    }
+}
+</script>
+
+</body>
+</html>
