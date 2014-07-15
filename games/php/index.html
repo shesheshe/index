@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>php</title>
+</head>
+<body>
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"> </script>
+	<script type="text/javascript">
+	$(function () {
+
+		$.ajax({
+			type: "GET",
+			url: "http://heroboy999.appspot.com/index.php"
+		})
+		.done(function(msg) {
+			console.log(msg);
+		});
+	
+		/*$.ajax({
+		statusCode: {
+			404: function() {
+			  alert( "page not found" );
+			}
+		  }
+		});*/
+	});	
+	</script>
+</body>
+</html>
