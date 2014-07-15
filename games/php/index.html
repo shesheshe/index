@@ -10,13 +10,19 @@
 	<script type="text/javascript">
 	$(function () {
 
+		var url = "http://heroboy999.appspot.com/index.php";
+		
 		$.ajax({
-			type: "GET",
-			url: "http://heroboy999.appspot.com/index.php"
-		})
-		.done(function(msg) {
-			console.log(msg);
-		});
+		  url: url,
+		  type: "GET",
+		  dataType: "json",
+		  success: function(json) {
+			console.log(json);
+		  },
+		  error: function() {
+			console.log("ERROR!!!");
+		  }
+		});	
 	
 		/*$.ajax({
 		statusCode: {
