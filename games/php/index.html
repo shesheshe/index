@@ -2,27 +2,50 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>php</title>
+	<title>herogo</title>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
 </head>
 <body>
 
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"> </script>
+
+	<div data-role="page" id="dd">
+		<ul class="dd" data-role="listview"></ul>
+	</div>
+	
+	<div data-role="page" id="mm">
+
+	</div>
+	
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+
 	<script type="text/javascript">
 	$(function () {
 
-		var url = "http://heroboy999.appspot.com/index.php";
+		var url = "http://hero99.ihost.tw/";
 		
 		$.ajax({
 		  url: url,
-		  type: "GET",
+		  type: "POST",
+		  data: {type:"select"},
 		  dataType: "json",
 		  success: function(json) {
-			console.log(json);
+			
+			/**/
+			var content = '';
+			$.each(json.list, function(key, value) {
+				content += "<li><a href=\"#mm\">"+value+"</a></li>";
+			});
+			
+			$(".dd")
+			.html("<li><a href=\"#mm\">"+json.+"</a></li>")
+			.listview('refresh');
+			
 		  },
 		  error: function() {
 			console.log("ERROR!!!");
 		  }
-		});	
+		});
 	
 		/*$.ajax({
 		statusCode: {
