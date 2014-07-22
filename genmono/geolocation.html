@@ -32,12 +32,17 @@
 			console.log("此瀏覽器支援地理定位功能!");
 			var geolocation=window.navigator.geolocation; //取得 Geolocation 物件
 			
-			geolocation.getCurrentPosition(function(position, coordinates) {
-				console.log(position);
-				console.log(coordinates);
-			});
+			geolocation.getCurrentPosition(success, error);
 		}
 		
+		function success(position, coordinates) {
+			console.log(position);
+			console.log(coordinates);
+		}
+		
+		function error(positionerror) {
+			console.log(positionerror);
+		}
 
 	});	
 
