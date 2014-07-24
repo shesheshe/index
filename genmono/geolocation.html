@@ -40,15 +40,14 @@
 		}
 		
 		function success(position, coordinates) {
-			set_log(position.coords);
-			set_log(position.timestamp);
-			set_log(coordinates.latitude);
-			set_log(coordinates.longitude);
-			set_log(coordinates.altitude);
-			set_log(coordinates.accuracy);
-			set_log(coordinates.altitudeAccuracy);
-			set_log(coordinates.heading);
-			set_log(coordinates.speed);
+			set_log("緯度:"+position.coords.latitude);
+			set_log("經度:"+position.coords.longitude);
+			set_log("高度:"+position.coords.altitude);
+			set_log("位置誤差:"+position.coords.accuracy);
+			set_log("高度誤差:"+position.coords.altitudeAccuracy);
+			set_log("移動方向:"+position.coords.heading);
+			set_log("移動速度:"+position.coords.speed);
+			set_log("取得位置資訊之時間:"+position.timestamp);
 		}
 		
 		function error(positionerror) {
