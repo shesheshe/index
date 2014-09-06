@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>genmono2 裝備簡易計算機</title>
+</head>
+<body>
+	
+	value:<input type="text" size="10" />
+	grade:<select id="grade_cnt">
+	</select>
+	<input type="button" value="go"/>
+	<div></div>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"> </script>
+	<script type="text/javascript">
+
+	var grade = 0;
+	var strengthening = 20;
+	var dmg = 0;
+	
+	$(function () {
+	
+		console.log("init");
+		
+		grade_cnt();
+		//strengthening_cnt();
+		
+		$("input[type=button]").on('click', function() {
+			var dmg = $("input[type=text]").val();
+			if(dmg=='') {
+				return false;
+			}
+			go(dmg);
+		});
+		
+
+	});	
+	
+	function grade_cnt() {
+	
+		var options = '';
+		for(var i=1; i<8; i++) {
+			options += "<option value=\""+i+"\">"+i+"</option>";
+		}
+		
+		$("select#grade_cnt")
+		.html(options)
+		.on("change", function() {
+			grade = this.value;
+		});
+		grade = $("#grade_cnt option:first").val();
+		
+	}
+	
+	function strengthening_cnt() {
+
+		var options = '';
+		for(var i=1; i<21; i++) {
+			options += "<option value=\""+i+"\">"+"+"+i+"</option>";
+		}
+		
+		$("select#strengthening_cnt")
+		.html(options)
+		.on("change", function() {
+			strengthening = this.value;
+		});
+		
+		strengthening = $("#strengthening_cnt option:first").val();
+
+	}
+	
+	function go(dmg) {
+		var base = 20;
+		if(strengthening>10) {
+			base = 30;
+		}
+
+		var text = '';
+		for(var i=1; i<strengthening+1; i++) {
+			value = 0;
+			value = base + parseInt(grade);
+			value = i * value;
+			value = value / 100;
+			value = value * dmg;
+			text += "+" + i + " : " + (parseInt(dmg)+Math.ceil(value)) + "<br />";
+		}
+
+		$("div").html(text);
+	}
+	
+	</script>
+</body>
+</html>
