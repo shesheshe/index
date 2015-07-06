@@ -157,9 +157,44 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
 	this.animal = Animal;
 	this.animal(varanem, x, y, image_name, real_h ,speed);
     //普通攻擊
-    this.attack_gen_con = 0;
-    this.attack_gen_x;
-    this.attack_gen_y;
+    this.attack_con = 0;
+    this.attack_x;
+    this.attack_y;
+    //fire_ball
+    this.fire_ball_array = [];
+    this.fire_ball_mp =50;
+    
+    this.exp = 0;
+    this.exp_array = {
+        1:[0,100,50,10,10],2:[10,110,60,12,12],3:[20,120,70,14,14],4:[30,130,80,16,16],5:[40,140,90,18,18],
+        6:[50,150,100,20,20],7:[60,160,110,22,22],8:[70,170,120,24,24],9:[80,180,130,26,26],10:[90,200,150,30,30]
+    }
+    this.level = 1;
+    this.hp = this.exp_array[this.level][1];
+    this.mp = this.exp_array[this.level][2];
+    this.atk = this.exp_array[this.level][3];
+    this.def = this.exp_array[this.level][4];
+    //level => exp, hp, mp, atk, def
+    
+    //素質
+    this.level_cheak = function () {
+        //alert(this.exp_array[this.level+1][0]);
+        //取得下一等級的需求經驗值
+        if (this.exp >= this.exp_array[this.level+1][0]) {
+            this.level = this.level+1;
+            this.hp = this.exp_array[this.level][1];
+            this.mp = this.exp_array[this.level][2];
+            this.atk = this.exp_array[this.level][3];
+            this.def = this.exp_array[this.level][4];
+        }
+    }   
+    
+    //魔力每秒回復
+    this.mp_up = function () {
+            this.mp++;
+            status_area_update ();
+    }
+    
     
 	//對話!!
 	this.dialo = function () {
@@ -171,46 +206,162 @@ function Hero (varanem, x, y, image_name, real_h ,speed) {
     }
 	
     //會攻擊(普通攻擊)
-    this.hero_attack_gen = function () {
+    this.hero_attack = function () {
         switch (this.dir) {
             case 0:
-                this.attack_gen_x = this.x;
-                this.attack_gen_y = this.y+this.h_unit;
+                this.attack_x = this.x;
+                this.attack_y = this.y+this.h_unit;
             break;
             case 1:
-                this.attack_gen_x = this.x-1;
-                this.attack_gen_y = this.y+1;
+                this.attack_x = this.x-1;
+                this.attack_y = this.y+1;
             break;
             case 2:
-                this.attack_gen_x = this.x+this.w_unit;
-                this.attack_gen_y = this.y+1;
+                this.attack_x = this.x+this.w_unit;
+                this.attack_y = this.y+1;
             break;
             case 3:
-                this.attack_gen_x = this.x;
-                this.attack_gen_y = this.y-1;
+                this.attack_x = this.x;
+                this.attack_y = this.y-1;
             break;
         }
         
-        play_area_02.drawImage(attack_gen,
-                               0, 
-                               0, 
-                               attack_gen_size, 
-                               attack_gen_size, 
-                               this.attack_gen_x*unit,
-                               this.attack_gen_y*unit,
-                               unit, 
-                               unit);
+        play_area_02.drawImage(attack,
+                               attack_array[this.dir][0], 
+                               attack_array[this.dir][1], 
+                               attack_array[this.dir][2], 
+                               attack_array[this.dir][3], 
+                               this.attack_x*unit,
+                               this.attack_y*unit,
+                               attack_array[this.dir][2]/2, 
+                               attack_array[this.dir][3]/2);
+        
+        //判斷有沒有攻擊到敵人 有的話敵人會失血
+        if (map[this.attack_y][this.attack_x] != 0) {
+                
+                var obj_touch = map[this.attack_y][this.attack_x];
+                eval(obj_touch).hp -= Math.ceil(this.atk/6);
+                
+                if (obj_touch.match("map_mon")) {
+                    if ( eval(obj_touch).hp >= 0) {
+                        
+                    }
+                    else {
+                        //得到經驗值
+                       this.exp += eval(obj_touch).drop_exp;
+                       this.level_cheak();
+                       eval(obj_touch).clear_occ(); 
+                       status_area_update ();
+                       
+                        for(var key2 in eval(this_map)["map_mon"]) {
+                            if (eval(obj_touch) == map_mon[key2]) {
+
+                                delete map_mon[key2];
+                            }
+                        }
+                    }                 
+                }        
+            }
     }
     
     //會攻擊(技能攻擊)
-    
+    this.fire_ball = function () {
+        
+        //魔力判斷 fun
+        if (this.mp >= this.fire_ball_mp) {
+            //產生火球
+            this.fire_ball_array.push([this.x,this.y,this.dir]);
+            //扣魔力
+            this.mp = this.mp - this.fire_ball_mp;
+        }
+        
+        status_area_update ();
+    }
     
     this.do_work = function () {
 		this.draw();
+
         
-        if (this.attack_gen_con == 1) {
-            this.hero_attack_gen();
+        if (this.attack_con == 1) {
+            this.hero_attack();
         }
+        
+        for (var key in this.fire_ball_array) {
+            switch (this.fire_ball_array[key][2]) {
+                case 0:
+                    this.fire_ball_array[key][0];
+                    this.fire_ball_array[key][1]++;
+                break;
+                case 1:
+                    this.fire_ball_array[key][0]--;
+                    this.fire_ball_array[key][1];
+                break;
+                case 2:
+                    this.fire_ball_array[key][0]++;
+                    this.fire_ball_array[key][1];
+                break;
+                case 3:
+                    this.fire_ball_array[key][0];
+                    this.fire_ball_array[key][1]--;
+                break;
+            }
+            
+            play_area_02.drawImage(magic,
+                                   magic_array[0][0], 
+                                   magic_array[0][1], 
+                                   magic_array[0][2], 
+                                   magic_array[0][3], 
+                                   this.fire_ball_array[key][0]*unit,
+                                   this.fire_ball_array[key][1]*unit,
+                                   magic_array[0][2]/2, 
+                                   magic_array[0][3]/2)
+            
+            //打到東西或出界會消失
+            if (this.fire_ball_array[key][0] <= 0 || 
+                     this.fire_ball_array[key][0] >= play_area_i ||
+                     this.fire_ball_array[key][1] <= 0 || 
+                     this.fire_ball_array[key][1] >= play_area_j) {
+                delete this.fire_ball_array[key];
+            }
+            else if (map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != 0 && 
+                map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]] != this.varanem) {
+                
+                var obj_touch = map[this.fire_ball_array[key][1]][this.fire_ball_array[key][0]];
+                eval(obj_touch).hp -= Math.ceil(this.atk-eval(obj_touch).def*0.7);
+                
+
+                
+                if (obj_touch.match("map_mon")) {
+                    if ( eval(obj_touch).hp >= 0) {
+                        
+                    }
+                    else {
+                        //得到經驗值
+                       this.exp += eval(obj_touch).drop_exp;
+                       this.level_cheak();
+                       eval(obj_touch).clear_occ(); 
+                       status_area_update ();
+                         
+                        for(var key2 in eval(this_map)["map_mon"]) {
+                            if (eval(obj_touch) == map_mon[key2]) {
+
+                                delete map_mon[key2];
+                            }
+                        }
+                    }
+                    
+                }
+
+                delete this.fire_ball_array[key];
+             
+            }
+
+        }
+        
+        if (this.mp < this.exp_array[this.level][2]) {
+            this.mp_up();
+        }
+
 	}
 }
 
@@ -303,5 +454,86 @@ function People (varanem, x, y, image_name, real_h ,speed, name, speak, route, b
             this.move();
         }
         
+	}
+}
+
+function Monster (varanem, x, y, image_name, real_h ,speed,name ,hp ,atk, def, drop_exp) {
+    //繼承Animal 對象冒充繼承
+	this.animal = Animal;
+	this.animal(varanem, x, y, image_name, real_h ,speed);
+    
+    this.name = name;
+    this.hp = hp;
+    this.atk = atk;
+    this.def = def;
+    this.drop_exp = drop_exp;
+
+	//緩衝 不要讓圖片動太快(移動)
+    this.butter_move = 20;
+    //計算運行幾次this.move function
+    this.fun_move_count = 0;
+
+	this.move = function () {
+		//
+		this.fun_move_count++;
+        if (this.fun_move_count == this.butter_move) {
+			switch (Math.floor(Math.random()*5)) {
+				case 0:
+				break;
+				case 1:
+					this.move_down();
+				break;
+				case 2:
+					this.move_left();
+				break;
+				case 3:
+					this.move_right();
+				break;
+				case 4:
+					this.move_up();
+				break;
+			}
+	
+            this.fun_move_count = 0;
+        }
+	}
+    
+    this.attack = function () {
+        if (this.atk - hero.def > 0) {
+            hero.hp -= this.atk - hero.def;
+        }
+        else {
+            hero.hp -= 1;
+        }
+        
+        status_area_update ();
+    }
+    
+    this.do_work = function () {
+		this.draw();
+		play_area_02.font = "bold 9px Courier";
+		play_area_02.fillText(this.name+" HP"+this.hp,this.x*unit,this.y*unit);
+        
+        if (this.y+this.h_unit < play_area_j && map[this.y+this.h_unit][this.x] == "hero") {
+            this.dir = 0;
+            this.attack();
+        }
+        else if (this.x-1 > 0 && map[this.y][this.x-1] == "hero") {
+            this.dir = 1;
+            this.attack();
+        }
+        else if (this.x+this.w_unit < play_area_i && map[this.y][this.x+this.w_unit] == "hero") {
+            this.dir = 2;
+            this.attack();
+        }
+        else if (this.y-1 > 0 && map[this.y-1][this.x] == "hero") {
+            this.dir = 3;
+            this.attack();
+        }
+        else {
+            this.move();
+        }
+        
+
 	}
 }

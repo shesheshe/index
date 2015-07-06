@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scaleble=no, initial-scale=1.0, maximum-scale=1.0">
+	<title>genmono2 地下城物品清單</title>
+</head>
+<body>
+	
+	dungeon:<select id="dungeon_list">
+	</select>
+	<input type="button" value="go"/>
+	<div></div>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"> </script>
+	<script type="text/javascript">
+
+	var dungeon_list = {
+	
+		"初心者の森" : ["ぼろい布", "鉄のかけら", "石ころ", "丈夫な紐"],
+		"荒れ平原" : ["ぼろい布", "鉄のかけら", "石ころ", "狂気の包丁", "マタタビの実"],
+		"広大な砂漠" : ["丈夫な紐", "濃厚粘土", "鉄のかけら", "石ころ", "かかし棒", "新鮮獣肉", "黒焦げた丸焼き"],
+		"孤独の森" : ["綺麗な首輪", "曲名♪森の若大将", "魔法の実", "濃厚粘土", "切りたて丸太", "丈夫な紐", "ぼろい布", "消せない蝋燭", "汚い古水"],
+		"*肝試しの道" : ["曲名♪深夜背後に", "曲名♪蘇る恐怖", "丸太", "丈夫な紐", "ぼろい布", "蒸留水"],
+		"静かな海辺" : ["曲名♪いたずら好き", "朱色の玉", "蒸留水", "切りたて丸太", "ぼろい布", "海色の石"],
+		"砂漠のオアシス" : ["丈夫な紐", "蒸留水", "石ころ", "鉄のかけら", "砥石", "濃厚粘土", "サボテンの乾皮", "合成獣の石盤"],
+		"雪の洞窟" : ["硬い羽根", "魔法の実", "朱色の玉", "切りたての丸太", "石ころ", "誰かの草履", "真っ白な牙"],
+		"廃虚となった町" : [],
+		"セカチュ岬" : [],
+		"悪魔の洞窟" : [],
+		"幻獣園" : [],
+		"忘れられた炭坑" : [],
+		"再起の港" : [],
+		"大吹雪の森" : [],
+		"暗黒の町" : [],
+		"火山地帯の温泉" : [],
+		"謎の沈没船" : [],
+		"時計塔がある街" : [],
+		"深海への入り口" : [],
+		"妖骨の洞窟" : [],
+		"最果ての跡地" : [],
+		"氷点下の洞窟" : [],
+		"嵐舞う大地" : [],
+		"灼熱地獄" : [],
+		"魔界樹の森" : [],
+		"神蔵" : [],
+		"勇者の墓地" : []
+	};
+
+	var dungeon = '';
+	
+	$(function () {
+	
+		console.log("init");
+		
+		dungeon_create();
+		go();
+		
+	});	
+	
+	function dungeon_create() {
+	
+		var options = '';
+		for(var name in dungeon_list) {
+			options += "<option value=\""+name+"\">"+name+"</option>";
+		}
+		
+		$("select#dungeon_list")
+		.html(options)
+		.on("change", function() {
+			dungeon = this.value;
+			console.log(dungeon);
+		});
+		dungeon = $("#dungeon_list option:first").val();
+		
+	}
+
+	function go() {
+
+		$("input[type=button]").on("click", function() {
+			var text = '';
+			var number = 1;
+			for(var item in dungeon_list[dungeon]) {
+				text += (number++)+":"+dungeon_list[dungeon][item] + "<br />";
+			}
+			$("div").html(text);
+		});
+		
+	}
+	
+	</script>
+</body>
+</html>

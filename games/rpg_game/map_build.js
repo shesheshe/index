@@ -59,21 +59,36 @@ function draw_map_ground(map_no) {
     }
 }
 
-var map_ani = []
+var map_ani = [];
+var map_mon = [];
 
 //畫出地圖上的人或怪物
 function draw_map_ani(map_no) {
 	//迴圈產出ani
-	for(var key in this[map_no]["map_ani"]){ 
-		map_ani[key] = new People ("map_ani["+key+"]", 
-						           this[map_no]["map_ani"][key][1], 
-						           this[map_no]["map_ani"][key][2], 
-						           this[map_no]["map_ani"][key][3], 
-						           this[map_no]["map_ani"][key][4],
-						           this[map_no]["map_ani"][key][5], 
-						           this[map_no]["map_ani"][key][0], 
-						           this[map_no]["map_ani"][key][6], 
-						           this[map_no]["map_ani"][key][7],
-						           this[map_no]["map_ani"][key][8]);
+	for(var key1 in this[map_no]["map_ani"]){ 
+		map_ani[key1] = new People ("map_ani["+key1+"]", 
+						           this[map_no]["map_ani"][key1][1], 
+						           this[map_no]["map_ani"][key1][2], 
+						           this[map_no]["map_ani"][key1][3], 
+						           this[map_no]["map_ani"][key1][4],
+						           this[map_no]["map_ani"][key1][5], 
+						           this[map_no]["map_ani"][key1][0], 
+						           this[map_no]["map_ani"][key1][6], 
+						           this[map_no]["map_ani"][key1][7],
+						           this[map_no]["map_ani"][key1][8]);
+    }
+    
+    for(var key2 in this[map_no]["map_mon"]){ 
+		map_mon[key2] = new Monster ("map_mon["+key2+"]", 
+						            this[map_no]["map_mon"][key2][1], 
+						            this[map_no]["map_mon"][key2][2], 
+						            this[map_no]["map_mon"][key2][3], 
+						            this[map_no]["map_mon"][key2][4],
+						            this[map_no]["map_mon"][key2][5], 
+						            this[map_no]["map_mon"][key2][0], 
+						            this[map_no]["map_mon"][key2][6], 
+						            this[map_no]["map_mon"][key2][7],
+						            this[map_no]["map_mon"][key2][8],
+						            this[map_no]["map_mon"][key2][9]);
     }
 }

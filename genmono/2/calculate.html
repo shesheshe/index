@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>genmono2 calculate</title>
+</head>
+<body>
+	
+	<select id="genmono_list">
+	</select>
+	
+	<div id="genmono_list_view"></div>
+	<br />
+	<!---->
+	
+	<select id="evolution_point">
+		<option value="0">0</option>
+		<option value="30">1</option>
+		<option value="40">2</option>
+		<option value="50">3</option>
+		<option value="60">4</option>
+		<option value="70">5</option>
+	</select>轉, lv <input id="genmono_lv" type="text" value="1" size="3" maxlength="3"/>
+	<br />
+	可分配:<input id="status_point" type="text" size="3" readonly="readonly"/>/<input id="status_point_max" type="text" size="3" readonly="readonly"/>
+	<br />點數:
+	<input id="s" type="text" size="3" maxlength="3"/>
+	<input id="a" type="text" size="3" maxlength="3"/>
+	<input id="d" type="text" size="3" maxlength="3"/>
+	<input id="l" type="text" size="3" maxlength="3"/>
+	<br />數值:
+	<input id="ss" type="text" size="3" readonly="readonly"/>
+	<input id="aa" type="text" size="3" readonly="readonly"/>
+	<input id="dd" type="text" size="3" readonly="readonly"/>
+	<input id="ll" type="text" size="3" readonly="readonly"/>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"> </script>
+	<script type="text/javascript">
+	var gels = [];
+	
+	$(function () {
+	
+		console.log("init");
+		
+		
+		
+		create_list();
+		genmono_evolution_list();
+		
+
+	});	
+	
+	function create_list() {
+		
+		var options = '';
+		var genmono_list = ["class F", "ケットシー", "ゲド", "付喪神", 
+		                    "class E", "ネコマタ", "オオカミ",
+							"class D", "キマイラ", "白虎", "虎狼狸"];
+		
+		for(var gl in genmono_list) {
+			options += "<option value=\""+genmono_list[gl]+"\">"+genmono_list[gl]+"</option>";
+		}
+		
+		$("select#genmono_list")
+		.html(options)
+		.on("change", function() {
+			console.log(this.value);
+			
+			if(this.value.split(" ")[0] == "class") {
+				return false;
+			}
+			
+			var row = '';
+			var col = '';
+			var table = '';
+			
+			for(var gel in gels) {	//幻獸列表
+				
+				for(var gelss in gels[gel]) {	//進化鍊
+					
+					if(gels[gel][gelss].split("_")[0] == this.value) {	//有出現就取出
+
+						row = "<div style=\"display:table-row;\">";
+						for(var gelsss in gels[gel]) {	//重新一次循環
+							
+							col = "<div class=\"genmono\"";
+							if(gelsss<gelss) {
+								col += "style=\"background-color:red;float:left;\">";
+							} else if(gelsss>gelss) {
+								col += "style=\"background-color:blue;float:left;\">";
+							} else {
+								col += "style=\"background-color:green;float:left;\">";
+							}
+							
+							col += gels[gel][gelsss].split("_")[0];
+							col += "<span>"+gels[gel][gelsss].split("_")[1]+"</span>";
+							col += "<span>"+gels[gel][gelsss].split("_")[2]+"</span>";
+							col += "<span>"+gels[gel][gelsss].split("_")[3]+"</span>";
+							col += "</div>";
+
+							row += col;
+						}
+						row += "</div>";
+						table += row;
+					}
+				}
+				
+			}
+			$("div#genmono_list_view").html(table);
+			
+			
+			
+		});
+		
+		//轉生獎勵 + 升級點數
+		$("select#evolution_point")
+		.on("change", function() {
+			var sp = $("input#genmono_lv").val();
+			sp = parseInt(this.value)+((sp-1)*2)
+			$("input#status_point").val(sp);
+			$("input#status_point_max").val(sp);
+		});
+		
+		
+		$("input#s")
+		.on("keyup", function(e) {
+			
+			for(var _char in this.value) {
+				if(!parseInt(this.value[_char])) {
+					console.log('超出預期字數!');
+					return;
+				}
+			}
+			if(this.value.length>3 || this.value == "") {
+				console.log('超出預期字數!');
+				return;
+			}
+
+			console.log(this.value);
+			console.log(e);
+		});
+		
+	}
+	
+	function genmono_evolution_list() {
+		
+		gels[0] = ["ケットシー_10_10_10", "ネコマタ_10_10_10", "キマイラ_10_10_10"];
+		gels[1] = ["ケットシー_10_10_10", "ネコマタ_10_10_10", "白虎_10_10_10"];
+		gels[2] = ["ケットシー_10_10_10", "オオカミ_10_10_10", "白虎_10_10_10"];
+		gels[3] = ["ケットシー_10_10_10", "オオカミ_10_10_10", "虎狼狸_10_10_10"];
+		
+	}
+	
+	
+	
+	</script>
+</body>
+</html>
