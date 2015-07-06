@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>(偽)(偽)暗黑破壞神</title>
+</head>
+<body>
+<canvas id="world"></canvas>
+
+<script type="text/javascript">
+	function draw() {
+		var ctx = document.getElementById('world').getContext('2d');
+		var img = new Image();
+		img.onload = function(){
+			ctx.drawImage(img, 0, 0);
+		}
+		img.src = 'pic/image_object.png';
+	}
+
+	draw();
+</script>
+</body>
+</html>
