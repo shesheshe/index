@@ -1,1 +1,59 @@
-hello, hero!
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>hbe專業團隊</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+</head>
+
+<body>
+	<div id="nav"></div>
+
+	<div class="container-fluid">
+		<div class="panel panel-primary">
+            <div class="panel-heading">
+				<h3 class="panel-title">
+					new
+				</h3>
+			</div>
+			<center>
+				<div class="panel-body news"  style="position: relative;">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="http://shesheshe.github.io/index/demo/lottery_v1/"  target="_blank" >20150706 - 樂透轉盤v1</a></li>
+						<li><a href="#"></a></li>
+						<li><a href="#"></a></li>
+						<li><a href="#"></a></li>
+						<li><a href="#"></a></li>
+					</ul>
+					
+				</div>
+			</center>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h4></h4>
+			</div>
+		</div>
+	</div>
+
+        <div id="footer"></div>
+        <div id="modal_popup"></div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			console.log("init");
+			$("#nav").load("nav.html");
+			$("#footer").load("footer.html");
+			$("#modal_popup").load("modal_popup.html");
+		});
+	</script>
+</body>
+</html>
